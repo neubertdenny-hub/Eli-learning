@@ -20,6 +20,37 @@ class DatabaseMigrator {
     try {
       console.log("🔄 Starting database migration...")
 
+      // Clean old tables first (for re-runs)
+      const cleanupStatements = [
+        "DROP TABLE IF EXISTS topic_foundation_requirements CASCADE",
+        "DROP TABLE IF EXISTS foundation_mastery CASCADE",
+        "DROP TABLE IF EXISTS foundation_dependencies CASCADE",
+        "DROP TABLE IF EXISTS foundations CASCADE",
+        "DROP TABLE IF EXISTS parent_access_sessions CASCADE",
+        "DROP TABLE IF EXISTS document_metadata CASCADE",
+        "DROP TABLE IF EXISTS ai_usage_logs CASCADE",
+        "DROP TABLE IF EXISTS progress CASCADE",
+        "DROP TABLE IF EXISTS review_schedules CASCADE",
+        "DROP TABLE IF EXISTS error_patterns CASCADE",
+        "DROP TABLE IF EXISTS task_attempts CASCADE",
+        "DROP TABLE IF EXISTS sessions CASCADE",
+        "DROP TABLE IF EXISTS tasks CASCADE",
+        "DROP TABLE IF EXISTS subtopics CASCADE",
+        "DROP TABLE IF EXISTS topics CASCADE",
+        "DROP TABLE IF EXISTS documents CASCADE",
+        "DROP TABLE IF EXISTS users CASCADE",
+      ]
+
+      for (const stmt of cleanupStatements) {
+        try {
+          await this.pool.query(stmt)
+        } catch (err) {
+          // Ignore cleanup errors
+        }
+      }
+
+      console.log("✅ Cleaned old tables")
+
       // Read schema file
       const schemaPath = path.join(process.cwd(), "lib/db/schema.sql")
       const schema = fs.readFileSync(schemaPath, "utf-8")
