@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS progress (
 );
 
 CREATE INDEX IF NOT EXISTS idx_progress_user_id ON progress(user_id);
-CREATE UNIQUE INDEX idx_progress_user_topic ON progress(user_id, topic_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_progress_user_topic ON progress(user_id, topic_id);
 
 -- ========== AI USAGE & COST TRACKING ==========
 
