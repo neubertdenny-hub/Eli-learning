@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS topics (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_topics_user_id ON topics(user_id);
+CREATE INDEX IF NOT EXISTS idx_topics_user_id ON topics(user_id);
 
 -- Subtopics (e.g., "Bruchrechnung" has "Addition", "Subtraktion")
 CREATE TABLE IF NOT EXISTS subtopics (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS subtopics (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_subtopics_topic_id ON subtopics(topic_id);
+CREATE INDEX IF NOT EXISTS idx_subtopics_topic_id ON subtopics(topic_id);
 
 -- Tasks (Individual math problems)
 CREATE TABLE IF NOT EXISTS tasks (
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_tasks_subtopic_id ON tasks(subtopic_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_subtopic_id ON tasks(subtopic_id);
 
 -- Sessions (Learning sessions)
 CREATE TABLE IF NOT EXISTS sessions (
@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS sessions (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_sessions_user_id ON sessions(user_id);
-CREATE INDEX idx_sessions_started_at ON sessions(started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_started_at ON sessions(started_at DESC);
 
 -- Task Attempts (Each attempt at solving a task)
 CREATE TABLE IF NOT EXISTS task_attempts (
@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS task_attempts (
   attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_task_attempts_session_id ON task_attempts(session_id);
-CREATE INDEX idx_task_attempts_task_id ON task_attempts(task_id);
+CREATE INDEX IF NOT EXISTS idx_task_attempts_session_id ON task_attempts(session_id);
+CREATE INDEX IF NOT EXISTS idx_task_attempts_task_id ON task_attempts(task_id);
 
 -- ========== ELI MEMORY & ANALYTICS ==========
 
@@ -102,8 +102,8 @@ CREATE TABLE IF NOT EXISTS error_patterns (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_error_patterns_user_id ON error_patterns(user_id);
-CREATE INDEX idx_error_patterns_topic_id ON error_patterns(topic_id);
+CREATE INDEX IF NOT EXISTS idx_error_patterns_user_id ON error_patterns(user_id);
+CREATE INDEX IF NOT EXISTS idx_error_patterns_topic_id ON error_patterns(topic_id);
 
 -- Review Schedule (Spaced Repetition)
 CREATE TABLE IF NOT EXISTS review_schedules (
@@ -117,8 +117,8 @@ CREATE TABLE IF NOT EXISTS review_schedules (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_review_schedules_user_id ON review_schedules(user_id);
-CREATE INDEX idx_review_schedules_next_review_date ON review_schedules(next_review_date);
+CREATE INDEX IF NOT EXISTS idx_review_schedules_user_id ON review_schedules(user_id);
+CREATE INDEX IF NOT EXISTS idx_review_schedules_next_review_date ON review_schedules(next_review_date);
 
 -- Progress (Overall mastery status per topic)
 CREATE TABLE IF NOT EXISTS progress (
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS progress (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_progress_user_id ON progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_progress_user_id ON progress(user_id);
 CREATE UNIQUE INDEX idx_progress_user_topic ON progress(user_id, topic_id);
 
 -- ========== AI USAGE & COST TRACKING ==========
@@ -155,8 +155,8 @@ CREATE TABLE IF NOT EXISTS ai_usage_logs (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_ai_usage_logs_user_id ON ai_usage_logs(user_id);
-CREATE INDEX idx_ai_usage_logs_api_call_timestamp ON ai_usage_logs(api_call_timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_usage_logs_user_id ON ai_usage_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_usage_logs_api_call_timestamp ON ai_usage_logs(api_call_timestamp DESC);
 
 -- ========== TEMPORARY/TRANSIENT TABLES ==========
 
@@ -176,8 +176,8 @@ CREATE TABLE IF NOT EXISTS document_metadata (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_document_metadata_user_id ON document_metadata(user_id);
-CREATE INDEX idx_document_metadata_expires_at ON document_metadata(expires_at);
+CREATE INDEX IF NOT EXISTS idx_document_metadata_user_id ON document_metadata(user_id);
+CREATE INDEX IF NOT EXISTS idx_document_metadata_expires_at ON document_metadata(expires_at);
 
 -- Parent Access Sessions (for dashboard PIN auth)
 CREATE TABLE IF NOT EXISTS parent_access_sessions (
@@ -188,8 +188,8 @@ CREATE TABLE IF NOT EXISTS parent_access_sessions (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_parent_access_sessions_expires_at ON parent_access_sessions(expires_at);
-CREATE INDEX idx_parent_access_sessions_session_token ON parent_access_sessions(session_token);
+CREATE INDEX IF NOT EXISTS idx_parent_access_sessions_expires_at ON parent_access_sessions(expires_at);
+CREATE INDEX IF NOT EXISTS idx_parent_access_sessions_session_token ON parent_access_sessions(session_token);
 
 -- ========== VIEWS FOR COMMON QUERIES ==========
 
@@ -244,8 +244,8 @@ CREATE TABLE IF NOT EXISTS foundations (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_foundations_key ON foundations(key);
-CREATE INDEX idx_foundations_category ON foundations(category);
+CREATE INDEX IF NOT EXISTS idx_foundations_key ON foundations(key);
+CREATE INDEX IF NOT EXISTS idx_foundations_category ON foundations(category);
 
 -- Foundation dependencies (which foundations are required for others)
 CREATE TABLE IF NOT EXISTS foundation_dependencies (
@@ -256,8 +256,8 @@ CREATE TABLE IF NOT EXISTS foundation_dependencies (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_foundation_dependencies_foundation_id ON foundation_dependencies(foundation_id);
-CREATE INDEX idx_foundation_dependencies_prerequisite_id ON foundation_dependencies(prerequisite_id);
+CREATE INDEX IF NOT EXISTS idx_foundation_dependencies_foundation_id ON foundation_dependencies(foundation_id);
+CREATE INDEX IF NOT EXISTS idx_foundation_dependencies_prerequisite_id ON foundation_dependencies(prerequisite_id);
 
 -- User's mastery of each foundation
 CREATE TABLE IF NOT EXISTS foundation_mastery (
@@ -273,9 +273,9 @@ CREATE TABLE IF NOT EXISTS foundation_mastery (
   UNIQUE(user_id, foundation_id)
 );
 
-CREATE INDEX idx_foundation_mastery_user_id ON foundation_mastery(user_id);
-CREATE INDEX idx_foundation_mastery_foundation_id ON foundation_mastery(foundation_id);
-CREATE INDEX idx_foundation_mastery_mastery_level ON foundation_mastery(mastery_level);
+CREATE INDEX IF NOT EXISTS idx_foundation_mastery_user_id ON foundation_mastery(user_id);
+CREATE INDEX IF NOT EXISTS idx_foundation_mastery_foundation_id ON foundation_mastery(foundation_id);
+CREATE INDEX IF NOT EXISTS idx_foundation_mastery_mastery_level ON foundation_mastery(mastery_level);
 
 -- Topic to foundation mapping (which topics need which foundations)
 CREATE TABLE IF NOT EXISTS topic_foundation_requirements (
@@ -286,5 +286,5 @@ CREATE TABLE IF NOT EXISTS topic_foundation_requirements (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_topic_foundation_requirements_topic_id ON topic_foundation_requirements(topic_id);
-CREATE INDEX idx_topic_foundation_requirements_foundation_id ON topic_foundation_requirements(foundation_id);
+CREATE INDEX IF NOT EXISTS idx_topic_foundation_requirements_topic_id ON topic_foundation_requirements(topic_id);
+CREATE INDEX IF NOT EXISTS idx_topic_foundation_requirements_foundation_id ON topic_foundation_requirements(foundation_id);
