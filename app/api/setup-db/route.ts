@@ -4,7 +4,8 @@ import { runMigration } from "@/lib/db/migrate"
 export async function GET(request: NextRequest) {
   try {
     const secret = request.headers.get("x-setup-secret") || new URL(request.url).searchParams.get("secret")
-    if (secret !== process.env.SETUP_SECRET) {
+    const validSecret = process.env.SETUP_SECRET || process.env.CRON_SECRET
+    if (secret !== validSecret) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
