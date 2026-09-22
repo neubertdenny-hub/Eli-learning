@@ -267,12 +267,10 @@ export async function runMigration(): Promise<void> {
   await migrator.migrate()
 }
 
-// Run if called directly
-if (require.main === module) {
-  runMigration()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error(error)
-      process.exit(1)
-    })
-}
+// Auto-run migration
+runMigration()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })
