@@ -1,8 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ========== LIGHT THEME ========== */
+  --background: #f8f9fa;
+  --foreground: #0d1117;
+  --surface-primary: #ffffff;
+  --surface-secondary: #f6f7f9;
+  --border-color: #e5e7eb;
+  --border-subtle: #f0f1f3;
+
+  /* PREMIUM BRAND COLORS */
+  --eli-primary: #1d4ed8;
+  --eli-primary-light: #3b82f6;
+  --eli-primary-lighter: #eff6ff;
+  --eli-secondary: #0ea5e9;
+  --eli-success: #059669;
+  --eli-warning: #d97706;
+  --eli-error: #dc2626;
+
+  /* SEMANTIC COLORS */
+  --color-green: #059669;
+  --color-green-light: #ecfdf5;
+  --color-yellow: #d97706;
+  --color-yellow-light: #fef3c7;
+  --color-red: #dc2626;
+  --color-red-light: #fee2e2;
+
+  /* PREMIUM GRAYS */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* SHADOWS */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-elevation: 0 8px 16px -2px rgba(0, 0, 0, 0.08);
+
+  /* SPACING */
+  --touch-target: 44px;
 }
 
 @theme inline {
@@ -14,13 +59,355 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0d1117;
+    --foreground: #e6edf3;
+    --surface-primary: #161b22;
+    --surface-secondary: #0d1117;
+    --border-color: #30363d;
+    --border-subtle: #21262d;
+
+    --eli-primary: #58a6ff;
+    --eli-primary-light: #79c0ff;
+    --eli-primary-lighter: #0d1a2e;
+    --eli-secondary: #56d4ff;
+    --eli-success: #3fb950;
+    --eli-warning: #d29922;
+    --eli-error: #f85149;
+
+    --gray-50: #161b22;
+    --gray-100: #0d1117;
+    --gray-200: #21262d;
+    --gray-300: #30363d;
+    --gray-400: #8b949e;
+    --gray-500: #6e7681;
+    --gray-600: #484f58;
+    --gray-700: #30363d;
+    --gray-800: #161b22;
+    --gray-900: #0d1117;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ========== TOUCH TARGETS ========== */
+button,
+a[role="button"],
+input[type="button"],
+input[type="submit"],
+.touch-target {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+}
+
+/* ========== UTILITY CLASSES ========== */
+
+.container-full {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-full {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-full {
+    padding: 0 2rem;
+  }
+}
+
+/* ========== PREMIUM CARDS ========== */
+
+.card-base {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.875rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease-out;
+}
+
+.card-base:hover {
+  border-color: var(--eli-primary-light);
+  box-shadow: var(--shadow-md);
+}
+
+.card-elevated {
+  background: var(--surface-primary);
+  border: none;
+  border-radius: 0.875rem;
+  box-shadow: var(--shadow-elevation);
+  transition: all 0.2s ease-out;
+}
+
+.card-elevated:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* ========== PREMIUM BUTTONS ========== */
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--eli-primary) 0%, var(--eli-primary-light) 100%);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.875rem 1.5rem;
+  min-height: 44px;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease-out;
+}
+
+.btn-primary:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+  background: var(--surface-secondary);
+  color: var(--foreground);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  padding: 0.75rem 1.25rem;
+  min-height: 44px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.btn-secondary:hover {
+  background: var(--surface-primary);
+  border-color: var(--eli-primary-light);
+  box-shadow: var(--shadow-md);
+}
+
+/* ========== ANIMATIONS ========== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(29, 78, 216, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(29, 78, 216, 0.5);
+  }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes nod {
+  0%, 100% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(4deg);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  75% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes blink {
+  0%, 49%, 100% {
+    opacity: 1;
+  }
+  50%, 99% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* ========== GRADIENTS ========== */
+
+.gradient-to-bottom {
+  background: linear-gradient(to bottom, var(--eli-primary-lighter), transparent);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, var(--eli-primary) 0%, var(--eli-secondary) 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, var(--color-green) 0%, #10b981 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, var(--eli-warning) 0%, #fbbf24 100%);
+}
+
+.gradient-subtle {
+  background: linear-gradient(to bottom, var(--surface-primary), var(--surface-secondary));
+}
+
+/* ========== FORM ELEMENTS ========== */
+
+input,
+textarea,
+select {
+  background-color: var(--surface-primary);
+  color: var(--foreground);
+  border: 1px solid var(--border-color);
+  border-radius: 0.625rem;
+  transition: all 0.2s ease-out;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--eli-primary);
+  box-shadow: 0 0 0 4px var(--eli-primary-lighter);
+}
+
+input::placeholder {
+  color: var(--gray-400);
+}
+
+/* ========== TYPOGRAPHY ========== */
+
+h1 {
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--foreground);
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+h3 {
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  color: var(--foreground);
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--gray-600);
+}
+
+.text-muted {
+  color: var(--gray-500);
+  font-size: 0.875rem;
+}
+
+.text-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ========== BORDERS & DIVIDERS ========== */
+
+.border-subtle {
+  border-color: var(--border-subtle);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 1.5rem 0;
 }

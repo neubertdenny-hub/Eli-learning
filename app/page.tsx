@@ -1,69 +1,183 @@
-import Image from "next/image";
+/**
+ * ELI – Home Page (Premium Edition)
+ *
+ * Main hub for learning with modern, polished design.
+ */
 
-export default function Home() {
+"use client"
+
+import React from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Header } from "@/components/layout/Header"
+import { Navigation } from "@/components/layout/Navigation"
+import { EliSpeaking } from "@/components/eli/EliRobot"
+import { MissionCard } from "@/components/task/MissionCard"
+import { TopicCard } from "@/components/task/TopicCard"
+
+export default function HomePage() {
+  const router = useRouter()
+
+  const userStats = {
+    name: "Zoey",
+    level: 1,
+    xp: 25,
+    maxXP: 100,
+    streak: 3,
+  }
+
+  const currentMission = {
+    title: "Addieren mit negativen Zahlen",
+    description: "Lerne, wie man negative Zahlen addiert",
+    duration: "ca. 20 Minuten",
+    difficulty: 2 as const,
+  }
+
+  const recentTopics = [
+    {
+      title: "Bruchrechnung",
+      emoji: "🍰",
+      status: "green" as const,
+      successRate: 85,
+      lastPracticed: "Heute",
+    },
+    {
+      title: "Negative Zahlen",
+      emoji: "❄️",
+      status: "yellow" as const,
+      successRate: 60,
+      lastPracticed: "Gestern",
+    },
+    {
+      title: "Multiplikation",
+      emoji: "✖️",
+      status: "red" as const,
+      successRate: 40,
+      lastPracticed: "Vor 3 Tagen",
+    },
+  ]
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 via-white to-blue-50 pb-24 sm:pb-32">
+      {/* Header */}
+      <Header
+        userName={userStats.name}
+        currentLevel={userStats.level}
+        currentXP={userStats.xp}
+        maxXP={userStats.maxXP}
+        streak={userStats.streak}
+        showParentAccess={true}
+        onParentClick={() => router.push("/parent")}
+      />
+
+      {/* Main Content */}
+      <main className="flex-1 container-full py-8 sm:py-12 space-y-10">
+        {/* Welcome Section */}
+        <section className="flex flex-col items-center text-center space-y-6 animate-fade-in">
+          <EliSpeaking
+            mood="happy"
+            size="lg"
+            message="Hey Zoey! 👋 Bereit für unsere Mathe-Mission?"
+          />
+        </section>
+
+        {/* Primary CTA: Mission */}
+        <section className="animate-slide-in-up">
+          <MissionCard
+            title={currentMission.title}
+            description={currentMission.description}
+            duration={currentMission.duration}
+            difficulty={currentMission.difficulty}
+            href="/learn"
+          />
+        </section>
+
+        {/* Upload Section */}
+        <section>
+          <Link href="/upload">
+            <button className="w-full card-elevated overflow-hidden hover:shadow-xl transition-all duration-200 group">
+              <div className="relative p-8 sm:p-10 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+                <div className="absolute -top-12 -right-12 w-40 h-40 bg-purple-200 rounded-full opacity-10 group-hover:opacity-20 transition-opacity" />
+
+                <div className="relative space-y-3">
+                  <div className="text-5xl sm:text-6xl">📸</div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                    Neues Thema hochladen
+                  </h3>
+                  <p className="text-base sm:text-lg text-gray-700">
+                    Fotografiere dein Mathebuch oder Arbeitsblatt
+                  </p>
+                  <div className="flex items-center justify-center gap-2 text-lg font-semibold text-purple-700 mt-6 group-hover:gap-3 transition-all">
+                    <span>Jetzt hochladen</span>
+                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </Link>
+        </section>
+
+        {/* Topics Section */}
+        <section className="space-y-6">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Deine Themen</h2>
+            <p className="text-gray-600">Dein aktueller Lernfortschritt</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {recentTopics.map((topic, idx) => (
+              <TopicCard key={idx} {...topic} />
+            ))}
+          </div>
+
+          <div className="flex justify-center pt-4">
+            <Link
+              href="/progress"
+              className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2 group"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+              <span>Alle Themen anschauen</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* Weekly Stats */}
+        <section className="card-elevated bg-gradient-to-br from-white to-blue-50 overflow-hidden">
+          <div className="absolute -top-20 -right-20 w-60 h-60 bg-blue-200 rounded-full opacity-5" />
+          <div className="relative p-8 sm:p-10 space-y-6">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">Diese Woche</h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              {/* Sessions */}
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold text-blue-600 mb-2">3</div>
+                <div className="text-sm text-gray-600 font-medium">Sessions</div>
+              </div>
+
+              {/* XP */}
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold text-green-600 mb-2">125</div>
+                <div className="text-sm text-gray-600 font-medium">XP verdient</div>
+              </div>
+
+              {/* Tasks */}
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold text-purple-600 mb-2">8</div>
+                <div className="text-sm text-gray-600 font-medium">Aufgaben</div>
+              </div>
+
+              {/* Streak */}
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold text-orange-600 mb-2">3</div>
+                <div className="text-sm text-gray-600 font-medium">Tage Streak 🔥</div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
+      {/* Navigation */}
+      <Navigation />
     </div>
-  );
+  )
 }
