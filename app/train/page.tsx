@@ -7,13 +7,13 @@
 
 "use client"
 
-import React, { useSearchParams } from "next/navigation"
+import React, { useSearchParams, Suspense } from "react"
 import Link from "next/link"
 import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { EliSpeaking } from "@/components/eli/EliRobot"
 
-export default function TrainPage() {
+function TrainContent() {
   const searchParams = useSearchParams()
   const topic = searchParams?.get("topic") || "unknown"
 
@@ -59,5 +59,13 @@ export default function TrainPage() {
 
       <Navigation />
     </div>
+  )
+}
+
+export default function TrainPage() {
+  return (
+    <Suspense fallback={<div>Laden...</div>}>
+      <TrainContent />
+    </Suspense>
   )
 }
