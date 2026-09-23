@@ -18,18 +18,34 @@ import { EliSpeaking } from "@/components/eli/EliRobot"
 import { MissionInterface } from "@/components/training/MissionInterface"
 import { MissionStartScreen } from "@/components/training/MissionStartScreen"
 import { DailyMission } from "@/lib/learning/mission-planner"
+import { MissionResumeManager } from "@/lib/learning/mission-resume"
 
 export default function LearnPage() {
   const [missionStarted, setMissionStarted] = useState(false)
   const [plannedMission, setPlannedMission] = useState<DailyMission | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [resumeAvailable, setResumeAvailable] = useState(false)
+  const [resumeSummary, setResumeSummary] = useState<any>(null)
 
-  // Phase 5B: Automatisch Mission erstellen
+  // Phase 5C: Mission Resume + Auto-Generation
   useEffect(() => {
-    const buildMission = async () => {
+    const initMission = async () => {
       try {
         setLoading(true)
+
+        // Prüfe ob Mission resumierbar ist
+        const resumeManager = new MissionResumeManager()
+        const canResume = resumeManager.canResume()
+
+        if (canResume) {
+          const summary = resumeManager.getResumeSummary()
+          setResumeAvailable(true)
+          setResumeSummary(summary)
+          // Lade auch geplante Mission für Alternative
+        }
+
+        // Generiere neue Mission falls nicht resumierbar
         const response = await fetch("/api/build-daily-mission", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -44,14 +60,14 @@ export default function LearnPage() {
         setPlannedMission(data.mission)
         setError(null)
       } catch (err) {
-        console.error("Mission build failed:", err)
+        console.error("Mission init failed:", err)
         setError("Konnte Mission nicht erstellen")
       } finally {
         setLoading(false)
       }
     }
 
-    buildMission()
+    initMission()
   }, [])
 
   if (missionStarted && plannedMission) {
@@ -68,11 +84,36 @@ export default function LearnPage() {
     )
   }
 
-  // Phase 5B: Zeige auto-generierte Mission
+  // Phase 5C: Zeige Resume Option oder neue Mission
   if (plannedMission) {
     return (
       <>
         <Header userName="Zoey" currentLevel={1} currentXP={25} maxXP={100} />
+
+        {/* Resume Option */}
+        {resumeAvailable && resumeSummary && (
+          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-b-2 border-blue-300 py-6 px-4">
+            <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="text-4xl">⏸️</div>
+                <div>
+                  <p className="font-bold text-lg text-gray-900">Mission pausiert</p>
+                  <p className="text-sm text-gray-600">
+                    {resumeSummary.progress} • {resumeSummary.timeUsed} • {resumeSummary.xpEarned} XP
+                  </p>
+                  <p className="text-xs text-gray-500">{resumeSummary.lastSaved}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setMissionStarted(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors whitespace-nowrap"
+              >
+                ▶️ Fortsetzen
+              </button>
+            </div>
+          </div>
+        )}
+
         <MissionStartScreen
           mission={plannedMission}
           onStart={() => setMissionStarted(true)}
