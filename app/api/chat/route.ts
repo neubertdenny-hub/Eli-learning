@@ -90,11 +90,14 @@ export async function POST(request: NextRequest) {
 
     const apiKey = process.env.OPENAI_API_KEY
     if (!apiKey) {
+      console.error("❌ OPENAI_API_KEY not set in environment variables!")
       return NextResponse.json(
-        { error: "OpenAI API key not configured" },
+        { error: "OpenAI API key not configured. Check environment variables!" },
         { status: 500 }
       )
     }
+
+    console.log("✅ OpenAI API key found, starting chat...")
 
     // Convert message history to OpenAI format
     const messages: Array<{ role: "user" | "assistant"; content: string }> = [
