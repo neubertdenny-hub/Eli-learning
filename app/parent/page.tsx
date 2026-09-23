@@ -165,6 +165,42 @@ export default function ParentDashboard() {
             </div>
           )}
 
+          {/* Review Priority Info - Phase 5D */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl">🔄</div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Review Prioritäten</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white rounded-2xl p-6 border-l-4 border-red-500">
+                <p className="text-sm text-red-600 font-bold mb-1">🚨 URGENT</p>
+                <p className="text-2xl font-bold text-gray-900">2</p>
+                <p className="text-sm text-gray-600">Skills sofort zu überprüfen</p>
+              </div>
+              <div className="bg-white rounded-2xl p-6 border-l-4 border-orange-500">
+                <p className="text-sm text-orange-600 font-bold mb-1">⚠️ HIGH</p>
+                <p className="text-2xl font-bold text-gray-900">1</p>
+                <p className="text-sm text-gray-600">Diese Woche einbauen</p>
+              </div>
+              <div className="bg-white rounded-2xl p-6 border-l-4 border-blue-500">
+                <p className="text-sm text-blue-600 font-bold mb-1">✅ NORMAL</p>
+                <p className="text-2xl font-bold text-gray-900">3</p>
+                <p className="text-sm text-gray-600">Routine Review</p>
+              </div>
+              <div className="bg-white rounded-2xl p-6 border-l-4 border-green-500">
+                <p className="text-sm text-green-600 font-bold mb-1">📌 LOW</p>
+                <p className="text-2xl font-bold text-gray-900">1</p>
+                <p className="text-sm text-gray-600">Optional üben</p>
+              </div>
+            </div>
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-6">
+              <p className="text-gray-800 font-medium">
+                💡 <strong>Confidence Decay:</strong> ELI verfolgt, wie sicher Zoey noch bei jeder Skill ist.
+                Skills, die länger nicht überprüft wurden, bekommen niedrigere Priorität bis zur nächsten Wiederholung.
+              </p>
+            </div>
+          </div>
+
           {/* Empfehlungen */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -181,6 +217,40 @@ export default function ParentDashboard() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Phase 5D: Session Quality Info */}
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-8 border-2 border-purple-300">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="text-4xl">📊</div>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">Session Quality</h3>
+                <p className="text-gray-600">Wie erfolgreich waren die letzten Lerneinheiten?</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white rounded-xl p-4 text-center">
+                <p className="text-4xl mb-2">⭐</p>
+                <p className="font-bold text-gray-900">71%</p>
+                <p className="text-sm text-gray-600">Durchschn. Success Rate</p>
+              </div>
+              <div className="bg-white rounded-xl p-4 text-center">
+                <p className="text-4xl mb-2">💪</p>
+                <p className="font-bold text-gray-900">3</p>
+                <p className="text-sm text-gray-600">Foundation Gaps erkannt</p>
+              </div>
+              <div className="bg-white rounded-xl p-4 text-center">
+                <p className="text-4xl mb-2">🎯</p>
+                <p className="font-bold text-gray-900">18 min</p>
+                <p className="text-sm text-gray-600">Aktive Lernzeit</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-700 mt-6">
+              ELI misst nur <strong>echte Lernzeit</strong> - wenn Zoey aktiv an Aufgaben arbeitet.
+              Pausen und Inaktivität werden nicht gezählt, damit du einen realistischen Überblick hast.
+            </p>
           </div>
 
           {/* Back Button */}
