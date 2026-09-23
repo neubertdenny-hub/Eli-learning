@@ -34,14 +34,25 @@ export function MissionInterface({
   useEffect(() => {
     // Generiere konkrete Beispiele basierend auf Skill
     const generateExample = (type: string, difficulty: number) => {
-      if (skillName.includes("negativ")) {
-        // Addieren mit negativen Zahlen Beispiele
+      if (skillName.includes("negativ") || skillName.includes("Negative")) {
+        // Addieren mit negativen Zahlen
         const examples = [
           { q: "5 + (-3) = ?", a: "2" },
           { q: "-5 + 8 = ?", a: "3" },
           { q: "-2 + (-4) = ?", a: "-6" },
           { q: "10 + (-7) = ?", a: "3" },
           { q: "-3 + 9 = ?", a: "6" },
+          { q: "0 + (-5) = ?", a: "-5" },
+          { q: "-10 + 10 = ?", a: "0" },
+        ]
+        return examples[Math.floor(Math.random() * examples.length)]
+      }
+      if (skillName.includes("Bruch")) {
+        const examples = [
+          { q: "3/5 + 1/5 = ?", a: "4/5" },
+          { q: "2/7 + 3/7 = ?", a: "5/7" },
+          { q: "1/4 + 1/4 = ?", a: "1/2" },
+          { q: "4/9 + 2/9 = ?", a: "6/9" },
         ]
         return examples[Math.floor(Math.random() * examples.length)]
       }

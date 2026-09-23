@@ -35,12 +35,42 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const getHelpMessage = (level: number): string => {
-    const messages: Record<number, string> = {
-      1: "💡 Kleiner Tipp: Schau dir die Zahlen genau an und denk an die Regel zum Addieren!",
-      2: "🧭 Richtung: Denk daran, wie man mit negativen Zahlen rechnet. Zahlenstrahl hilft!",
-      3: "📚 Erklärung: Addieren mit negativ bedeutet: Wir gehen auf dem Zahlenstrahl nach links. 5 + (-3) = 5 - 3 = 2",
+    // Task-spezifische Tipps basierend auf Problem
+    const problem = task.problem_statement.toLowerCase()
+
+    if (problem.includes("+") && problem.includes("(")) {
+      // Negative Zahlen Addition
+      if (level === 1) {
+        return "💡 Tipp: Wenn du eine negative Zahl addierst, ist das wie subtrahieren. Beispiel: 5 + (-3) = 5 - 3"
+      }
+      if (level === 2) {
+        return "🧭 Richtung: Positive Zahl nach rechts, negative Zahl nach links auf dem Zahlenstrahl!"
+      }
+      if (level === 3) {
+        return "📚 Schritt-für-Schritt:\n1. Erkenne: 5 + (-3) = 5 - 3\n2. Berechne: 5 - 3 = 2\n3. Antwort: 2"
+      }
     }
-    return messages[level] || "Versuch es nochmal!"
+
+    if (problem.includes("/")) {
+      // Bruchrechnung
+      if (level === 1) {
+        return "💡 Tipp: Wenn Brüche gleiche Nenner haben, addiere nur die Zähler!"
+      }
+      if (level === 2) {
+        return "🧭 Nenner bleibt gleich, Zähler werden addiert. (Zähler ist oben, Nenner unten)"
+      }
+      if (level === 3) {
+        return "📚 Beispiel: 3/5 + 1/5 = (3+1)/5 = 4/5. Der Nenner (5) bleibt immer!"
+      }
+    }
+
+    // Fallback Tipps
+    const defaultMessages: Record<number, string> = {
+      1: "💡 Kleiner Tipp: Schau dir die Zahlen genau an und denk an die Regeln!",
+      2: "🧭 Richtung: Versuche die Aufgabe Schritt für Schritt zu lösen.",
+      3: "📚 Erklärung: Wenn du unsicher bist, schreib jeden Schritt auf!",
+    }
+    return defaultMessages[level] || "Versuch es nochmal!"
   }
 
   const handleSubmitAnswer = async () => {
