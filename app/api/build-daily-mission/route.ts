@@ -20,8 +20,30 @@
 import { NextRequest, NextResponse } from "next/server"
 import { MissionPlanner, DailyMission } from "@/lib/learning/mission-planner"
 import { SchoolTopicDetector } from "@/lib/learning/school-topic-detector"
+import { skillMasteryRepository, schoolTopicRepository } from "@/lib/db/repositories"
 
-// Mock Daten - später aus DB
+// Daten aus Database
+async function getMasteryData(userId: string) {
+  try {
+    return await skillMasteryRepository.getByUser(userId)
+  } catch (error) {
+    console.error("Failed to fetch mastery data:", error)
+    // Fallback zu Mock wenn DB fehlt
+    return mockMasteryData
+  }
+}
+
+async function getSchoolTopics(userId: string) {
+  try {
+    return await schoolTopicRepository.getByUser(userId)
+  } catch (error) {
+    console.error("Failed to fetch school topics:", error)
+    // Fallback zu Mock
+    return mockSchoolTopics
+  }
+}
+
+// Mock Daten - Fallback wenn DB nicht funktioniert
 const mockMasteryData = [
   {
     skill_name: "Addieren mit negativen Zahlen",
@@ -64,17 +86,6 @@ const mockSchoolTopics = [
     sources: ["upload", "practice"],
     masteryLevel: 2,
   },
-  {
-    topicId: "negative_numbers",
-    topicName: "Negative Zahlen",
-    firstSeenAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    lastSeenAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-    uploadFrequency: 1,
-    recentTaskCount: 2,
-    relevanceScore: 35,
-    sources: ["practice"],
-    masteryLevel: 3,
-  },
 ]
 
 export async function POST(request: NextRequest) {
@@ -86,37 +97,74 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "userId erforderlich" }, { status: 400 })
     }
 
-    // 1. Erkenne aktuelle Schulthemen
-    const currentSchoolTopics = SchoolTopicDetector.detectCurrentTopics(mockSchoolTopics)
+    // 1. Hole echte Daten aus Database
+    const [masteryData, schoolTopicsData] = await Promise.all([
+      getMasteryData(userId),
+      getSchoolTopics(userId),
+    ])
 
-    // 2. Erkennung von Foundation Gaps (vereinfacht)
+    // 2. Erkenne aktuelle Schulthemen - konvertiere DB-Daten zu Interface
+    const schoolTopicsForDetector = schoolTopicsData.length > 0
+      ? schoolTopicsData.map((t: any) => ({
+          topicId: t.topicId,
+          topicName: t.topicName,
+          firstSeenAt: new Date(t.firstSeenAt),
+          lastSeenAt: new Date(t.lastSeenAt),
+          uploadFrequency: t.uploadFrequency || 0,
+          recentTaskCount: t.recentTaskCount || 0,
+          relevanceScore: t.relevanceScore || 0,
+          sources: t.sources ? JSON.parse(t.sources) : [],
+          masteryLevel: t.masteryLevel || 0,
+        }))
+      : mockSchoolTopics
+
+    const currentSchoolTopics = SchoolTopicDetector.detectCurrentTopics(schoolTopicsForDetector)
+
+    // 3. Erkennung von Foundation Gaps
     const detectedGaps: string[] = []
-    const masteryDataWithIssues = mockMasteryData.filter((m) => m.current_level < 2)
+    const masteryDataWithIssues = (masteryData as any[]).filter((m) => {
+      const level = m.currentLevel !== undefined ? m.currentLevel : (m.current_level || 0)
+      return level < 2
+    })
     if (masteryDataWithIssues.length > 0) {
-      detectedGaps.push(masteryDataWithIssues[0].skill_name)
+      const skill = masteryDataWithIssues[0]
+      const skillName = skill.skillName !== undefined ? skill.skillName : skill.skill_name
+      detectedGaps.push(skillName)
     }
 
-    // 3. Fällige Reviews
-    const reviewDueSkills = mockMasteryData
-      .filter((m) => {
-        const daysSince = (new Date().getTime() - new Date(m.last_practiced).getTime()) / (1000 * 60 * 60 * 24)
+    // 4. Fällige Reviews
+    const reviewDueSkills = masteryData
+      .filter((m: any) => {
+        const daysSince =
+          (new Date().getTime() - new Date(m.lastPracticed).getTime()) / (1000 * 60 * 60 * 24)
         return daysSince > 7
       })
-      .map((m) => m.skill_name)
+      .map((m: any) => m.skillName)
 
-    // 4. Baue Mission
+    // 5. Konvertiere Mastery Daten zu erwartetem Format
+    const masteryDataForPlanner = masteryData.map((m: any) => ({
+      skill_name: m.skillName || m.skill_name,
+      current_level: m.currentLevel || m.current_level,
+      attempts: m.attempts || 0,
+      correct_attempts: m.correctAttempts || m.correct_attempts || 0,
+      time_spent_minutes: m.timeSpentMinutes || m.time_spent_minutes || 0,
+      last_practiced: m.lastPracticed || m.last_practiced,
+      next_review: m.nextReview || m.next_review,
+    }))
+
+    // 6. Baue Mission
     const mission = MissionPlanner.buildDailyMission(
       userId,
       currentSchoolTopics,
-      mockMasteryData as any,
+      masteryDataForPlanner as any,
       detectedGaps,
       reviewDueSkills,
       new Map(),
       {} // Eli Memory
     )
 
-    // 5. Berechne Review Prioritäten
-    const reviewPriorities = MissionPlanner.calculateReviewPriorities(mockMasteryData as any)
+    // 7. Berechne Review Prioritäten
+    const reviewPriorities = MissionPlanner.calculateReviewPriorities(masteryDataForPlanner as any)
 
     return NextResponse.json(
       {
