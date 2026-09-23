@@ -125,13 +125,27 @@ export function AiTutorChat() {
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-xs px-4 py-3 rounded-lg ${
-                    msg.role === "user"
-                      ? "bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-br-none"
-                      : "bg-white text-gray-900 rounded-bl-none border-2 border-gray-200"
-                  }`}
+                  style={{
+                    maxWidth: "320px",
+                    padding: "12px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: msg.role === "user" ? "rgb(79, 70, 229)" : "white",
+                    color: msg.role === "user" ? "white" : "#000000",
+                    border: msg.role === "user" ? "none" : "2px solid #e5e7eb",
+                    borderBottomLeftRadius: msg.role === "user" ? "8px" : "0px",
+                    borderBottomRightRadius: msg.role === "user" ? "0px" : "8px",
+                  }}
                 >
-                  <p className="text-base font-semibold leading-relaxed whitespace-pre-wrap text-black">{msg.content}</p>
+                  <p style={{
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    lineHeight: "1.5",
+                    whiteSpace: "pre-wrap",
+                    margin: "0",
+                    color: msg.role === "user" ? "white" : "#000000"
+                  }}>
+                    {msg.content}
+                  </p>
                 </div>
               </div>
             ))}
