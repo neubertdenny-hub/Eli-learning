@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { EliSpeaking } from "@/components/eli/EliRobot"
+import { GeometryDiagram } from "@/components/geometry/GeometryDiagram"
 
 interface MathTask {
   id: string
@@ -13,6 +14,10 @@ interface MathTask {
   answer: number | string
   type: string
   difficulty: "einfach" | "mittel" | "schwer"
+  geometry?: {
+    shape: "rectangle" | "square" | "triangle" | "circle" | "trapez" | "cylinder"
+    data: Record<string, number>
+  }
 }
 
 const TOPIC_TASKS: Record<string, MathTask[]> = {
@@ -65,12 +70,12 @@ const TOPIC_TASKS: Record<string, MathTask[]> = {
     { id: "6", question: "4x + 3 = 2x + 11, x = ?", answer: 4, type: "equation", difficulty: "schwer" },
   ],
   "geometrie": [
-    { id: "1", question: "Rechteck: L=5cm, B=3cm, Umfang = ?cm", answer: 16, type: "geometry", difficulty: "einfach" },
-    { id: "2", question: "Quadrat: Seite=4cm, Fläche = ?cm²", answer: 16, type: "geometry", difficulty: "einfach" },
-    { id: "3", question: "Dreieck: Basis=6cm, Höhe=4cm, Fläche = ?cm²", answer: 12, type: "geometry", difficulty: "mittel" },
-    { id: "4", question: "Kreis: r=3cm, Umfang ≈ ?cm (π≈3,14)", answer: 18.84, type: "geometry", difficulty: "mittel" },
-    { id: "5", question: "Trapez: a=5cm, b=3cm, h=4cm, Fläche = ?cm²", answer: 16, type: "geometry", difficulty: "schwer" },
-    { id: "6", question: "Zylinder: r=2cm, h=5cm, Volumen ≈ ?cm³ (π≈3,14)", answer: 62.8, type: "geometry", difficulty: "schwer" },
+    { id: "1", question: "📏 Rechteck-Challenge! Länge=5cm, Breite=3cm. Wie groß ist der Umfang?", answer: 16, type: "geometry", difficulty: "einfach", geometry: { shape: "rectangle", data: { length: 5, width: 3 } } },
+    { id: "2", question: "⬛ Quadrat-Challenge! Seite=4cm. Wie groß ist die Fläche?", answer: 16, type: "geometry", difficulty: "einfach", geometry: { shape: "square", data: { side: 4 } } },
+    { id: "3", question: "🔺 Dreieck-Challenge! Basis=6cm, Höhe=4cm. Wie groß ist die Fläche?", answer: 12, type: "geometry", difficulty: "mittel", geometry: { shape: "triangle", data: { base: 6, height: 4 } } },
+    { id: "4", question: "⭕ Kreis-Challenge! Radius=3cm. Wie groß ist der Umfang? (π≈3,14)", answer: 18.84, type: "geometry", difficulty: "mittel", geometry: { shape: "circle", data: { radius: 3 } } },
+    { id: "5", question: "🔷 Trapez-Challenge! a=5cm, b=3cm, h=4cm. Wie groß ist die Fläche?", answer: 16, type: "geometry", difficulty: "schwer", geometry: { shape: "trapez", data: { a: 5, b: 3, height: 4 } } },
+    { id: "6", question: "📦 Zylinder-Challenge! Radius=2cm, Höhe=5cm. Wie groß ist das Volumen? (π≈3,14)", answer: 62.8, type: "geometry", difficulty: "schwer", geometry: { shape: "cylinder", data: { radius: 2, height: 5 } } },
   ],
 }
 
@@ -99,6 +104,7 @@ function TrainingContent() {
   const [completed, setCompleted] = useState(0)
   const [drawTool, setDrawTool] = useState<"pen" | "rectangle" | "circle" | "line" | "triangle">("pen")
   const [startPos, setStartPos] = useState({ x: 0, y: 0 })
+  const [showTip, setShowTip] = useState(false)
   const canvasImageRef = React.useRef<ImageData | null>(null)
 
   React.useEffect(() => {
@@ -203,6 +209,22 @@ function TrainingContent() {
 
   const currentTask = tasks[currentIdx]
 
+  const getHelpfulTip = (task: MathTask): string => {
+    if (task.type === "geometry" && task.geometry) {
+      const { shape, data } = task.geometry
+      if (shape === "rectangle") {
+        return `📐 Denk dran: Ein Rechteck hat 4 Seiten! Du musst alle zusammenzählen! Probier es: addiere Länge + Breite, und das Ergebnis × 2! 📌 Beispiel: L=4cm, B=2cm → Das ist (4+2)×2 = 12cm. 👉 Bei dir: (${data.length}+${data.width})×2 = ?`
+      } else if (shape === "square") {
+        return `📐 Ein Quadrat ist einfach! Alle 4 Seiten sind GLEICH lang! Also: Seite × Seite = Fläche. 📌 Beispiel: Seite 3cm → 3×3 = 9cm². 👉 Bei dir: ${data.side}×${data.side} = ?`
+      } else if (shape === "triangle") {
+        return `📐 Dreieck-Trick! Man braucht Basis (unten) und Höhe (wie hoch). Dann: (Basis × Höhe) ÷ 2! 📌 Beispiel: Basis=4, Höhe=2 → (4×2)÷2 = 4cm². 👉 Bei dir: (${data.base}×${data.height})÷2 = ?`
+      } else if (shape === "circle") {
+        return `⭕ Kreis-Formel: Umfang = 2 × r × 3,14 (oder d × 3,14). Radius ist die Linie von Mitte bis Rand! 📌 Beispiel: r=2cm → 2×2×3,14 ≈ 12,56cm. 👉 Bei dir: 2×${data.radius}×3,14 = ?`
+      }
+    }
+    return `Du schaffst das! Versuch es nochmal! 💪`
+  }
+
   const handleSubmit = () => {
     const answer = parseFloat(userAnswer)
     const expectedAnswer = typeof currentTask.answer === "number" ? currentTask.answer : parseFloat(currentTask.answer)
@@ -215,6 +237,7 @@ function TrainingContent() {
           setCurrentIdx(currentIdx + 1)
           setUserAnswer("")
           setFeedback(null)
+          setShowTip(false)
         }
       }, 1500)
     } else {
@@ -277,11 +300,21 @@ function TrainingContent() {
           </div>
 
           {/* Task - Full Width */}
-          <div className="bg-white rounded-2xl border-3 border-blue-300 p-6 sm:p-8 space-y-4">
-            <div className="text-center">
+          <div className="bg-white rounded-2xl border-3 border-blue-300 p-6 sm:p-8 space-y-6">
+            <div className="text-center space-y-6">
               <p className="text-2xl sm:text-4xl font-bold text-gray-900 leading-tight">
                 {currentTask.question}
               </p>
+
+              {/* Geometry Diagram */}
+              {isGeometry && currentTask.geometry && (
+                <div className="flex justify-center py-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl">
+                  <GeometryDiagram
+                    type={currentTask.geometry.shape}
+                    data={currentTask.geometry.data}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Whiteboard Canvas - LARGE */}
@@ -345,8 +378,21 @@ function TrainingContent() {
             </div>
 
             {/* Input - Prominent */}
-            <div className="space-y-2 border-t-2 border-gray-200 pt-4">
-              <label className="text-base font-bold text-gray-700">✍️ Deine Antwort:</label>
+            <div className="space-y-3 border-t-2 border-gray-200 pt-4">
+              <div className="flex justify-between items-center">
+                <label className="text-base font-bold text-gray-700">✍️ Deine Antwort:</label>
+                <button
+                  onClick={() => setShowTip(!showTip)}
+                  className="px-4 py-2 bg-yellow-300 hover:bg-yellow-400 text-gray-800 rounded-lg font-bold text-sm transition-colors"
+                >
+                  💡 Tipp
+                </button>
+              </div>
+              {showTip && (
+                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 text-base text-gray-800 font-medium">
+                  {getHelpfulTip(currentTask)}
+                </div>
+              )}
               <input
                 type="number"
                 step="any"
@@ -369,7 +415,7 @@ function TrainingContent() {
             {feedback === "wrong" && (
               <div className="bg-red-100 border-2 border-red-400 rounded-lg p-4 text-center">
                 <p className="text-lg font-bold text-red-700">❌ Versuche es nochmal!</p>
-                <p className="text-base text-red-600 mt-2">Tipp: Die Antwort ist {currentTask.answer}</p>
+                <p className="text-base text-red-600 mt-2">{getHelpfulTip(currentTask)}</p>
               </div>
             )}
 
