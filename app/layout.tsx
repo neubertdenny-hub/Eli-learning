@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { APP_CONFIG } from "@/lib/utils/constants"
+import { AiTutorChat } from "@/components/chat/AiTutorChat"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       </head>
       <body className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
         {children}
+        <AiTutorChat />
       </body>
     </html>
   )
