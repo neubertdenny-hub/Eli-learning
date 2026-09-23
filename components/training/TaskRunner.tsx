@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { EliSpeaking } from "@/components/eli/EliRobot"
+import type { HelpLevel } from "@/lib/learning/dynamic-help-generator"
 
 export interface Task {
   id: string
@@ -32,39 +33,42 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
   const [showHelpOptions, setShowHelpOptions] = useState(false)
   const [helpHistory, setHelpHistory] = useState<number[]>([])
   const [helpMessage, setHelpMessage] = useState<string>("")
+  const [helpLoading, setHelpLoading] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const getHelpMessage = (level: number): string => {
-    // Task-spezifische Tipps basierend auf Problem
-    const problem = task.problem_statement.toLowerCase()
+  // Laden von dynamischen Hilfe-Tipps vom Server
+  const loadDynamicHelp = async (level: number) => {
+    setHelpLoading(true)
+    try {
+      const response = await fetch("/api/generate-help", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          problem: task.problem_statement,
+          solution: task.solution || "Lösung",
+          helpLevels: [level],
+        }),
+      })
 
-    if (problem.includes("+") && problem.includes("(")) {
-      // Negative Zahlen Addition
-      if (level === 1) {
-        return "💡 Tipp: Wenn du eine negative Zahl addierst, ist das wie subtrahieren. Beispiel: 5 + (-3) = 5 - 3"
+      const data = await response.json()
+
+      if (data.success && data.helpLevels && data.helpLevels.length > 0) {
+        const helpLevel = data.helpLevels[0]
+        return `${helpLevel.emoji} ${helpLevel.hint}`
+      } else if (data.fallback && data.helpLevels && data.helpLevels.length > 0) {
+        // Fallback Hilfe wenn OpenAI nicht verfügbar
+        const helpLevel = data.helpLevels[level - 1]
+        return `${helpLevel.emoji} ${helpLevel.hint}`
       }
-      if (level === 2) {
-        return "🧭 Richtung: Positive Zahl nach rechts, negative Zahl nach links auf dem Zahlenstrahl!"
-      }
-      if (level === 3) {
-        return "📚 Schritt-für-Schritt:\n1. Erkenne: 5 + (-3) = 5 - 3\n2. Berechne: 5 - 3 = 2\n3. Antwort: 2"
-      }
+    } catch (error) {
+      console.error("Error loading dynamic help:", error)
     }
+    setHelpLoading(false)
+    return getFallbackHelpMessage(level)
+  }
 
-    if (problem.includes("/")) {
-      // Bruchrechnung
-      if (level === 1) {
-        return "💡 Tipp: Wenn Brüche gleiche Nenner haben, addiere nur die Zähler!"
-      }
-      if (level === 2) {
-        return "🧭 Nenner bleibt gleich, Zähler werden addiert. (Zähler ist oben, Nenner unten)"
-      }
-      if (level === 3) {
-        return "📚 Beispiel: 3/5 + 1/5 = (3+1)/5 = 4/5. Der Nenner (5) bleibt immer!"
-      }
-    }
-
-    // Fallback Tipps
+  const getFallbackHelpMessage = (level: number): string => {
+    // Fallback Tipps wenn OpenAI nicht verfügbar
     const defaultMessages: Record<number, string> = {
       1: "💡 Kleiner Tipp: Schau dir die Zahlen genau an und denk an die Regeln!",
       2: "🧭 Richtung: Versuche die Aufgabe Schritt für Schritt zu lösen.",
@@ -90,11 +94,16 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
     }
   }
 
-  const handleRequestHelp = (level: number) => {
+  const handleRequestHelp = async (level: number) => {
     setCurrentHelpLevel(level)
     setHelpHistory([...helpHistory, level])
-    setHelpMessage(getHelpMessage(level))
+    setHelpLoading(true)
     setShowHelpOptions(false)
+
+    // Lade dynamische Hilfe vom Server
+    const message = await loadDynamicHelp(level)
+    setHelpMessage(message)
+    setHelpLoading(false)
   }
 
   return (
@@ -148,11 +157,13 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
         {/* Help Level Options */}
         {showHelpOptions && (
           <div className="space-y-2 bg-yellow-50 p-4 rounded-lg border-2 border-yellow-300">
-            <p className="text-sm font-bold text-yellow-800 mb-3">Welche Hilfe brauchst du?</p>
+            <p className="text-sm font-bold text-yellow-800 mb-3">
+              {helpLoading ? "⏳ Generiere Hilfe..." : "Welche Hilfe brauchst du?"}
+            </p>
             <div className="grid grid-cols-1 gap-2">
               <button
                 onClick={() => handleRequestHelp(1)}
-                disabled={helpHistory.includes(1)}
+                disabled={helpHistory.includes(1) || helpLoading}
                 className="text-sm bg-yellow-200 hover:bg-yellow-300 disabled:bg-gray-300 disabled:text-gray-600 p-3 rounded-lg font-bold transition-colors text-left"
               >
                 💡 <span className="font-bold">Level 1: Kleiner Tipp</span>
@@ -161,7 +172,7 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
               </button>
               <button
                 onClick={() => handleRequestHelp(2)}
-                disabled={helpHistory.includes(2)}
+                disabled={helpHistory.includes(2) || helpLoading}
                 className="text-sm bg-yellow-200 hover:bg-yellow-300 disabled:bg-gray-300 disabled:text-gray-600 p-3 rounded-lg font-bold transition-colors text-left"
               >
                 🧭 <span className="font-bold">Level 2: Richtung</span>
@@ -170,7 +181,7 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
               </button>
               <button
                 onClick={() => handleRequestHelp(3)}
-                disabled={helpHistory.includes(3)}
+                disabled={helpHistory.includes(3) || helpLoading}
                 className="text-sm bg-yellow-200 hover:bg-yellow-300 disabled:bg-gray-300 disabled:text-gray-600 p-3 rounded-lg font-bold transition-colors text-left"
               >
                 📚 <span className="font-bold">Level 3: Erklärung</span>
