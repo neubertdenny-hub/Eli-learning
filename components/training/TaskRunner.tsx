@@ -61,7 +61,7 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
     <div className="w-full max-w-2xl mx-auto bg-white rounded-2xl border-3 border-blue-300 p-6 sm:p-8 space-y-6">
       {/* Eli Robot Status */}
       <div className="flex justify-center">
-        <EliSpeaking mood="thinking" size="md" />
+        <EliSpeaking mood="thinking" size="md" message="Lass mich dir helfen! 🤖" />
       </div>
 
       {/* Problem Statement */}
