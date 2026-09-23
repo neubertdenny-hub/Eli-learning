@@ -2,21 +2,22 @@
 
 :root {
   /* ========== LIGHT THEME ========== */
-  --background: #f8f9fa;
-  --foreground: #0d1117;
+  --background: #f0f4f9;
+  --foreground: #1a202c;
   --surface-primary: #ffffff;
-  --surface-secondary: #f6f7f9;
-  --border-color: #e5e7eb;
-  --border-subtle: #f0f1f3;
+  --surface-secondary: #f7fafc;
+  --border-color: #e2e8f0;
+  --border-subtle: #edf2f7;
 
-  /* PREMIUM BRAND COLORS */
-  --eli-primary: #1d4ed8;
-  --eli-primary-light: #3b82f6;
-  --eli-primary-lighter: #eff6ff;
-  --eli-secondary: #0ea5e9;
-  --eli-success: #059669;
-  --eli-warning: #d97706;
-  --eli-error: #dc2626;
+  /* PREMIUM MODERN BRAND COLORS */
+  --eli-primary: #6366f1;
+  --eli-primary-light: #818cf8;
+  --eli-primary-lighter: #f0f4ff;
+  --eli-secondary: #8b5cf6;
+  --eli-accent: #ec4899;
+  --eli-success: #10b981;
+  --eli-warning: #f59e0b;
+  --eli-error: #ef4444;
 
   /* SEMANTIC COLORS */
   --color-green: #059669;
@@ -135,53 +136,54 @@ input[type="submit"],
 .card-base {
   background: var(--surface-primary);
   border: 1px solid var(--border-color);
-  border-radius: 0.875rem;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease-out;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .card-base:hover {
   border-color: var(--eli-primary-light);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 24px -4px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
 }
 
 .card-elevated {
-  background: var(--surface-primary);
+  background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
   border: none;
-  border-radius: 0.875rem;
-  box-shadow: var(--shadow-elevation);
-  transition: all 0.2s ease-out;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .card-elevated:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.2);
+  transform: translateY(-4px);
 }
 
 /* ========== PREMIUM BUTTONS ========== */
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--eli-primary) 0%, var(--eli-primary-light) 100%);
+  background: linear-gradient(135deg, var(--eli-primary) 0%, var(--eli-secondary) 100%);
   color: white;
   border: none;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 0.875rem 1.5rem;
-  min-height: 44px;
+  border-radius: 0.875rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  padding: 1rem 2rem;
+  min-height: 52px;
   cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: all 0.2s ease-out;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .btn-primary:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.4);
+  transform: translateY(-3px);
 }
 
 .btn-primary:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px -3px rgba(99, 102, 241, 0.3);
 }
 
 .btn-secondary {

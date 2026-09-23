@@ -29,66 +29,65 @@ export function Header({
   const xpPercentage = Math.round((currentXP / maxXP) * 100)
 
   return (
-    <header className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white sticky top-0 z-50 shadow-md safe-area-inset-top">
-      <div className="container-full py-3 sm:py-4">
-        {/* Top Row: User + Parent */}
-        <div className="flex items-center justify-between mb-3">
-          {/* User Name */}
-          <div className="flex items-center gap-2">
-            <div className="text-lg sm:text-xl font-bold">👋 {userName}</div>
+    <header className="w-full bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 text-white sticky top-0 z-50 shadow-lg safe-area-inset-top">
+      <div className="container-full py-4 sm:py-5">
+        {/* Top Row: User + Parent - More spacious */}
+        <div className="flex items-center justify-between mb-4">
+          {/* User Name - Bigger */}
+          <div className="flex items-center gap-3">
+            <div className="text-2xl sm:text-3xl font-bold">👋 {userName}</div>
+            <div className="text-sm opacity-90">Level {currentLevel}</div>
           </div>
 
-          {/* Parent Access (subtle) */}
+          {/* Parent Access - Better styled */}
           {showParentAccess && (
             <button
               onClick={onParentClick}
-              className="text-xs sm:text-sm px-2 py-1 rounded bg-blue-700 hover:bg-blue-800 transition-colors opacity-75 hover:opacity-100"
+              className="px-3 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm"
               aria-label="Elternansicht"
+              title="Parent View"
             >
               👨‍👩‍👧
             </button>
           )}
         </div>
 
-        {/* Middle Row: Level + Streak */}
-        <div className="flex items-center gap-4 mb-3">
-          {/* Level */}
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🏆</span>
-            <div>
-              <div className="text-xs opacity-75">Level</div>
-              <div className="text-lg sm:text-xl font-bold">{currentLevel}</div>
-            </div>
+        {/* Stats Row: Level + Streak - Horizontal, modern */}
+        <div className="flex gap-3 sm:gap-4 mb-4">
+          {/* Level Card */}
+          <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+            <div className="text-xs opacity-75 font-medium">🏆 LEVEL</div>
+            <div className="text-2xl sm:text-3xl font-bold">{currentLevel}</div>
+          </div>
+
+          {/* XP Progress */}
+          <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+            <div className="text-xs opacity-75 font-medium">⭐ PUNKTE</div>
+            <div className="text-2xl sm:text-3xl font-bold">{currentXP}</div>
           </div>
 
           {/* Streak */}
           {streak > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🔥</span>
-              <div>
-                <div className="text-xs opacity-75">Streak</div>
-                <div className="text-lg sm:text-xl font-bold">{streak} Tage</div>
-              </div>
+            <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+              <div className="text-xs opacity-75 font-medium">🔥 STREAK</div>
+              <div className="text-2xl sm:text-3xl font-bold">{streak}</div>
             </div>
           )}
         </div>
 
-        {/* Bottom Row: XP Bar */}
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs sm:text-sm font-medium">⭐ XP</span>
+        {/* XP Progress Bar - Full width */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-semibold opacity-90">Fortschritt</span>
             <span className="text-xs opacity-75">
-              {currentXP} / {maxXP}
+              {xpPercentage}% → Level {currentLevel + 1}
             </span>
           </div>
-          <div className="w-full bg-blue-400 rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-white/20 rounded-full h-2.5 overflow-hidden backdrop-blur-sm border border-white/10">
             <div
-              className="bg-gradient-to-r from-yellow-300 to-yellow-400 h-full rounded-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 h-full rounded-full transition-all duration-500 ease-out shadow-lg"
               style={{ width: `${xpPercentage}%` }}
             />
-          </div>
-          <div className="text-xs text-right mt-1 opacity-75">
-            {Math.round(((maxXP - currentXP) / maxXP) * 100)}% bis Level {currentLevel + 1}
           </div>
         </div>
       </div>

@@ -20,26 +20,30 @@ interface TopicCardProps {
   href?: string
 }
 
-const STATUS_INFO: Record<MasteryStatus, { color: string; label: string; icon: string }> = {
+const STATUS_INFO: Record<MasteryStatus, { gradient: string; label: string; icon: string; badgeColor: string }> = {
   green: {
-    color: "bg-green-100 border-green-400",
+    gradient: "from-emerald-500/10 to-teal-500/10",
     label: "Sicher beherrscht!",
     icon: "✅",
+    badgeColor: "bg-emerald-100 text-emerald-700",
   },
   yellow: {
-    color: "bg-yellow-100 border-yellow-400",
+    gradient: "from-amber-500/10 to-orange-500/10",
     label: "Noch üben",
     icon: "⚡",
+    badgeColor: "bg-amber-100 text-amber-700",
   },
   red: {
-    color: "bg-red-100 border-red-400",
+    gradient: "from-rose-500/10 to-red-500/10",
     label: "Schwierig",
     icon: "🆘",
+    badgeColor: "bg-rose-100 text-rose-700",
   },
   new: {
-    color: "bg-gray-100 border-gray-400",
+    gradient: "from-indigo-500/10 to-purple-500/10",
     label: "Neu",
     icon: "✨",
+    badgeColor: "bg-indigo-100 text-indigo-700",
   },
 }
 
@@ -56,46 +60,48 @@ export function TopicCard({
 
   const content = (
     <div
-      className={`p-4 sm:p-6 rounded-xl border-2 transition-all ${
-        info.color
-      } hover:shadow-md`}
+      className={`relative p-6 rounded-xl bg-gradient-to-br ${info.gradient} border border-white/30 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:border-white/50 hover:scale-105 group`}
     >
-      {/* Top Row: Emoji + Title */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3 flex-1">
-          <span className="text-4xl">{emoji}</span>
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+      {/* Content - relative z-10 */}
+      <div className="relative z-10 space-y-4">
+        {/* Top Row: Emoji + Title */}
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-5xl">{emoji}</span>
           <div className="flex-1">
             <h3 className="text-lg sm:text-xl font-bold text-gray-900">{title}</h3>
           </div>
         </div>
-      </div>
 
-      {/* Status */}
-      <div className="flex items-center gap-2 mb-3">
-        <span>{info.icon}</span>
-        <span className="text-sm sm:text-base font-semibold text-gray-700">{info.label}</span>
-      </div>
-
-      {/* Success Rate (if applicable) */}
-      {status !== "new" && successRate > 0 && (
-        <div className="mb-3">
-          <div className="flex justify-between items-center text-xs sm:text-sm mb-1">
-            <span className="text-gray-600">Erfolgsquote</span>
-            <span className="font-bold text-gray-700">{successRate}%</span>
-          </div>
-          <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-green-500 h-full rounded-full transition-all"
-              style={{ width: `${successRate}%` }}
-            />
-          </div>
+        {/* Status Badge */}
+        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold ${info.badgeColor}`}>
+          <span>{info.icon}</span>
+          <span>{info.label}</span>
         </div>
-      )}
 
-      {/* Last Practiced */}
-      {lastPracticed && (
-        <div className="text-xs text-gray-600">Zuletzt: {lastPracticed}</div>
-      )}
+        {/* Success Rate (if applicable) */}
+        {status !== "new" && successRate > 0 && (
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-xs sm:text-sm">
+              <span className="text-gray-600 font-medium">Erfolgsquote</span>
+              <span className="font-bold text-indigo-600">{successRate}%</span>
+            </div>
+            <div className="w-full bg-gray-200/50 rounded-full h-2.5 overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-300"
+                style={{ width: `${successRate}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Last Practiced */}
+        {lastPracticed && (
+          <div className="text-xs text-gray-600">📅 Zuletzt: {lastPracticed}</div>
+        )}
+      </div>
     </div>
   )
 
