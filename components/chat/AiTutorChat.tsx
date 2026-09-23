@@ -128,10 +128,10 @@ export function AiTutorChat() {
                   className={`max-w-xs px-4 py-3 rounded-lg ${
                     msg.role === "user"
                       ? "bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-br-none"
-                      : "bg-gray-100 text-gray-900 rounded-bl-none border border-gray-300"
+                      : "bg-white text-gray-900 rounded-bl-none border-2 border-gray-200"
                   }`}
                 >
-                  <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                  <p className="text-base font-semibold leading-relaxed whitespace-pre-wrap text-black">{msg.content}</p>
                 </div>
               </div>
             ))}
