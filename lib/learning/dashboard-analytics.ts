@@ -314,28 +314,29 @@ export function generateParentReport(
 
 function generateParentSummary(dashboard: StudentDashboard, period: string): string {
   const stats = period === "weekly" ? dashboard.this_week : dashboard.this_month
-  return `${dashboard.student_name} completed ${stats.missions_completed} learning missions this ${period}, earning ${stats.xp_earned} XP and reaching Level ${dashboard.current_level}. Overall mastery average: ${Math.round((dashboard.mastery_overview.average_mastery / 5) * 100)}%.`
+  const periodText = period === "weekly" ? "in dieser Woche" : "in diesem Monat"
+  return `${dashboard.student_name} hat ${stats.missions_completed} Lernmissionen ${periodText} abgeschlossen und ${stats.xp_earned} XP verdient. Aktuelles Level: ${dashboard.current_level}. Durchschnittliche Mastery: ${Math.round((dashboard.mastery_overview.average_mastery / 5) * 100)}%.`
 }
 
 function generateHighlights(dashboard: StudentDashboard, period: string): string[] {
   const highlights: string[] = []
 
   if (dashboard.current_level > 0) {
-    highlights.push(`🎉 Reached Level ${dashboard.current_level}`)
+    highlights.push(`🎉 Level ${dashboard.current_level} erreicht`)
   }
 
   if (dashboard.mastery_overview.skills_mastered_5 > 0) {
     highlights.push(
-      `🏆 ${dashboard.mastery_overview.skills_mastered_5} skill${dashboard.mastery_overview.skills_mastered_5 > 1 ? "s" : ""} at mastery level`
+      `🏆 ${dashboard.mastery_overview.skills_mastered_5} Skill${dashboard.mastery_overview.skills_mastered_5 > 1 ? "s" : ""} gemeistert`
     )
   }
 
   if (dashboard.streak_info.current_days >= 7) {
-    highlights.push(`🔥 ${dashboard.streak_info.current_days}-day learning streak!`)
+    highlights.push(`🔥 ${dashboard.streak_info.current_days}-Tage-Lernsträhne!`)
   }
 
   if (dashboard.recent_achievements.length > 0) {
-    highlights.push(`⭐ Earned ${dashboard.recent_achievements.length} new badges`)
+    highlights.push(`⭐ ${dashboard.recent_achievements.length} neue Abzeichen verdient`)
   }
 
   return highlights
@@ -345,15 +346,15 @@ function generateAreasForSupport(dashboard: StudentDashboard): string[] {
   const areas: string[] = []
 
   if (dashboard.mastery_overview.skills_not_started > 3) {
-    areas.push(`Many skills not yet attempted (${dashboard.mastery_overview.skills_not_started})`)
+    areas.push(`Viele Skills noch nicht begonnen (${dashboard.mastery_overview.skills_not_started})`)
   }
 
   if (dashboard.focus_areas.length > 0 && dashboard.focus_areas[0].current_level === 0) {
-    areas.push(`Getting started with: ${dashboard.focus_areas[0].skill_name}`)
+    areas.push(`Anfang mit: ${dashboard.focus_areas[0].skill_name}`)
   }
 
   if (dashboard.streak_info.current_days < 3) {
-    areas.push("Consistency: Try to build a streak with daily practice")
+    areas.push("Konsistenz: Versuchen Sie, eine Lernsträhne mit täglichem Üben aufzubauen")
   }
 
   return areas
@@ -363,22 +364,22 @@ function generateRecommendations(dashboard: StudentDashboard, period: string): s
   const recs: string[] = []
 
   if (dashboard.streak_info.current_days === 0) {
-    recs.push("🎯 Start a new streak! Even 10 minutes of daily practice builds momentum.")
+    recs.push("🎯 Starten Sie eine neue Lernsträhne! Schon 10 Minuten tägliche Übung baut Schwung auf.")
   }
 
   if (dashboard.mastery_overview.skills_fluent_3 === 0) {
     recs.push(
-      "📈 Focus on reaching Fluency (Level 3) in at least one skill to build confidence."
+      "📈 Konzentrieren Sie sich darauf, Fließendheit (Level 3) in mindestens einem Skill zu erreichen."
     )
   }
 
   if (dashboard.learning_velocity.estimated_weeks_to_level_up > 4) {
     recs.push(
-      "⏱️ Try adding one more mission per week to level up faster—spaced repetition matters!"
+      "⏱️ Versuchen Sie, eine Mission pro Woche hinzuzufügen, um schneller aufzusteigen – verteilte Wiederholung ist wichtig!"
     )
   }
 
-  recs.push("💪 Celebrate progress! Each skill mastered is a real achievement.")
+  recs.push("💪 Feiern Sie Fortschritte! Jeder gemeisterte Skill ist eine echte Leistung.")
 
   return recs
 }
