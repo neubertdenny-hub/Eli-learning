@@ -165,7 +165,7 @@ export function MissionInterface({
       {/* Eli Motivation */}
       <div className="max-w-4xl mx-auto mb-8 flex justify-center">
         <EliSpeaking
-          mood={currentTask.taskType === "challenge" ? "surprised" : "explaining"}
+          mood={currentTask.taskType === "challenge" ? "excited" : "explaining"}
           size="lg"
           message={`${currentTask.taskType === "challenge" ? "Das wird schwierig!" : "Du schaffst das!"} 💪`}
         />
