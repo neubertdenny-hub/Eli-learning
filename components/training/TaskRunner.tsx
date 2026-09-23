@@ -31,7 +31,17 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
   const [currentHelpLevel, setCurrentHelpLevel] = useState(0)
   const [showHelpOptions, setShowHelpOptions] = useState(false)
   const [helpHistory, setHelpHistory] = useState<number[]>([])
+  const [helpMessage, setHelpMessage] = useState<string>("")
   const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  const getHelpMessage = (level: number): string => {
+    const messages: Record<number, string> = {
+      1: "💡 Kleiner Tipp: Schau dir die Zahlen genau an und denk an die Regel zum Addieren!",
+      2: "🧭 Richtung: Denk daran, wie man mit negativen Zahlen rechnet. Zahlenstrahl hilft!",
+      3: "📚 Erklärung: Addieren mit negativ bedeutet: Wir gehen auf dem Zahlenstrahl nach links. 5 + (-3) = 5 - 3 = 2",
+    }
+    return messages[level] || "Versuch es nochmal!"
+  }
 
   const handleSubmitAnswer = async () => {
     if (!userAnswer.trim()) return
@@ -53,8 +63,8 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
   const handleRequestHelp = (level: number) => {
     setCurrentHelpLevel(level)
     setHelpHistory([...helpHistory, level])
+    setHelpMessage(getHelpMessage(level))
     setShowHelpOptions(false)
-    // Help wird vom Parent nach API-Call gegeben
   }
 
   return (
@@ -73,6 +83,13 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
           Schwierigkeit: {Array(task.difficulty_level).fill("⭐").join("")}
         </p>
       </div>
+
+      {/* Help Message Display */}
+      {helpMessage && (
+        <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 animate-fadeIn">
+          <p className="text-sm text-blue-800 font-medium">{helpMessage}</p>
+        </div>
+      )}
 
       {/* Input Area */}
       <div className="space-y-3">
@@ -100,25 +117,37 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
 
         {/* Help Level Options */}
         {showHelpOptions && (
-          <div className="grid grid-cols-3 gap-2 bg-yellow-50 p-3 rounded-lg">
-            <button
-              onClick={() => handleRequestHelp(1)}
-              className="text-xs bg-yellow-100 hover:bg-yellow-200 p-2 rounded font-bold"
-            >
-              Level 1<br />Kleiner Tipp
-            </button>
-            <button
-              onClick={() => handleRequestHelp(2)}
-              className="text-xs bg-yellow-100 hover:bg-yellow-200 p-2 rounded font-bold"
-            >
-              Level 2<br />Richtung
-            </button>
-            <button
-              onClick={() => handleRequestHelp(3)}
-              className="text-xs bg-yellow-100 hover:bg-yellow-200 p-2 rounded font-bold"
-            >
-              Level 3<br />Erklärung
-            </button>
+          <div className="space-y-2 bg-yellow-50 p-4 rounded-lg border-2 border-yellow-300">
+            <p className="text-sm font-bold text-yellow-800 mb-3">Welche Hilfe brauchst du?</p>
+            <div className="grid grid-cols-1 gap-2">
+              <button
+                onClick={() => handleRequestHelp(1)}
+                disabled={helpHistory.includes(1)}
+                className="text-sm bg-yellow-200 hover:bg-yellow-300 disabled:bg-gray-300 disabled:text-gray-600 p-3 rounded-lg font-bold transition-colors text-left"
+              >
+                💡 <span className="font-bold">Level 1: Kleiner Tipp</span>
+                <br />
+                <span className="text-xs">Eine kleine Anleitung</span>
+              </button>
+              <button
+                onClick={() => handleRequestHelp(2)}
+                disabled={helpHistory.includes(2)}
+                className="text-sm bg-yellow-200 hover:bg-yellow-300 disabled:bg-gray-300 disabled:text-gray-600 p-3 rounded-lg font-bold transition-colors text-left"
+              >
+                🧭 <span className="font-bold">Level 2: Richtung</span>
+                <br />
+                <span className="text-xs">Zeigt die richtige Richtung</span>
+              </button>
+              <button
+                onClick={() => handleRequestHelp(3)}
+                disabled={helpHistory.includes(3)}
+                className="text-sm bg-yellow-200 hover:bg-yellow-300 disabled:bg-gray-300 disabled:text-gray-600 p-3 rounded-lg font-bold transition-colors text-left"
+              >
+                📚 <span className="font-bold">Level 3: Erklärung</span>
+                <br />
+                <span className="text-xs">Vollständige Erklärung</span>
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -149,8 +178,13 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
 
       {/* Help History Indicator */}
       {helpHistory.length > 0 && (
-        <div className="text-xs text-gray-600 text-center">
-          📚 Hilfe-Level verwendet: {helpHistory.join(", ")}
+        <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-3 text-center">
+          <p className="text-sm font-bold text-orange-800">
+            📚 Hilfe verwendet: {helpHistory.map(level => `Level ${level}`).join(", ")}
+          </p>
+          <p className="text-xs text-orange-600 mt-1">
+            Tipp: Versuche nächstes Mal ohne Hilfe! Du schaffst das! 💪
+          </p>
         </div>
       )}
     </div>
