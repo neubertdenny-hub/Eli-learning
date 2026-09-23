@@ -32,59 +32,68 @@ export function MissionInterface({
 
   // Mission Struktur: 5 Tasks à 20 min
   useEffect(() => {
+    // Generiere konkrete Beispiele basierend auf Skill
+    const generateExample = (type: string, difficulty: number) => {
+      if (skillName.includes("negativ")) {
+        // Addieren mit negativen Zahlen Beispiele
+        const examples = [
+          { q: "5 + (-3) = ?", a: "2" },
+          { q: "-5 + 8 = ?", a: "3" },
+          { q: "-2 + (-4) = ?", a: "-6" },
+          { q: "10 + (-7) = ?", a: "3" },
+          { q: "-3 + 9 = ?", a: "6" },
+        ]
+        return examples[Math.floor(Math.random() * examples.length)]
+      }
+      // Fallback für andere Skills
+      return { q: "Berechne: 2 + 3 = ?", a: "5" }
+    }
+
     const tasks: MissionTask[] = [
       {
         id: "task-1-review",
-        title: `Wiederholung: ${skillName}`,
-        problem_statement: `Beantworte diese Aufgabe zu ${skillName}:`,
+        title: `Wiederholung`,
+        problem_statement: `${generateExample("review", difficultyLevel - 1).q}`,
         taskType: "calculation",
         difficulty_level: difficultyLevel - 1,
         category: "calculation",
-        solution: "42",
-        solution_steps: [
-          {
-            step_number: 1,
-            description: "Schritt 1",
-            explanation: "Erkläre wie du vorgehst",
-            visual_hint: "Denke an die Regel...",
-          },
-        ],
+        solution: generateExample("review", difficultyLevel - 1).a,
       },
       {
         id: "task-2-favorite",
-        title: `Lieblingsthema: ${skillName}`,
-        problem_statement: `Eine interessante Aufgabe für dich:`,
+        title: `Übung`,
+        problem_statement: `${generateExample("practice", difficultyLevel).q}`,
         taskType: "conceptual",
         difficulty_level: difficultyLevel,
-        category: "problem_solving",
-        solution: "42",
+        category: "calculation",
+        solution: generateExample("practice", difficultyLevel).a,
       },
       {
         id: "task-3-challenge",
-        title: `🎯 Herausforderung!`,
-        problem_statement: `Das wird schwieriger! Bist du bereit?`,
+        title: `🎯 Herausforderung`,
+        problem_statement: `${generateExample("challenge", difficultyLevel + 1).q}`,
         taskType: "challenge",
         difficulty_level: difficultyLevel + 1,
-        category: "problem_solving",
-        solution: "42",
+        category: "calculation",
+        solution: generateExample("challenge", difficultyLevel + 1).a,
       },
       {
         id: "task-4-consolidation",
-        title: `Festigung: ${skillName}`,
-        problem_statement: `Lass uns das Gelernte festigen:`,
+        title: `Festigung`,
+        problem_statement: `${generateExample("consolidation", difficultyLevel).q}`,
         taskType: "consolidation",
         difficulty_level: difficultyLevel,
         category: "calculation",
-        solution: "42",
+        solution: generateExample("consolidation", difficultyLevel).a,
       },
       {
         id: "task-5-victory",
-        title: `🏆 Sieges-Runde!`,
-        problem_statement: `Du schaffst das! Letzte Aufgabe:`,
+        title: `🏆 Finale`,
+        problem_statement: `${generateExample("victory", difficultyLevel).q}`,
         taskType: "victory",
         difficulty_level: difficultyLevel,
         category: "calculation",
-        solution: "42",
+        solution: generateExample("victory", difficultyLevel).a,
       },
     ]
 
