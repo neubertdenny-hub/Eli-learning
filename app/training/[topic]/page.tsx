@@ -254,82 +254,78 @@ function TrainingContent() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50 pb-24 sm:pb-32">
       <Header userName="Zoey" currentLevel={1} currentXP={25} maxXP={100} />
 
-      <main className="flex-1 container-full py-6 sm:py-8 space-y-8">
-        <div className="max-w-2xl mx-auto space-y-6">
+      <main className="flex-1 container-full py-6 sm:py-8 space-y-6">
+        <div className="w-full max-w-4xl mx-auto space-y-4">
           <EliSpeaking
             mood="thinking"
             size="lg"
             message={`${topicName} üben! Level: ${currentTask.difficulty} 💪`}
           />
 
-          {/* Progress */}
-          <div className="bg-white rounded-xl border-2 border-blue-200 p-4">
-            <div className="flex justify-between text-sm mb-2">
+          {/* Progress - Compact */}
+          <div className="bg-white rounded-xl border-2 border-blue-200 p-3">
+            <div className="flex justify-between text-xs mb-2">
               <span className="font-bold">{topicName}</span>
               <span className="text-gray-600">Aufgabe {currentIdx + 1}/{tasks.length}</span>
             </div>
-            <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
+            <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-blue-500 h-full transition-all"
                 style={{ width: `${((currentIdx + 1) / tasks.length) * 100}%` }}
               />
             </div>
-            <div className="flex justify-between text-xs mt-2 text-gray-600">
-              <span>Schwierigkeit: {currentTask.difficulty}</span>
-              <span>{completed} gelöst</span>
-            </div>
           </div>
 
-          {/* Task */}
-          <div className="bg-white rounded-2xl border-3 border-blue-300 p-8 space-y-6">
+          {/* Task - Full Width */}
+          <div className="bg-white rounded-2xl border-3 border-blue-300 p-6 sm:p-8 space-y-4">
             <div className="text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-gray-900 leading-relaxed">
+              <p className="text-2xl sm:text-4xl font-bold text-gray-900 leading-tight">
                 {currentTask.question}
               </p>
             </div>
 
-            {/* Whiteboard Canvas */}
-            <div className="space-y-2">
+            {/* Whiteboard Canvas - LARGE */}
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-bold text-gray-700">📝 Rechnenweg aufschreiben:</label>
+                <label className="text-base font-bold text-gray-700">📝 Rechnenweg:</label>
                 <button
                   onClick={clearCanvas}
-                  className="text-xs bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-1 rounded transition-colors"
+                  className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-bold transition-colors"
                 >
-                  Löschen
+                  🗑️ Löschen
                 </button>
               </div>
 
               {/* Geometry Tools */}
               {isGeometry && (
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap justify-start">
                   <button
                     onClick={() => setDrawTool("pen")}
-                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "pen" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "pen" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
                   >
                     ✏️ Stift
                   </button>
                   <button
                     onClick={() => setDrawTool("rectangle")}
-                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "rectangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "rectangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
                   >
                     ▭ Rechteck
                   </button>
                   <button
                     onClick={() => setDrawTool("circle")}
-                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "circle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "circle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
                   >
                     ◯ Kreis
                   </button>
                   <button
                     onClick={() => setDrawTool("line")}
-                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "line" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "line" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
                   >
                     / Linie
                   </button>
                   <button
                     onClick={() => setDrawTool("triangle")}
-                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "triangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "triangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
                   >
                     △ Dreieck
                   </button>
@@ -338,19 +334,19 @@ function TrainingContent() {
 
               <canvas
                 ref={canvasRef}
-                width={400}
-                height={200}
+                width={800}
+                height={300}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={endDrawing}
                 onMouseLeave={endDrawing}
-                className="w-full border-2 border-gray-400 rounded-lg bg-white cursor-crosshair"
+                className="w-full border-3 border-gray-400 rounded-lg bg-white cursor-crosshair shadow-md"
               />
             </div>
 
-            {/* Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700">Finale Antwort:</label>
+            {/* Input - Prominent */}
+            <div className="space-y-2 border-t-2 border-gray-200 pt-4">
+              <label className="text-base font-bold text-gray-700">✍️ Deine Antwort:</label>
               <input
                 type="number"
                 step="any"
@@ -358,7 +354,7 @@ function TrainingContent() {
                 onChange={(e) => setUserAnswer(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
                 placeholder="Antwort eingeben..."
-                className="w-full border-2 border-gray-300 rounded-lg p-4 text-center text-2xl font-bold focus:outline-none focus:border-blue-500"
+                className="w-full border-3 border-gray-300 rounded-lg p-4 text-center text-3xl font-bold focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-300"
                 autoFocus
               />
             </div>
@@ -366,24 +362,24 @@ function TrainingContent() {
             {/* Feedback */}
             {feedback === "correct" && (
               <div className="bg-green-100 border-2 border-green-400 rounded-lg p-4 text-center animate-pulse">
-                <p className="text-lg font-bold text-green-700">✅ Richtig!</p>
+                <p className="text-xl font-bold text-green-700">✅ Richtig!</p>
               </div>
             )}
 
             {feedback === "wrong" && (
               <div className="bg-red-100 border-2 border-red-400 rounded-lg p-4 text-center">
                 <p className="text-lg font-bold text-red-700">❌ Versuche es nochmal!</p>
-                <p className="text-sm text-red-600 mt-2">Tipp: Die Antwort ist {currentTask.answer}</p>
+                <p className="text-base text-red-600 mt-2">Tipp: Die Antwort ist {currentTask.answer}</p>
               </div>
             )}
 
-            {/* Button */}
+            {/* Button - Big */}
             <button
               onClick={handleSubmit}
               disabled={!userAnswer || feedback !== null}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-400 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-400 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all shadow-lg"
             >
-              Überprüfen
+              ✅ Überprüfen
             </button>
           </div>
         </div>
