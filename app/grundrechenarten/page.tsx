@@ -6,19 +6,6 @@ import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { EliSpeaking } from "@/components/eli/EliRobot"
 
-// Redirect to proper training page
-export default function GrundrechenartenPage() {
-  React.useEffect(() => {
-    window.location.href = "/training/multiplikation"
-  }, [])
-
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p>Weiterleiten...</p>
-    </div>
-  )
-}
-
 interface Task {
   id: string
   question: string
