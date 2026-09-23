@@ -8,13 +8,30 @@
 
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { EliSpeaking } from "@/components/eli/EliRobot"
+import { MissionInterface } from "@/components/training/MissionInterface"
 
 export default function LearnPage() {
+  const [missionStarted, setMissionStarted] = useState(false)
+
+  if (missionStarted) {
+    return (
+      <MissionInterface
+        skillName="Addieren mit negativen Zahlen"
+        difficultyLevel={2}
+        onMissionComplete={(xpEarned, perfectMission) => {
+          alert(`🎉 Mission fertig! ${xpEarned} XP ${perfectMission ? "✅ Perfect!" : ""}`)
+          setMissionStarted(false)
+        }}
+        onClose={() => setMissionStarted(false)}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50 pb-24 sm:pb-32">
       <Header userName="Zoey" currentLevel={1} currentXP={25} maxXP={100} />
@@ -35,7 +52,10 @@ export default function LearnPage() {
               Wir schauen uns 5-7 Aufgaben an und steigern die Schwierigkeit.
             </p>
 
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors">
+            <button
+              onClick={() => setMissionStarted(true)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors"
+            >
               🚀 Mission starten
             </button>
           </div>
