@@ -15,8 +15,15 @@ interface MathTask {
   difficulty: "einfach" | "mittel" | "schwer"
 }
 
-// Aufgaben nach Thema (Klasse 7 Niveau)
 const TOPIC_TASKS: Record<string, MathTask[]> = {
+  "grundrechenarten": [
+    { id: "1", question: "234 + 156 = ?", answer: 390, type: "addition", difficulty: "einfach" },
+    { id: "2", question: "567 + 243 = ?", answer: 810, type: "addition", difficulty: "einfach" },
+    { id: "3", question: "789 + 456 = ?", answer: 1245, type: "addition", difficulty: "mittel" },
+    { id: "4", question: "1234 + 5678 = ?", answer: 6912, type: "addition", difficulty: "mittel" },
+    { id: "5", question: "456 - 234 = ?", answer: 222, type: "subtraction", difficulty: "einfach" },
+    { id: "6", question: "1000 - 567 = ?", answer: 433, type: "subtraction", difficulty: "schwer" },
+  ],
   "bruchrechnung": [
     { id: "1", question: "1/2 + 1/4 = ?", answer: 0.75, type: "fraction", difficulty: "einfach" },
     { id: "2", question: "3/4 + 2/8 = ?", answer: 1, type: "fraction", difficulty: "einfach" },
@@ -68,6 +75,7 @@ const TOPIC_TASKS: Record<string, MathTask[]> = {
 }
 
 const TOPIC_NAMES: Record<string, string> = {
+  "grundrechenarten": "Grundrechenarten",
   "bruchrechnung": "Bruchrechnung",
   "negative-zahlen": "Negative Zahlen",
   "multiplikation": "Multiplikation",
@@ -81,6 +89,7 @@ function TrainingContent() {
   const topic = (params?.topic as string) || "bruchrechnung"
   const tasks = TOPIC_TASKS[topic] || TOPIC_TASKS["bruchrechnung"]
   const topicName = TOPIC_NAMES[topic] || "Training"
+  const isGeometry = topic === "geometrie"
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
@@ -88,8 +97,10 @@ function TrainingContent() {
   const [userAnswer, setUserAnswer] = useState("")
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null)
   const [completed, setCompleted] = useState(0)
+  const [drawTool, setDrawTool] = useState<"pen" | "rectangle" | "circle" | "line" | "triangle">("pen")
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 })
+  const canvasImageRef = React.useRef<ImageData | null>(null)
 
-  // Canvas drawing setup
   React.useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
@@ -97,25 +108,31 @@ function TrainingContent() {
       if (ctx) {
         ctx.fillStyle = "#ffffff"
         ctx.fillRect(0, 0, canvas.width, canvas.height)
+        canvasImageRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height)
       }
     }
   }, [currentIdx])
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDrawing(true)
     const canvas = canvasRef.current
     if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
     const rect = canvas.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
-    ctx.beginPath()
-    ctx.moveTo(x, y)
+
+    setStartPos({ x, y })
+    setIsDrawing(true)
+
+    if (drawTool === "pen") {
+      const ctx = canvas.getContext("2d")
+      if (!ctx) return
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+    }
   }
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return
+    if (!isDrawing || drawTool !== "pen") return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
@@ -132,7 +149,43 @@ function TrainingContent() {
     ctx.stroke()
   }
 
-  const endDrawing = () => {
+  const endDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    const rect = canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    ctx.lineWidth = 2
+    ctx.strokeStyle = "#000000"
+
+    if (drawTool === "rectangle") {
+      const w = x - startPos.x
+      const h = y - startPos.y
+      ctx.strokeRect(startPos.x, startPos.y, w, h)
+    } else if (drawTool === "circle") {
+      const r = Math.sqrt((x - startPos.x) ** 2 + (y - startPos.y) ** 2)
+      ctx.beginPath()
+      ctx.arc(startPos.x, startPos.y, r, 0, 2 * Math.PI)
+      ctx.stroke()
+    } else if (drawTool === "line") {
+      ctx.beginPath()
+      ctx.moveTo(startPos.x, startPos.y)
+      ctx.lineTo(x, y)
+      ctx.stroke()
+    } else if (drawTool === "triangle") {
+      const midX = (startPos.x + x) / 2
+      ctx.beginPath()
+      ctx.moveTo(midX, startPos.y)
+      ctx.lineTo(startPos.x, y)
+      ctx.lineTo(x, y)
+      ctx.closePath()
+      ctx.stroke()
+    }
+
     setIsDrawing(false)
   }
 
@@ -143,6 +196,7 @@ function TrainingContent() {
       if (ctx) {
         ctx.fillStyle = "#ffffff"
         ctx.fillRect(0, 0, canvas.width, canvas.height)
+        canvasImageRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height)
       }
     }
   }
@@ -245,6 +299,43 @@ function TrainingContent() {
                   Löschen
                 </button>
               </div>
+
+              {/* Geometry Tools */}
+              {isGeometry && (
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    onClick={() => setDrawTool("pen")}
+                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "pen" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                  >
+                    ✏️ Stift
+                  </button>
+                  <button
+                    onClick={() => setDrawTool("rectangle")}
+                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "rectangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                  >
+                    ▭ Rechteck
+                  </button>
+                  <button
+                    onClick={() => setDrawTool("circle")}
+                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "circle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                  >
+                    ◯ Kreis
+                  </button>
+                  <button
+                    onClick={() => setDrawTool("line")}
+                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "line" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                  >
+                    / Linie
+                  </button>
+                  <button
+                    onClick={() => setDrawTool("triangle")}
+                    className={`px-3 py-1 text-xs rounded font-bold transition-colors ${drawTool === "triangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                  >
+                    △ Dreieck
+                  </button>
+                </div>
+              )}
+
               <canvas
                 ref={canvasRef}
                 width={400}
