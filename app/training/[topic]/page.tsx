@@ -82,10 +82,70 @@ function TrainingContent() {
   const tasks = TOPIC_TASKS[topic] || TOPIC_TASKS["bruchrechnung"]
   const topicName = TOPIC_NAMES[topic] || "Training"
 
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const [isDrawing, setIsDrawing] = useState(false)
   const [currentIdx, setCurrentIdx] = useState(0)
   const [userAnswer, setUserAnswer] = useState("")
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null)
   const [completed, setCompleted] = useState(0)
+
+  // Canvas drawing setup
+  React.useEffect(() => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      const ctx = canvas.getContext("2d")
+      if (ctx) {
+        ctx.fillStyle = "#ffffff"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
+    }
+  }, [currentIdx])
+
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    setIsDrawing(true)
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    const rect = canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+  }
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    const rect = canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    ctx.lineWidth = 2
+    ctx.lineCap = "round"
+    ctx.lineJoin = "round"
+    ctx.strokeStyle = "#000000"
+    ctx.lineTo(x, y)
+    ctx.stroke()
+  }
+
+  const endDrawing = () => {
+    setIsDrawing(false)
+  }
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      const ctx = canvas.getContext("2d")
+      if (ctx) {
+        ctx.fillStyle = "#ffffff"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
+    }
+  }
 
   const currentTask = tasks[currentIdx]
 
@@ -174,17 +234,43 @@ function TrainingContent() {
               </p>
             </div>
 
+            {/* Whiteboard Canvas */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-bold text-gray-700">📝 Rechnenweg aufschreiben:</label>
+                <button
+                  onClick={clearCanvas}
+                  className="text-xs bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-1 rounded transition-colors"
+                >
+                  Löschen
+                </button>
+              </div>
+              <canvas
+                ref={canvasRef}
+                width={400}
+                height={200}
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={endDrawing}
+                onMouseLeave={endDrawing}
+                className="w-full border-2 border-gray-400 rounded-lg bg-white cursor-crosshair"
+              />
+            </div>
+
             {/* Input */}
-            <input
-              type="number"
-              step="any"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              placeholder="Antwort eingeben..."
-              className="w-full border-2 border-gray-300 rounded-lg p-4 text-center text-2xl font-bold focus:outline-none focus:border-blue-500"
-              autoFocus
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700">Finale Antwort:</label>
+              <input
+                type="number"
+                step="any"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+                placeholder="Antwort eingeben..."
+                className="w-full border-2 border-gray-300 rounded-lg p-4 text-center text-2xl font-bold focus:outline-none focus:border-blue-500"
+                autoFocus
+              />
+            </div>
 
             {/* Feedback */}
             {feedback === "correct" && (
