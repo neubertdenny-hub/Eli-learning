@@ -21,7 +21,7 @@ export default function ProgressPage() {
       status: "green" as const,
       successRate: 85,
       lastPracticed: "Heute",
-      href: "/train?topic=bruchrechnung",
+      href: "/training/bruchrechnung",
     },
     {
       title: "Negative Zahlen",
@@ -29,7 +29,7 @@ export default function ProgressPage() {
       status: "yellow" as const,
       successRate: 60,
       lastPracticed: "Gestern",
-      href: "/train?topic=negative-zahlen",
+      href: "/training/negative-zahlen",
     },
     {
       title: "Multiplikation",
@@ -37,7 +37,7 @@ export default function ProgressPage() {
       status: "red" as const,
       successRate: 40,
       lastPracticed: "Vor 3 Tagen",
-      href: "/train?topic=multiplikation",
+      href: "/training/multiplikation",
     },
     {
       title: "Division",
@@ -45,7 +45,7 @@ export default function ProgressPage() {
       status: "green" as const,
       successRate: 78,
       lastPracticed: "Vor 1 Woche",
-      href: "/train?topic=division",
+      href: "/training/division",
     },
     {
       title: "Gleichungen",
@@ -53,13 +53,13 @@ export default function ProgressPage() {
       status: "yellow" as const,
       successRate: 55,
       lastPracticed: "Vor 2 Tagen",
-      href: "/train?topic=gleichungen",
+      href: "/training/gleichungen",
     },
     {
       title: "Geometrie",
       emoji: "📐",
       status: "new" as const,
-      href: "/train?topic=geometrie",
+      href: "/training/geometrie",
     },
   ]
 
