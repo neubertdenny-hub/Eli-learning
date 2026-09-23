@@ -49,15 +49,34 @@ export const DocumentAnalysisResultSchema = z.object({
 
 // ========== CLASSIFICATION SCHEMA ==========
 
+// Answer Classification Categories (A-F)
+// A = Correct
+// B = Small/careless error (understands principle)
+// C = Middle error (one step misunderstood)
+// D = Foundation gap (prerequisite knowledge missing)
+// E = Doesn't understand the problem statement
+// F = Uncertain recognition (handwriting/image clarity)
+
+export const AnswerClassificationEnum = z.enum([
+  "A", // Correct
+  "B", // Small error
+  "C", // Middle error
+  "D", // Foundation gap
+  "E", // Problem understanding
+  "F", // Uncertain recognition
+])
+
 export const HelpSuggestionSchema = z.object({
   help_level: z.number().min(0).max(5).describe("Help level 0-5"),
-  intervention_type: z.enum(["hint", "step_by_step", "explain_concept", "similar_problem"]),
-  suggestion_text: z.string().describe("Actual help text for Eli"),
+  intervention_type: z.enum(["hint", "step_by_step", "explain_concept", "similar_problem", "bridge_task", "clarify_problem"]),
+  suggestion_text: z.string().describe("Actual help text for Eli (max 150 chars)"),
+  require_reprompt: z.boolean().optional().describe("Ask Zoey to try again after this help?"),
 })
 
 export const ClassificationResultSchema = z.object({
+  classification: AnswerClassificationEnum.describe("Category A-F"),
   is_correct: z.boolean().describe("Is the answer mathematically correct?"),
-  confidence: z.number().min(0).max(1).describe("Confidence in classification"),
+  confidence: z.number().min(0).max(1).describe("Confidence 0-1"),
   error_type: z
     .enum([
       "sign_error",
@@ -67,10 +86,14 @@ export const ClassificationResultSchema = z.object({
       "careless_mistake",
       "incomplete_solution",
       "notation_error",
+      "foundation_gap",
+      "problem_interpretation",
+      "recognition_uncertainty",
     ])
     .optional()
-    .describe("Type of error if incorrect"),
-  explanation: z.string().describe("Why this answer is correct/incorrect"),
+    .describe("Specific error type"),
+  foundation_gaps: z.array(z.string()).optional().describe("Foundation keys (e.g., 'negative_numbers') if classification D"),
+  explanation: z.string().describe("Why this answer is correct/incorrect (for Eli to explain)"),
   help_suggestion: HelpSuggestionSchema.optional(),
 })
 
@@ -107,6 +130,8 @@ export const EliTextSchema = z.object({
 export type DocumentAnalysisResult = z.infer<
   typeof DocumentAnalysisResultSchema
 >
+export type AnswerClassification = z.infer<typeof AnswerClassificationEnum>
+export type HelpSuggestion = z.infer<typeof HelpSuggestionSchema>
 export type ClassificationResult = z.infer<
   typeof ClassificationResultSchema
 >
