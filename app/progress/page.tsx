@@ -16,6 +16,12 @@ import { TopicGrid } from "@/components/task/TopicCard"
 export default function ProgressPage() {
   const allTopics = [
     {
+      title: "Grundrechenarten",
+      emoji: "🧮",
+      status: "new" as const,
+      href: "/training/grundrechenarten",
+    },
+    {
       title: "Bruchrechnung",
       emoji: "🍰",
       status: "green" as const,
