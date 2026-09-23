@@ -6,6 +6,7 @@
  */
 
 import React from "react"
+import Link from "next/link"
 
 interface HeaderProps {
   userName?: string
@@ -41,14 +42,15 @@ export function Header({
 
           {/* Parent Access - Better styled */}
           {showParentAccess && (
-            <button
-              onClick={onParentClick}
-              className="px-3 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm"
+            <Link
+              href="/parent"
+              className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm flex items-center gap-2"
               aria-label="Elternansicht"
-              title="Parent View"
+              title="Parent Dashboard"
             >
-              👨‍👩‍👧
-            </button>
+              <span className="text-lg">👨‍👩‍👧</span>
+              <span className="hidden sm:inline">Eltern</span>
+            </Link>
           )}
         </div>
 
