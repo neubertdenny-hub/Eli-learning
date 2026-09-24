@@ -114,6 +114,8 @@ function TrainingContent() {
   const [showLevelUp, setShowLevelUp] = useState(false)
   const [rewardMessage, setRewardMessage] = useState<{ xp: number; coins: number; levelUp: boolean } | null>(null)
   const [usedHelp, setUsedHelp] = useState(false)
+  const [showBadgeUnlock, setShowBadgeUnlock] = useState<string | null>(null)
+  const [currentStreak, setCurrentStreak] = useState(0)
   const canvasImageRef = React.useRef<ImageData | null>(null)
 
   React.useEffect(() => {
@@ -342,6 +344,7 @@ function TrainingContent() {
       }
 
       try {
+        // 1. Process Reward
         const rewardRes = await fetch("/api/reward/process", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -362,8 +365,30 @@ function TrainingContent() {
             setShowLevelUp(true)
           }
         }
+
+        // 2. Record Learning Day (für Streaks)
+        const streakRes = await fetch("/api/streak/record", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        })
+        const streakData = await streakRes.json()
+        if (streakData.success) {
+          setCurrentStreak(streakData.currentStreak)
+        }
+
+        // 3. Check Badges
+        const badgeRes = await fetch("/api/badge/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        })
+        const badgeData = await badgeRes.json()
+        if (badgeData.success && badgeData.newBadges.length > 0) {
+          setShowBadgeUnlock(badgeData.newBadges[0])
+        }
       } catch (error) {
-        console.error("Reward Processing Error:", error)
+        console.error("Gamification Error:", error)
       }
 
       setTimeout(() => {
@@ -375,6 +400,7 @@ function TrainingContent() {
           setUsedHelp(false)
           setRewardMessage(null)
           setShowLevelUp(false)
+          setShowBadgeUnlock(null)
         }
       }, 1500)
     } else {
