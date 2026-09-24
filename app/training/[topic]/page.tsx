@@ -658,14 +658,22 @@ function TrainingContent() {
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                   <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto border-3 border-yellow-300 shadow-2xl">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 p-6 sticky top-0 flex justify-between items-center">
+                    <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 p-6 sticky top-0 flex justify-between items-center gap-3">
                       <h3 className="text-2xl font-bold text-gray-900">💡 Detaillierte Hilfe</h3>
-                      <button
-                        onClick={() => setShowTip(false)}
-                        className="text-2xl text-gray-600 hover:text-gray-900 font-bold"
-                      >
-                        ✕
-                      </button>
+                      <div className="flex gap-2 items-center">
+                        <ReadAloudButton
+                          text={getHelpfulTip(currentTask)}
+                          isMath={false}
+                          label="vorlesen"
+                          size="sm"
+                        />
+                        <button
+                          onClick={() => setShowTip(false)}
+                          className="text-2xl text-gray-600 hover:text-gray-900 font-bold"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
 
                     {/* Content */}
