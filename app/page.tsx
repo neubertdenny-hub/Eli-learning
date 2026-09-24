@@ -92,6 +92,31 @@ export default function HomePage() {
           />
         </section>
 
+        {/* Exam Preparation Section */}
+        <section>
+          <Link href="/exam">
+            <button className="w-full card-elevated overflow-hidden hover:shadow-xl transition-all duration-200 group">
+              <div className="relative p-8 sm:p-10 bg-gradient-to-br from-blue-50 to-cyan-100 border border-blue-200">
+                <div className="absolute -top-12 -right-12 w-40 h-40 bg-blue-200 rounded-full opacity-10 group-hover:opacity-20 transition-opacity" />
+
+                <div className="relative space-y-3">
+                  <div className="text-5xl sm:text-6xl">📝</div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                    Klassenarbeit vorbereiten
+                  </h3>
+                  <p className="text-base sm:text-lg text-gray-700">
+                    Lade dein Material hoch und erstelle einen Lernplan
+                  </p>
+                  <div className="flex items-center justify-center gap-2 text-lg font-semibold text-blue-700 mt-6 group-hover:gap-3 transition-all">
+                    <span>Zur Vorbereitung</span>
+                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </Link>
+        </section>
+
         {/* Upload Section */}
         <section>
           <Link href="/upload">
