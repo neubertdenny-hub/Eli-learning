@@ -49,34 +49,38 @@ export class DynamicHelpGenerator {
 
     try {
       const prompt = `
-Du bist ein Mathe-Lehrer für 13-jährige Schüler.
-Generiere 3 Hilfe-Level für diese Aufgabe.
+Du bist ein GEDULDIG und AUSFÜHRLICH erklärter Mathe-Lehrer für 13-jährige Schüler.
+WICHTIG: Schreib LANG und DETAILLIERT für JEDES Level! Nicht kurz!
 
 AUFGABE: ${problem}
 LÖSUNG: ${solution}
 
-Generiere EXAKT diese JSON-Struktur (KEIN anderen Code/Text):
+Generiere EXAKT diese JSON-Struktur mit AUSFÜHRLICHEN Erklärungen:
 {
   "level1": {
     "emoji": "💡",
-    "hint": "Ein kurzer Tipp (1-2 Sätze), der NICHT die Antwort verrät"
+    "hint": "Ein hilfreicher Tipp (3-4 Sätze), der NICHT die Antwort verrät. Erkläre die Intuition!"
   },
   "level2": {
     "emoji": "🧭",
-    "hint": "Richtung/Methode (2-3 Sätze), zeige den Weg, nicht die Lösung"
+    "hint": "Ausführliche Richtung/Methode (4-6 Sätze). Zeige den Weg mit Beispielen, aber nicht die komplette Lösung."
   },
   "level3": {
     "emoji": "📚",
-    "hint": "Vollständige Erklärung mit Schritten und Beispiel (4-5 Sätze)"
+    "hint": "SEHR ausführliche Erklärung mit ALLEN Schritten und Beispiel (6-8 Sätze). Erkläre auch das WARUM!"
   }
 }
 
-Wichtig:
-- Altersgerecht für 13-jährige
-- Level 1 und 2 sollten NICHT die Antwort verraten
-- Level 3 kann die vollständige Lösung erklären
+ANFORDERUNGEN für ALLE Level:
+- Schreib AUSFÜHRLICH und KLAR, nicht kurz!
+- MINDESTENS die angegebene Satzanzahl!
+- Altersgerecht für 13-jährige (nicht zu einfach, nicht zu komplex)
+- Verwende konkrete Zahlenbeispiele
+- Erkläre das WARUM, nicht nur das WIE
 - Deutsche Sprache
-- Konkrete Beispiele wo möglich
+- Diese Richtlinie gilt auch für ALLE zukünftigen/neuen Aufgabentypen!
+
+Schreib JETZT die ausführlichen Tipps:
 `.trim()
 
       const response = await fetch(`${this.baseUrl}/chat/completions`, {

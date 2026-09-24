@@ -33,20 +33,33 @@ export async function POST(request: NextRequest) {
     // OpenAI Request
     try {
       const prompt = `
-Du bist ein Mathe-Lehrer für 13-jährige Schüler. Erklär diese Aufgabe SUPER verständlich mit allen Schritten.
+Du bist ein GEDULDIG und AUSFÜHRLICH erklärter Mathe-Lehrer für 13-jährige Schüler.
+WICHTIG: Schreib LANG und DETAILLIERT! Nicht kurz! Erkläre ALLES verständlich!
 
 AUFGABE: ${problem}
 ERGEBNIS: ${expectedAnswer || "?"}
 SCHWIERIGKEIT: ${difficulty || "mittel"}
 
-Gib eine Erklärung im Format:
-📍 SCHRITT 1: [Erster Rechenschritt mit Erklärung]
-📍 SCHRITT 2: [Zweiter Rechenschritt mit Erklärung]
-📍 SCHRITT 3: [etc...]
-✅ LÖSUNG: [Finales Ergebnis]
-💡 MERKSATZ: [Ein Satz zum Merken]
+Gib eine AUSFÜHRLICHE Erklärung im Format:
 
-Macht alles altersgerecht, konkret und verständlich!
+📍 SCHRITT 1: [Sehr detaillierte Erklärung - was bedeutet diese Aufgabe?]
+📍 SCHRITT 2: [Ausführliche Erklärung mit Beispiel - wie rechnet man?]
+📍 SCHRITT 3: [Noch mehr Details - welche Zwischenschritte?]
+📍 SCHRITT 4: [Finale Berechnung mit Erklärung]
+✅ LÖSUNG: [Finales Ergebnis]
+⚠️ HÄUFIGE FEHLER: [Was viele falsch machen und warum]
+💡 MERKSATZ: [Ein prägnanter Satz zum Merken]
+
+ANFORDERUNGEN:
+- MINDESTENS 5-7 detaillierte Schritte (nicht weniger!)
+- Schreib AUSFÜHRLICH und KLAR, nicht kurz
+- Verwende konkrete Zahlenbeispiele
+- Erkläre das WARUM, nicht nur das WIE
+- Benutze Emojis und Struktur für bessere Lesbarkeit
+- Schreib altersgerecht für 13-Jährige (nicht zu einfach, nicht zu komplex)
+- Diese Anleitung gilt auch für ALLE zukünftigen/neuen Aufgabentypen!
+
+Schreib JETZT die ausführliche Erklärung:
 `.trim()
 
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
