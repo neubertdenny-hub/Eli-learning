@@ -211,6 +211,22 @@ function TrainingContent() {
   const currentTask = tasks[currentIdx]
 
   const getHelpfulTip = (task: MathTask): string => {
+    // WICHTIG: Nie die aktuelle Aufgabe als Beispiel zeigen!
+    // Generiere ANDERE Zahlen für Beispiele
+
+    const generateExampleNumbers = () => {
+      // Generiere Zufalls-Zahlen die NICHT die aktuellen sind
+      if (task.difficulty === "einfach") {
+        return { a: 7, b: 4 } // Andere als 5+3
+      }
+      if (task.difficulty === "mittel" || task.difficulty === "schwer") {
+        return { a: 345, b: 278 } // Andere Beispiel-Zahlen
+      }
+      return { a: 8, b: 3 }
+    }
+
+    const ex = generateExampleNumbers()
+
     // Geometrie-spezifische Tipps
     if (task.type === "geometry" && task.geometry) {
       const { shape, data } = task.geometry
@@ -386,7 +402,8 @@ function TrainingContent() {
       if (hasBigNumbers || difficulty === "schwer" || difficulty === "mittel") {
         return `➕ SPALTENWEISE ADDITION - So funktioniert's:
 
-🎯 Das Ziel: 234 + 156 richtig berechnen
+💡 BEISPIEL MIT ANDEREN ZAHLEN (nicht deine Aufgabe!):
+🎯 Das Ziel: ${ex.a} + ${ex.b} richtig berechnen
 
 📝 SCHRITT 1: Schreib die Zahlen UNTEREINANDER
    Wichtig: Die Stellen müssen perfekt ausgerichtet sein!
