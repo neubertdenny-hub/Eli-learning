@@ -7,7 +7,12 @@ import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { EliSpeaking } from "@/components/eli/EliRobot"
 import { GeometryDiagram } from "@/components/geometry/GeometryDiagram"
-import { getSmartTip } from "@/lib/learning/smart-tips"
+import {
+  generateTipForAddition,
+  generateTipForSubtraction,
+  generateTipForMultiplication,
+  generateTipForDivision
+} from "@/lib/learning/tip-generator"
 
 interface MathTask {
   id: string
@@ -211,21 +216,28 @@ function TrainingContent() {
   const currentTask = tasks[currentIdx]
 
   const getHelpfulTip = (task: MathTask): string => {
-    // WICHTIG: Nie die aktuelle Aufgabe als Beispiel zeigen!
-    // Generiere ANDERE Zahlen für Beispiele
+    // Nutze die neuen Tip-Generatoren - die zeigen ANDERE Zahlen, nicht die echte Aufgabe!
 
-    const generateExampleNumbers = () => {
-      // Generiere Zufalls-Zahlen die NICHT die aktuellen sind
-      if (task.difficulty === "einfach") {
-        return { a: 7, b: 4 } // Andere als 5+3
-      }
-      if (task.difficulty === "mittel" || task.difficulty === "schwer") {
-        return { a: 345, b: 278 } // Andere Beispiel-Zahlen
-      }
-      return { a: 8, b: 3 }
+    const question = task.question.toLowerCase()
+    const isAddition = question.includes("+") && !question.includes("(")
+    const isSubtraction = question.includes("-") && !question.includes("(")
+    const isMultiplication = question.includes("*") || question.includes("×")
+    const isDivision = question.includes("/") || question.includes("÷")
+    const isDecimal = question.includes(",")
+
+    // Nutze die neuen Generatoren!
+    if (isAddition) {
+      return generateTipForAddition(task.difficulty)
     }
-
-    const ex = generateExampleNumbers()
+    if (isSubtraction) {
+      return generateTipForSubtraction(task.difficulty)
+    }
+    if (isMultiplication) {
+      return generateTipForMultiplication(task.difficulty, isDecimal)
+    }
+    if (isDivision) {
+      return generateTipForDivision()
+    }
 
     // Geometrie-spezifische Tipps
     if (task.type === "geometry" && task.geometry) {
@@ -241,21 +253,10 @@ function TrainingContent() {
       }
     }
 
-    // Smart Fallback mit Schwierigkeits-Erkennung
-    const question = task.question.toLowerCase()
-    const isAddition = question.includes("+") && !question.includes("(")
-    const isSubtraction = question.includes("-") && !question.includes("(")
-    const isMultiplication = question.includes("*") || question.includes("×")
-    const isDivision = question.includes("/") || question.includes("÷")
+    // Fallback für Spezialfälle (Negative, Brüche, Gleichungen)
     const isNegative = question.includes("(") && question.includes("-")
     const isFraction = question.includes("/") && (question.includes("+") || question.includes("-"))
     const isEquation = question.includes("x") || question.includes("=")
-    const isDecimal = question.includes(",")
-
-    // Extrahiere Zahlen um Schwierigkeit zu erkennen
-    const numbers = question.match(/\d+/g) || []
-    const hasBigNumbers = numbers.some(n => parseInt(n) > 50)
-    const difficulty = task.difficulty || "einfach"
 
     if (isNegative) return `➖ NEGATIVE ZAHLEN - So funktioniert's:
 
@@ -307,231 +308,6 @@ function TrainingContent() {
 ✅ ERGEBNIS: 1/4 + 2/4 = 3/4
 
 💡 MERKSATZ: "Bei gleichen Nennern: Zähler addieren, Nenner bleibt!"`
-
-    if (isMultiplication) {
-      if (isDecimal) return `✖️ DEZIMAL-MULTIPLIKATION - So funktioniert's:
-
-🎯 Das Ziel: 2,5 × 2 richtig berechnen
-
-📝 SCHRITT 1: Ignoriere ERST die Kommas!
-   Rechne: 25 × 2 (als wäre es eine ganze Zahl)
-
-📝 SCHRITT 2: Führe die normale Multiplikation durch
-   • 25 × 2 = 50
-
-📝 SCHRITT 3: Zähle die Dezimalstellen
-   • In 2,5 ist 1 Dezimalstelle (die 5 nach dem Komma)
-   • In 2 sind 0 Dezimalstellen
-   • Insgesamt: 1 Dezimalstelle
-
-📝 SCHRITT 4: Setze das Komma zurück
-   • Ergebnis 50 mit 1 Dezimalstelle = 5,0
-   • Das ist einfach 5
-
-✅ ERGEBNIS: 2,5 × 2 = 5
-
-💡 MERKSATZ: "Kommas ignorieren, rechnen, dann Komma zurückzählen!"`
-
-      if (hasBigNumbers || difficulty === "schwer") return `✖️ SCHRIFTLICHE MULTIPLIKATION - So funktioniert's:
-
-🎯 Das Ziel: 23 × 4 richtig berechnen
-
-📝 SCHRITT 1: Schreib die Aufgabe auf
-   23 × 4
-
-📝 SCHRITT 2: Zerlege die erste Zahl in Zehner und Einer
-   23 = 20 + 3
-
-📝 SCHRITT 3: Multipliziere JEDEN Teil einzeln
-   • Zehner: 20 × 4 = 80
-   • Einer: 3 × 4 = 12
-
-📝 SCHRITT 4: Addiere die Ergebnisse
-   80 + 12 = 92
-
-✅ ERGEBNIS: 23 × 4 = 92
-
-💡 MERKSATZ: "Multiplikation = Zerlegen, Multiplizieren, Addieren!"`
-
-      return `✖️ MULTIPLIKATION MIT KLEINEN ZAHLEN - So funktioniert's:
-
-🎯 Das Ziel: 3 × 4 richtig berechnen
-
-📝 SCHRITT 1: Verstehe, was Multiplikation bedeutet
-   3 × 4 bedeutet: "Nimm die Zahl 4 genau 3-mal"
-
-📝 SCHRITT 2: Schreib es als Addition auf
-   4 + 4 + 4 = ?
-
-📝 SCHRITT 3: Zähle zusammen
-   • Erste 4: 4
-   • Zweite 4: 4 + 4 = 8
-   • Dritte 4: 8 + 4 = 12
-
-✅ ERGEBNIS: 3 × 4 = 12
-
-💡 MERKSATZ: "Multiplikation = Die Zahl wird mehrfach addiert!"`
-    }
-
-    if (isDivision) return `➗ DIVISION - So funktioniert's:
-
-🎯 Das Ziel: 12 ÷ 3 richtig berechnen
-
-📝 SCHRITT 1: Verstehe, was Division bedeutet
-   12 ÷ 3 bedeutet: "Teile 12 in 3 gleiche Teile"
-
-📝 SCHRITT 2: Verteile fair
-   • Du hast 12 Sachen
-   • Du teilst auf 3 Personen
-   • Jeder bekommt: ?
-
-📝 SCHRITT 3: Verteile die Sachen
-   • Person 1 bekommt: 1, 2, 3, 4
-   • Person 2 bekommt: 5, 6, 7, 8
-   • Person 3 bekommt: 9, 10, 11, 12
-   • Jeder hat 4!
-
-📝 SCHRITT 4: Kontrolle durch Multiplikation
-   • 3 × 4 = 12? JA! ✓
-
-✅ ERGEBNIS: 12 ÷ 3 = 4
-
-💡 MERKSATZ: "Division = Fair verteilen in gleiche Teile!"`
-
-    if (isAddition) {
-      if (hasBigNumbers || difficulty === "schwer" || difficulty === "mittel") {
-        return `➕ SPALTENWEISE ADDITION - So funktioniert's:
-
-💡 BEISPIEL MIT ANDEREN ZAHLEN (nicht deine Aufgabe!):
-🎯 Das Ziel: ${ex.a} + ${ex.b} richtig berechnen
-
-📝 SCHRITT 1: Schreib die Zahlen UNTEREINANDER
-   Wichtig: Die Stellen müssen perfekt ausgerichtet sein!
-
-     234
-   + 156
-   -----
-
-📝 SCHRITT 2: Fang RECHTS an (bei den Einern)
-   • Einer: 4 + 6 = 10
-   • Das ist 1 Zehner + 0 Einer
-   • Schreib die 0 unten, merke dir die 1 (Übertrag!)
-
-     234
-   + 156
-   -----
-       0  ← Die 0 von 10
-
-📝 SCHRITT 3: Rechne die ZEHNER (mit Übertrag!)
-   • Zehner: 3 + 5 = 8, PLUS der Übertrag 1 = 9
-   • Schreib die 9 unten
-
-     234
-   + 156
-   -----
-      90  ← Die 9 von 9 Zehnern
-
-📝 SCHRITT 4: Rechne die HUNDERTER
-   • Hunderter: 2 + 1 = 3
-   • Schreib die 3 unten
-
-     234
-   + 156
-   -----
-     390  ← FERTIG!
-
-💡 MERKSATZ: "Immer von RECHTS nach LINKS rechnen, Überträge nicht vergessen!"
-
-⚠️ HÄUFIGER FEHLER: Von links anfangen oder Überträge vergessen!`
-      }
-      return `➕ ADDITION MIT KLEINEN ZAHLEN:
-
-🎯 Das Ziel: 5 + 3 richtig berechnen
-
-📝 SCHRITT 1: Stell dir eine Zahlenlinie vor
-   0 - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8
-
-📝 SCHRITT 2: Start bei der ERSTEN Zahl
-   Du fängst bei der 5 an!
-
-📝 SCHRITT 3: Zähle so viele Schritte NACH OBEN wie die zweite Zahl
-   • Start: 5
-   • +1: 6
-   • +2: 7
-   • +3: 8 ← FERTIG!
-
-✅ ERGEBNIS: 5 + 3 = 8
-
-💡 MERKSATZ: "Addieren heißt: Von der ersten Zahl aus nach oben zählen!"`
-    }
-
-    if (isSubtraction) {
-      if (hasBigNumbers || difficulty === "schwer") {
-        return `➖ SPALTENWEISE SUBTRAKTION - So funktioniert's:
-
-🎯 Das Ziel: 1000 - 567 richtig berechnen
-
-📝 SCHRITT 1: Schreib die Zahlen UNTEREINANDER
-   Die größere Zahl oben, die kleinere unten!
-
-     1000
-   -  567
-   ------
-
-📝 SCHRITT 2: Fang RECHTS an (bei den Einern)
-   • Einer: 0 - 7? Das geht nicht!
-   • BORGE: Nimm 1 Zehner von der nächsten Stelle
-   • Jetzt hast du: 10 - 7 = 3
-   • Schreib die 3 unten
-
-     1000
-   -  567
-   ------
-        3  ← Das Ergebnis der Einer
-
-📝 SCHRITT 3: Rechne die ZEHNER (mit Borgen!)
-   • Zehner: 0 - 1 Borgen = -1, aber noch die 6 subtrahieren
-   • Borge wieder 1 Hunderter
-   • Jetzt: 10 - 1 - 6 = 3
-   • Schreib die 3 unten
-
-     1000
-   -  567
-   ------
-       33
-
-📝 SCHRITT 4: Rechne die HUNDERTER (mit Borgen!)
-   • Hunderter: 10 - 1 Borgen - 5 = 4
-
-📝 SCHRITT 5: Rechne die TAUSENDER
-   • Tausender: 1 - 1 Borgen = 0 (oder weglassen)
-
-✅ ERGEBNIS: 1000 - 567 = 433
-
-💡 MERKSATZ: "Wenn oben kleinere als unten: BORGEN von links!"
-
-⚠️ HÄUFIGER FEHLER: Vergessen, dass man "geborgt" hat!`
-      }
-      return `➖ SUBTRAKTION MIT KLEINEN ZAHLEN:
-
-🎯 Das Ziel: 8 - 3 richtig berechnen
-
-📝 SCHRITT 1: Stell dir eine Zahlenlinie vor
-   0 - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8
-
-📝 SCHRITT 2: Start bei der ERSTEN Zahl
-   Du fängst bei der 8 an!
-
-📝 SCHRITT 3: Zähle so viele Schritte NACH UNTEN wie die zweite Zahl
-   • Start: 8
-   • -1: 7
-   • -2: 6
-   • -3: 5 ← FERTIG!
-
-✅ ERGEBNIS: 8 - 3 = 5
-
-💡 MERKSATZ: "Subtrahieren heißt: Von der ersten Zahl aus nach unten zählen!"`
-    }
 
     if (isEquation) return `📝 Gleichung lösen: x ist die unbekannte Zahl! Was muss statt x stehen? Beispiel: x + 5 = 12 → Welche Zahl + 5 = 12? Antwort: 7`
 
