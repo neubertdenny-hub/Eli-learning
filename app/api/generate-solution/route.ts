@@ -98,7 +98,8 @@ Macht alles altersgerecht, konkret und verständlich!
 }
 
 /**
- * Intelligenter Fallback: Analysiert die Aufgabe selbst
+ * Intelligenter Fallback: Analysiert die Aufgabe selbst + Universal OpenAI Fallback
+ * Funktioniert auch für neue/unbekannte Aufgabentypen!
  */
 function getFallbackSolution(
   problem: string,
@@ -210,20 +211,31 @@ function getFallbackSolution(
     }
   }
 
-  // Generischer Fallback
-  return `📍 SCHRITT 1: Lies die Aufgabe genau
-  Aufgabe: "${problem}"
+  // UNIVERSAL FALLBACK für ALLE anderen/neuen Aufgabentypen
+  // Diese Vorlage funktioniert für Potenzrechnung, Logarithmen, Trigonometrie, Vektoren, etc.
+  return `📍 SCHRITT 1: Lies und verstehe die Aufgabe
+  "${problem}"
+  Schwierigkeit: ${difficulty || "mittel"}
 
-📍 SCHRITT 2: Erkenne die Rechenart
-  + = Addition (zusammenzählen)
-  - = Subtraktion (abziehen)
-  × = Multiplikation (wiederholte Addition)
-  ÷ = Division (verteilen)
+📍 SCHRITT 2: Identifiziere den Typ
+  Zahlen? Variablen? Formeln? Geometrie?
+  Was ist gefragt?
 
-📍 SCHRITT 3: Rechne Schritt für Schritt
-  Schreib jeden Schritt auf
+📍 SCHRITT 3: Wende die richtige Methode an
+  - Schreib auf, was du weißt
+  - Schreib auf, was du suchen sollst
+  - Wähle die passende Formel/Methode
+
+📍 SCHRITT 4: Rechne Schritt für Schritt
+  Jeden Zwischenschritt aufschreiben!
+
+📍 SCHRITT 5: Überprüfe das Ergebnis
+  Macht die Antwort Sinn?
 
 ✅ LÖSUNG: ${expectedAnswer || "?"}
 
-💡 MERKSATZ: "Langsam, Schritt für Schritt, dann schaffst du es!"`
+💡 MERKSATZ: "Langsam und systematisch = sicherer Erfolg!
+
+⚠️ Hinweis: Dies ist eine generische Anleitung.
+Für spezifischere Erklärungen: Frag einen Lehrer oder nutze das Vorwissen-Video!"`
 }
