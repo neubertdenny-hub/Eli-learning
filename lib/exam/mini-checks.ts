@@ -89,13 +89,13 @@ function generateMiniCheckQuestions(
       id: `q-${topicId}-${i}`,
       topicId,
       topicName,
-      questionText: template.questionText,
-      questionType: template.questionType,
+      questionText: template.questionText || "Frage",
+      questionType: template.questionType || "multiple-choice",
       options: template.options,
-      correctAnswer: template.correctAnswer,
-      explanation: template.explanation,
-      difficulty: template.difficulty,
-      estimatedSeconds: template.estimatedSeconds,
+      correctAnswer: template.correctAnswer || "",
+      explanation: template.explanation || "",
+      difficulty: template.difficulty || "medium",
+      estimatedSeconds: template.estimatedSeconds || 30,
     })
   }
 
@@ -320,7 +320,7 @@ export function scoreMiniCheck(session: MiniCheckSession): MiniCheckSession {
 
   for (const question of session.questions) {
     const userAnswer = session.userAnswers[question.id]
-    const correct = userAnswer && normalizeAnswer(userAnswer) === normalizeAnswer(question.correctAnswer)
+    const correct = !!(userAnswer && normalizeAnswer(userAnswer) === normalizeAnswer(question.correctAnswer))
 
     isCorrect[question.id] = correct
     if (correct) correctCount++
