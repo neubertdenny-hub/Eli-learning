@@ -40,15 +40,25 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
   const loadDynamicHelp = async (level: number) => {
     setHelpLoading(true)
     try {
+      if (!task.solution) {
+        console.warn("Task hat keine solution:", task)
+        return getFallbackHelpMessage(level)
+      }
+
       const response = await fetch("/api/generate-help", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           problem: task.problem_statement,
-          solution: task.solution || "Lösung",
+          solution: task.solution,
           helpLevels: [level],
         }),
       })
+
+      if (!response.ok) {
+        console.error("Help API error:", response.status)
+        return getFallbackHelpMessage(level)
+      }
 
       const data = await response.json()
 
@@ -60,21 +70,65 @@ export function TaskRunner({ task, onSubmit, onCompleted }: TaskRunnerProps) {
         const helpLevel = data.helpLevels[level - 1]
         return `${helpLevel.emoji} ${helpLevel.hint}`
       }
+
+      console.warn("Unexpected help response:", data)
+      return getFallbackHelpMessage(level)
     } catch (error) {
       console.error("Error loading dynamic help:", error)
+      return getFallbackHelpMessage(level)
+    } finally {
+      setHelpLoading(false)
     }
-    setHelpLoading(false)
-    return getFallbackHelpMessage(level)
   }
 
   const getFallbackHelpMessage = (level: number): string => {
-    // Fallback Tipps wenn OpenAI nicht verfügbar
-    const defaultMessages: Record<number, string> = {
-      1: "💡 Kleiner Tipp: Schau dir die Zahlen genau an und denk an die Regeln!",
-      2: "🧭 Richtung: Versuche die Aufgabe Schritt für Schritt zu lösen.",
-      3: "📚 Erklärung: Wenn du unsicher bist, schreib jeden Schritt auf!",
+    // Intelligente Fallback-Tipps basierend auf Aufgaben-Pattern
+    const problem = task.problem_statement.toLowerCase()
+    const solution = task.solution?.toString().toLowerCase() || ""
+
+    // Erkenne Aufgaben-Typen
+    const isAddition = problem.includes("+")
+    const isSubtraction = problem.includes("-") && !problem.includes("(")
+    const isMultiplication = problem.includes("*") || problem.includes("×")
+    const isDivision = problem.includes("/") || problem.includes("÷")
+    const isNegative = problem.includes("(") && problem.includes("-")
+    const isFraction = problem.includes("/")
+    const isEquation = problem.includes("=")
+
+    // Level 1: Kleine Hinweise
+    if (level === 1) {
+      if (isNegative) return "💡 Hinweis: Negative Zahl bedeutet das Gegenteil!"
+      if (isFraction) return "💡 Hinweis: Zähler (oben) und Nenner (unten) beachten!"
+      if (isMultiplication) return "💡 Hinweis: Wie oft wird die Zahl addiert?"
+      if (isDivision) return "💡 Hinweis: In wie viele Teile wird geteilt?"
+      return "💡 Hinweis: Lies die Aufgabe genau und identifiziere alle Zahlen und Symbole!"
     }
-    return defaultMessages[level] || "Versuch es nochmal!"
+
+    // Level 2: Richtung & Methode
+    if (level === 2) {
+      if (isNegative) return "🧭 Methode: Positive nach rechts, negative nach links auf dem Zahlenstrahl!"
+      if (isFraction) return "🧭 Methode: Wenn Nenner gleich, addiere/subtrahiere nur die Zähler!"
+      if (isMultiplication) return "🧭 Methode: Zähle wie oft du die Zahl addieren würdest!"
+      if (isDivision) return "🧭 Methode: Wie viel bekommt jedes Teil davon?"
+      if (isAddition) return "🧭 Methode: Zähle von der ersten Zahl aus weiter nach oben!"
+      if (isSubtraction) return "🧭 Methode: Zähle von der ersten Zahl aus nach unten!"
+      return "🧭 Methode: Versuche die Aufgabe in kleine Schritte zu zerlegen!"
+    }
+
+    // Level 3: Vollständige Erklärung
+    if (level === 3) {
+      if (isNegative)
+        return `📚 Erklärung: "${problem}" = positive + negative. Das ist wie: erste Zahl - absolute Wert der zweiten. Lösung: ${solution || "versuche zu berechnen!"}`
+      if (isFraction)
+        return `📚 Erklärung: Bei Brüchen: Zähler oben addieren/subtrahieren, Nenner unten bleibt gleich! "${problem}" = "${solution || "?"}"`
+      if (isMultiplication)
+        return `📚 Erklärung: Multiplikation = wiederholte Addition. "${problem}" bedeutet die erste Zahl so oft addieren wie die zweite sagt!`
+      if (isDivision)
+        return `📚 Erklärung: Division = verteilen. "${problem}" bedeutet: teile die erste Zahl in so viele Teile wie die zweite sagt!`
+      return `📚 Erklärung: Schreib alle Schritte auf: 1) Zahlen identifizieren, 2) Operation erkennen, 3) Berechnen, 4) Kontrolle. Lösung: ${solution || "?"}`
+    }
+
+    return "Versuch es nochmal! 💪"
   }
 
   const handleSubmitAnswer = async () => {
