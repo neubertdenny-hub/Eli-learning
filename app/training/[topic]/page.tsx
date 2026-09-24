@@ -225,15 +225,20 @@ function TrainingContent() {
     const isDivision = question.includes("/") || question.includes("÷")
     const isDecimal = question.includes(",")
 
-    // Nutze die neuen Generatoren!
+    // Erkenne die Aufgabengröße SELBST (nicht task.difficulty vertrauen!)
+    const numbers = question.match(/\d+/g) || []
+    const hasBigNumbers = numbers.some(n => parseInt(n) > 50)
+    const detectedDifficulty = hasBigNumbers ? (numbers.some(n => parseInt(n) > 100) ? "schwer" : "mittel") : "einfach"
+
+    // Nutze die neuen Generatoren mit erkannter Schwierigkeit!
     if (isAddition) {
-      return generateTipForAddition(task.difficulty)
+      return generateTipForAddition(detectedDifficulty)
     }
     if (isSubtraction) {
-      return generateTipForSubtraction(task.difficulty)
+      return generateTipForSubtraction(detectedDifficulty)
     }
     if (isMultiplication) {
-      return generateTipForMultiplication(task.difficulty, isDecimal)
+      return generateTipForMultiplication(detectedDifficulty, isDecimal)
     }
     if (isDivision) {
       return generateTipForDivision()

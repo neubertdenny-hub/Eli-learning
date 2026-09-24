@@ -36,50 +36,46 @@ Aufgabe: 7 + 4 = ?
 💡 MERKSATZ: "Addieren heißt: Von der ersten Zahl aus nach oben zählen!"`
   }
 
-  return `➕ SPALTENWEISE ADDITION - Methode mit Beispiel:
+  return `➕ SPALTENWEISE ADDITION - So geht's:
 
-💡 BEISPIEL MIT ANDEREN ZAHLEN (NICHT DEINE AUFGABE!):
+💡 BEISPIEL MIT ANDEREN ZAHLEN:
 Aufgabe: 345 + 278 = ?
 
 📝 SCHRITT 1: Schreib die Zahlen UNTEREINANDER
-   Wichtig: Die Stellen müssen perfekt ausgerichtet sein!
-
       345
     + 278
     -----
 
-📝 SCHRITT 2: Fang RECHTS an (bei den EINERN)
-   • Addiere die Einer-Ziffern (rechts)
+📝 SCHRITT 2: Rechne RECHTS ZUERST (die hinteren Zahlen)
    • 5 + 8 = 13
-   • Schreib nur die 3 unten, merke die 1 (Übertrag!)
+   • Schreib 3 unten, merke 1
 
-📝 SCHRITT 3: Rechne die ZEHNER (mit Übertrag!)
-   • Addiere die Zehner + Übertrag
-   • 4 + 7 + 1 = 12
-   • Schreib die 2 unten, merke die 1
+📝 SCHRITT 3: Rechne die MITTLEREN Zahlen (Zehner)
+   • 4 + 7 = 11
+   • Plus die 1 von oben = 12
+   • Schreib 2 unten, merke 1
 
-📝 SCHRITT 4: Rechne die HUNDERTER (mit Übertrag!)
-   • Addiere die Hunderter + Übertrag
-   • 3 + 2 + 1 = 6
-   • Schreib die 6 unten
+📝 SCHRITT 4: Rechne die LINKEN Zahlen (Hunderter)
+   • 3 + 2 = 5
+   • Plus die 1 von oben = 6
+   • Schreib 6 unten
 
       345
     + 278
     -----
       623
 
-✅ BEISPIEL-ERGEBNIS: 345 + 278 = 623
+✅ ERGEBNIS: 345 + 278 = 623
 
-📌 JETZT DEINE AUFGABE:
-   Nutze diese Methode für DEINE Zahlen!
-   - Schreib untereinander
-   - Rechne spaltenweise von RECHTS nach LINKS
-   - Vergiss Überträge nicht!
+📌 DEINE AUFGABE: Mach das Gleiche!
+   1. Schreib untereinander
+   2. Rechne VON RECHTS NACH LINKS
+   3. Wenn eine Summe ≥ 10 ist, merke die vordere Ziffer!
 
-💡 MERKSATZ: "Immer von RECHTS nach LINKS! Überträge nicht vergessen!"
+💡 MERKSATZ: "Immer von rechts anfangen, von unten nach oben!"
 
-⚠️ WICHTIG: Diese Aufgabe hat ANDERE Zahlen als das Beispiel!
-   Du musst selbst rechnen, nicht abschreiben! 🔒`
+⚠️ WICHTIG: Dieses Beispiel hat ANDERE Zahlen!
+   Du musst deine Aufgabe selbst rechnen! 🔒`
 }
 
 export function generateTipForSubtraction(difficulty: string): string {
@@ -112,37 +108,49 @@ Aufgabe: 9 - 3 = ?
 💡 MERKSATZ: "Subtrahieren heißt: Von der ersten Zahl aus nach unten zählen!"`
   }
 
-  return `➖ SPALTENWEISE SUBTRAKTION - Methode mit Beispiel:
+  return `➖ SPALTENWEISE SUBTRAKTION - So geht's:
 
-💡 BEISPIEL MIT ANDEREN ZAHLEN (NICHT DEINE AUFGABE!):
+💡 BEISPIEL MIT ANDEREN ZAHLEN:
 Aufgabe: 800 - 234 = ?
 
-📝 SCHRITT 1: Schreib die Zahlen UNTEREINANDER (größere oben!)
+📝 SCHRITT 1: Schreib die Zahlen UNTEREINANDER (große oben!)
 
       800
     - 234
     -----
 
-📝 SCHRITT 2: Fang RECHTS an (bei den EINERN)
+📝 SCHRITT 2: Rechne RECHTS ZUERST
    • 0 - 4 geht nicht!
-   • "Borge" 1 Zehner → 10 - 4 = 6
+   • "Borge" 1 von den Zehnern: 10 - 4 = 6
+   • Schreib 6 unten
 
-📝 SCHRITT 3: Rechne die ZEHNER (mit Borgen!)
-   • 0 - 1 Borgen - 3 geht nicht!
-   • "Borge" 1 Hunderter → 10 - 1 - 3 = 6
+📝 SCHRITT 3: Rechne die MITTLEREN Zahlen
+   • Du hast 1 geborgt, also nur noch 0 - 1 = -1
+   • Das geht nicht!
+   • Borge wieder: 10 - 1 - 3 = 6
+   • Schreib 6 unten
 
-📝 SCHRITT 4: Rechne die HUNDERTER (mit Borgen!)
-   • 8 - 1 Borgen - 2 = 5
+📝 SCHRITT 4: Rechne die LINKEN Zahlen
+   • Du hast 1 geborgt, also 8 - 1 = 7
+   • 7 - 2 = 5
+   • Schreib 5 unten
 
-✅ BEISPIEL-ERGEBNIS: 800 - 234 = 566
+      800
+    - 234
+    -----
+      566
 
-📌 JETZT DEINE AUFGABE:
-   Nutze diese Methode für DEINE Zahlen!
-   - Schreib untereinander
-   - Rechne spaltenweise von RECHTS nach LINKS
-   - Wenn oben kleiner als unten: BORGEN! 🔒
+✅ ERGEBNIS: 800 - 234 = 566
 
-💡 MERKSATZ: "Wenn oben kleiner als unten: BORGEN von links!"`
+📌 DEINE AUFGABE: Mach das Gleiche!
+   1. Schreib untereinander
+   2. Rechne VON RECHTS NACH LINKS
+   3. Wenn oben kleiner ist: Borge von links!
+
+💡 MERKSATZ: "Wenn es nicht reicht, borge von der nächsten Stelle!"
+
+⚠️ WICHTIG: Dieses Beispiel hat ANDERE Zahlen!
+   Du musst deine Aufgabe selbst rechnen! 🔒`
 }
 
 export function generateTipForMultiplication(difficulty: string, isDecimal: boolean): string {
@@ -202,53 +210,62 @@ Aufgabe: 4 × 3 = ?
 💡 MERKSATZ: "Multiplikation = Die Zahl wird mehrfach addiert!"`
   }
 
-  return `✖️ SCHRIFTLICHE MULTIPLIKATION - Methode mit Beispiel:
+  return `✖️ SCHRIFTLICHE MULTIPLIKATION - So geht's:
 
-💡 BEISPIEL MIT ANDEREN ZAHLEN (NICHT DEINE AUFGABE!):
+💡 BEISPIEL MIT ANDEREN ZAHLEN:
 Aufgabe: 23 × 4 = ?
 
-📝 SCHRITT 1: Zerlege die erste Zahl
+📝 SCHRITT 1: Zerlege die erste Zahl in Zehner + Einer
    23 = 20 + 3
 
-📝 SCHRITT 2: Multipliziere JEDEN Teil
+📝 SCHRITT 2: Multipliziere jeden Teil einzeln
    • 20 × 4 = 80
    • 3 × 4 = 12
 
 📝 SCHRITT 3: Addiere die Ergebnisse
    80 + 12 = 92
 
-✅ BEISPIEL-ERGEBNIS: 23 × 4 = 92
+✅ ERGEBNIS: 23 × 4 = 92
 
-📌 JETZT DEINE AUFGABE:
-   Nutze diese Methode für DEINE Zahlen! 🔒
+📌 DEINE AUFGABE: Mach das Gleiche!
+   1. Zerlege die erste Zahl
+   2. Multipliziere die Teile
+   3. Addiere die Ergebnisse!
 
-💡 MERKSATZ: "Zerlegen, Multiplizieren, Addieren!"`
+💡 MERKSATZ: "Zerlegen → Multiplizieren → Addieren!"
+
+⚠️ WICHTIG: Dieses Beispiel hat ANDERE Zahlen!
+   Du musst deine Aufgabe selbst rechnen! 🔒`
 }
 
 export function generateTipForDivision(): string {
-  return `➗ DIVISION - Methode mit Beispiel:
+  return `➗ DIVISION - So geht's:
 
-💡 BEISPIEL MIT ANDEREN ZAHLEN (NICHT DEINE AUFGABE!):
+💡 BEISPIEL MIT ANDEREN ZAHLEN:
 Aufgabe: 20 ÷ 5 = ?
 
-📝 SCHRITT 1: Verstehe Division
-   20 ÷ 5 bedeutet: "Teile 20 in 5 gleiche Teile"
+📝 SCHRITT 1: Was bedeutet Division?
+   20 ÷ 5 = "Teile 20 in 5 gleiche Teile"
 
-📝 SCHRITT 2: Verteile fair
-   • Du hast 20 Sachen
+📝 SCHRITT 2: Denk daran: "Wie viel bekommt jeder?"
+   • Du hast 20
    • 5 Personen
    • Jeder bekommt: ?
 
-📝 SCHRITT 3: Teile auf
-   Jede Person bekommt 4 Sachen
+📝 SCHRITT 3: Verteile fair
+   Wenn jeder 4 bekommt: 5 × 4 = 20 ✓
+   Also: 20 ÷ 5 = 4
 
-📝 SCHRITT 4: Kontrolle
-   5 × 4 = 20 ✓
+✅ ERGEBNIS: 20 ÷ 5 = 4
 
-✅ BEISPIEL-ERGEBNIS: 20 ÷ 5 = 4
+📌 DEINE AUFGABE: Mach das Gleiche!
+   1. Wie viele sind oben? (die erste Zahl)
+   2. Wie viele Teile? (die zweite Zahl)
+   3. Wie viel pro Teil?
+   4. Kontrolle: Teil × Anzahl = oben?
 
-📌 JETZT DEINE AUFGABE:
-   Nutze diese Methode für DEINE Zahlen! 🔒
+💡 MERKSATZ: "Division = Fair verteilen!"
 
-💡 MERKSATZ: "Division = Fair verteilen in gleiche Teile!"`
+⚠️ WICHTIG: Dieses Beispiel hat ANDERE Zahlen!
+   Du musst deine Aufgabe selbst rechnen! 🔒`
 }
