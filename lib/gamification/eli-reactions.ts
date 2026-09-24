@@ -17,7 +17,9 @@ export type EliMood =
 export interface EliReaction {
   mood: EliMood
   message: string
+  speechText?: string // Text für Voice (kann anders als display sein)
   duration?: number // ms - wie lange anzeigen
+  autoSpeak?: boolean // Soll automatisch gesprochen werden?
 }
 
 /**
@@ -64,7 +66,9 @@ export function getReactionLevelUp(newLevel: number): EliReaction {
   return {
     mood: "celebrating",
     message: `LEVEL UP! 🎉 Du bist jetzt Level ${newLevel}!`,
+    speechText: `Level Up! Du bist jetzt auf Level ${newLevel}!`,
     duration: 3000,
+    autoSpeak: true,
   }
 }
 

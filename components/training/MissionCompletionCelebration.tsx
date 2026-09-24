@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react"
 import { EliSpeaking } from "@/components/eli/EliRobot"
+import { useVoice } from "@/lib/voice/useVoice"
 import type { EliReaction } from "@/lib/gamification/eli-reactions"
 
 export interface MissionCompletionCelebrationProps {
@@ -27,12 +28,23 @@ export function MissionCompletionCelebration({
   eliReaction,
   onClose,
 }: MissionCompletionCelebrationProps) {
+  const { autoSpeak } = useVoice()
+
   useEffect(() => {
-    if (show && eliReaction.duration) {
-      const timer = setTimeout(onClose, eliReaction.duration)
-      return () => clearTimeout(timer)
+    if (show) {
+      // Speak reaction if enabled
+      if (eliReaction.speechText || eliReaction.message) {
+        const textToSpeak = eliReaction.speechText || eliReaction.message
+        autoSpeak(textToSpeak, "greeting")
+      }
+
+      // Auto-close after duration
+      if (eliReaction.duration) {
+        const timer = setTimeout(onClose, eliReaction.duration)
+        return () => clearTimeout(timer)
+      }
     }
-  }, [show, eliReaction.duration, onClose])
+  }, [show, eliReaction, onClose, autoSpeak])
 
   if (!show) return null
 
