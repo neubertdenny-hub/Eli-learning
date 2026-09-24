@@ -12,6 +12,7 @@ import Link from "next/link"
 import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { DailyChallenges } from "@/components/gamification/DailyChallenges"
+import { Leaderboard } from "@/components/gamification/Leaderboard"
 
 export default function ProgressPage() {
   const [userRewards, setUserRewards] = useState({ xp: 0, coins: 0, level: 1 })
@@ -191,6 +192,12 @@ export default function ProgressPage() {
           <div className="space-y-4">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">🎯 Tägliche Challenges</h2>
             <DailyChallenges userId="test-user" />
+          </div>
+
+          {/* Leaderboard - Phase 6F-B */}
+          <div className="space-y-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">🏆 Leaderboard</h2>
+            <Leaderboard userId="test-user" />
           </div>
 
           {/* Skills Grid */}
