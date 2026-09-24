@@ -13,6 +13,13 @@ import {
   generateTipForMultiplication,
   generateTipForDivision
 } from "@/lib/learning/tip-generator"
+import { MissionCompletionCelebration } from "@/components/training/MissionCompletionCelebration"
+import {
+  getReactionTaskCorrectIndependent,
+  getReactionLevelUp,
+  getReactionMissionCompleted,
+} from "@/lib/gamification/eli-reactions"
+import type { EliReaction } from "@/lib/gamification/eli-reactions"
 
 interface MathTask {
   id: string
@@ -116,6 +123,14 @@ function TrainingContent() {
   const [usedHelp, setUsedHelp] = useState(false)
   const [showBadgeUnlock, setShowBadgeUnlock] = useState<string | null>(null)
   const [currentStreak, setCurrentStreak] = useState(0)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [celebrationData, setCelebrationData] = useState<{
+    xpEarned: number
+    coinsEarned: number
+    newLevel?: number
+    badgesUnlocked?: string[]
+    eliReaction: EliReaction
+  } | null>(null)
   const canvasImageRef = React.useRef<ImageData | null>(null)
 
   React.useEffect(() => {
@@ -356,14 +371,28 @@ function TrainingContent() {
         })
         const reward = await rewardRes.json()
         if (reward.success) {
+          // Determine Eli Reaction
+          let eliReaction: EliReaction
+          if (reward.levelUp) {
+            eliReaction = getReactionLevelUp(reward.newLevel)
+          } else {
+            eliReaction = getReactionTaskCorrectIndependent()
+          }
+
+          // Show Celebration
+          setCelebrationData({
+            xpEarned: reward.xp,
+            coinsEarned: reward.coins,
+            newLevel: reward.levelUp ? reward.newLevel : undefined,
+            eliReaction,
+          })
+          setShowCelebration(true)
+
           setRewardMessage({
             xp: reward.xp,
             coins: reward.coins,
             levelUp: reward.levelUp,
           })
-          if (reward.levelUp) {
-            setShowLevelUp(true)
-          }
         }
 
         // 2. Record Learning Day (für Streaks)
@@ -401,6 +430,8 @@ function TrainingContent() {
           setRewardMessage(null)
           setShowLevelUp(false)
           setShowBadgeUnlock(null)
+          setShowCelebration(false)
+          setCelebrationData(null)
         }
       }, 1500)
     } else {
@@ -637,6 +668,19 @@ function TrainingContent() {
           </div>
         </div>
       </main>
+
+      {/* Mission Completion Celebration */}
+      {showCelebration && celebrationData && (
+        <MissionCompletionCelebration
+          show={showCelebration}
+          xpEarned={celebrationData.xpEarned}
+          coinsEarned={celebrationData.coinsEarned}
+          newLevel={celebrationData.newLevel}
+          badgesUnlocked={celebrationData.badgesUnlocked}
+          eliReaction={celebrationData.eliReaction}
+          onClose={() => setShowCelebration(false)}
+        />
+      )}
 
       <Navigation />
     </div>
