@@ -18,7 +18,7 @@ interface NavigationItem {
 const NAV_ITEMS: NavigationItem[] = [
   { href: "/", icon: "🏠", label: "Start" },
   { href: "/learn", icon: "🚀", label: "Lernen" },
-  { href: "/upload", icon: "📸", label: "Upload" },
+  { href: "/mein-eli", icon: "🎨", label: "Mein Eli" },
   { href: "/progress", icon: "📈", label: "Progress" },
 ]
 
