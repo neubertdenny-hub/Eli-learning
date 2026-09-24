@@ -224,25 +224,49 @@ function TrainingContent() {
       }
     }
 
-    // Smart Fallback für alle anderen Aufgabentypen
+    // Smart Fallback mit Schwierigkeits-Erkennung
     const question = task.question.toLowerCase()
     const isAddition = question.includes("+") && !question.includes("(")
     const isSubtraction = question.includes("-") && !question.includes("(")
     const isMultiplication = question.includes("*") || question.includes("×")
     const isDivision = question.includes("/") || question.includes("÷")
     const isNegative = question.includes("(") && question.includes("-")
-    const isFraction = question.includes("/") && question.includes("+") || question.includes("-")
+    const isFraction = question.includes("/") && (question.includes("+") || question.includes("-"))
     const isEquation = question.includes("x") || question.includes("=")
+    const isDecimal = question.includes(",")
+
+    // Extrahiere Zahlen um Schwierigkeit zu erkennen
+    const numbers = question.match(/\d+/g) || []
+    const hasBigNumbers = numbers.some(n => parseInt(n) > 50)
+    const difficulty = task.difficulty || "einfach"
 
     if (isNegative) return `➖ Negative Zahlen-Trick: Positive nach rechts, negative nach links auf dem Zahlenstrahl! Beispiel: -5 + 3 = -5 dann +3 = -2. Bei dir: rechne Schritt für Schritt!`
-    if (isFraction) return `🔢 Bruch-Regel: Wenn Nenner (unten) gleich, addiere/subtrahiere nur die Zähler! Der Nenner bleibt gleich! Beispiel: 1/4 + 2/4 = 3/4`
-    if (isMultiplication) return `✖️ Multiplikation = wiederholte Addition! Beispiel: 3 × 4 bedeutet: 4 + 4 + 4 = 12. Zähle wie oft du addierst!`
-    if (isDivision) return `➗ Division = verteilen! Beispiel: 12 ÷ 3 bedeutet: 12 in 3 Teile teilen = 4 pro Teil. Wie viel bekommt jedes Teil?`
-    if (isAddition) return `➕ Addition: Zähle von der ersten Zahl aus WEITER nach oben! Beispiel: 5 + 3 bedeutet: 5, 6, 7, 8 (= 8). Bei dir: zähle nach oben!`
-    if (isSubtraction) return `➖ Subtraktion: Zähle von der ersten Zahl aus ZURÜCK nach unten! Beispiel: 8 - 3 bedeutet: 8, 7, 6, 5 (= 5). Bei dir: zähle nach unten!`
-    if (isEquation) return `📝 Gleichung lösen: x ist die unbekannte Zahl! Beispiel: x + 5 = 12 bedeutet: Welche Zahl + 5 ergibt 12? Antwort: 7. Bei dir: probiere verschiedene Zahlen!`
 
-    return `💡 Tipp: Schau dir alle Zahlen und Symbole in der Aufgabe genau an! Welche Rechenart ist es? Addition, Subtraktion, Multiplikation oder Division? Versuch es Schritt für Schritt!`
+    if (isFraction) return `🔢 Bruch-Regel: Wenn Nenner (unten) gleich, addiere/subtrahiere nur die Zähler! Der Nenner bleibt gleich! Beispiel: 1/4 + 2/4 = 3/4`
+
+    if (isMultiplication) {
+      if (isDecimal) return `✖️ Dezimal-Multiplikation: Ignoriere Kommas beim Rechnen! Beispiel: 2,5 × 2 → Rechne 25 × 2 = 50 → Dann 1 Dezimalstelle: 5,0. Schreib einfach: 5`
+      if (hasBigNumbers || difficulty === "schwer") return `✖️ Multiplikation schriftlich: Multipliziere jede Ziffer einzeln, dann addiere! 📌 Beispiel: 23 × 4 → (20 × 4) + (3 × 4) = 80 + 12 = 92. Bei dir: zerlege die Zahl!`
+      return `✖️ Multiplikation = wiederholte Addition! Beispiel: 3 × 4 = 4 + 4 + 4 = 12`
+    }
+
+    if (isDivision) return `➗ Division = verteilen! Beispiel: 12 ÷ 3 bedeutet: 12 in 3 Teile teilen = 4 pro Teil.`
+
+    if (isAddition) {
+      if (hasBigNumbers || difficulty === "schwer" || difficulty === "mittel") {
+        return `➕ Große Addition - spaltenweise rechnen!\n📌 Schritt 1: Einer addieren (4 + 6 = 10)\n📌 Schritt 2: Zehner addieren (30 + 50 = 80)\n📌 Schritt 3: Hunderter addieren (200 + 100 = 300)\n📌 Dann alles zusammen: 10 + 80 + 300 = 390\nOder schreib untereinander und rechne spaltenweise!`
+      }
+      return `➕ Addition: Bei kleinen Zahlen: zähle weiter! Beispiel: 5 + 3 → zähle: 6, 7, 8. Bei großen Zahlen: spaltenweise rechnen!`
+    }
+
+    if (isSubtraction) {
+      if (hasBigNumbers || difficulty === "schwer") return `➖ Große Subtraktion - spaltenweise rechnen!\n📌 Schreib die Zahlen untereinander (oben die größere!)\n📌 Rechne Einer: wenn nicht genug, "borge" von den Zehnern\n📌 Rechne Zehner und Hunderter genauso\n📌 Beispiel: 1000 - 567 = zerlege und rechne Schritt für Schritt!`
+      return `➖ Subtraktion: Zähle zurück! Beispiel: 8 - 3 → zähle: 7, 6, 5 = 5`
+    }
+
+    if (isEquation) return `📝 Gleichung lösen: x ist die unbekannte Zahl! Was muss statt x stehen? Beispiel: x + 5 = 12 → Welche Zahl + 5 = 12? Antwort: 7`
+
+    return `💡 Tipp: Schau dir die Aufgabe genau an! Welche Rechenart? Addition (+), Subtraktion (-), Multiplikation (×) oder Division (÷)? Versuch es Schritt für Schritt!`
   }
 
   const handleSubmit = () => {
