@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { EliSpeaking } from "@/components/eli/EliRobot"
 import { GeometryDiagram } from "@/components/geometry/GeometryDiagram"
+import { getSmartTip } from "@/lib/learning/smart-tips"
 
 interface MathTask {
   id: string
