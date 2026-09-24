@@ -13,8 +13,34 @@ export interface SmartTipOptions {
 
 /**
  * Generiere intelligente, aufgabenspezifische Tipps
- * Erklärt die Methode auf altersgerechtem Niveau (13+ Jahre)
+ * WICHTIG: Zeigt ANDERE Beispiele, nicht die aktuelle Aufgabe lösen!
+ * Damit der Schüler nicht einfach abschreiben kann
  */
+
+function generateExampleNumbers(
+  operationType: string,
+  difficulty: string
+): { a: number; b: number } {
+  // Generiere ANDERE Zahlen für Beispiele
+  // Nicht die Zahlen aus der aktuellen Aufgabe verwenden!
+
+  if (difficulty === "einfach") {
+    return {
+      a: Math.floor(Math.random() * 5) + 3, // 3-7
+      b: Math.floor(Math.random() * 4) + 2, // 2-5
+    }
+  }
+
+  if (difficulty === "mittel" || difficulty === "schwer") {
+    return {
+      a: Math.floor(Math.random() * 400) + 100, // 100-500
+      b: Math.floor(Math.random() * 400) + 100, // 100-500
+    }
+  }
+
+  return { a: 5, b: 3 }
+}
+
 export function getSmartTip(options: SmartTipOptions): string {
   const {
     problem = "",
@@ -138,4 +164,18 @@ export function getSmartTipAllLevels(
     level2: getSmartTip({ ...options, level: 2 }),
     level3: getSmartTip({ ...options, level: 3 }),
   }
+}
+
+/**
+ * Anti-Cheat-Hinweis für Tipps
+ * Reminder: Tipps zeigen Methode + Beispiel, nicht die Lösung der aktuellen Aufgabe!
+ */
+export function addAntiCheatWarning(tipText: string): string {
+  return `${tipText}
+
+⚠️ WICHTIG FÜR SCHÜLER:
+   Diese Tipps zeigen die METHODE mit anderen Zahlen!
+   Deine Aufgabe hat ANDERE Zahlen!
+   🔒 Nutze die Methode, um DEINE Aufgabe SELBST zu lösen!
+   Du schaffst das! 💪`
 }
