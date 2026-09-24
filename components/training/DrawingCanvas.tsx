@@ -63,11 +63,16 @@ export function DrawingCanvas({ onRecognition, onClose }: DrawingCanvasProps) {
         </div>
 
         {/* Canvas */}
-        <div className="border-3 border-blue-300 rounded-lg overflow-hidden bg-white flex-1 min-h-64">
+        <div className="border-3 border-blue-300 rounded-lg overflow-hidden bg-white flex-1 min-h-64 relative">
           <canvas
             ref={canvasRef}
-            className="w-full h-full cursor-crosshair touch-none"
-            style={{ display: "block" }}
+            className="w-full h-full cursor-crosshair touch-none absolute inset-0"
+            style={{
+              display: "block",
+              touchAction: "none",
+              WebkitTouchCallout: "none",
+              WebkitUserSelect: "none",
+            }}
           />
         </div>
 

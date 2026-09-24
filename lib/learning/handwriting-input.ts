@@ -70,8 +70,11 @@ export class HandwritingCanvas {
     this.canvas = canvas
     this.ctx = canvas.getContext("2d")!
 
-    this.setupEventListeners()
     this.setupCanvas()
+    this.setupEventListeners()
+
+    // Re-setup canvas on window resize
+    window.addEventListener("resize", () => this.setupCanvas())
   }
 
   private setupCanvas(): void {
@@ -87,16 +90,40 @@ export class HandwritingCanvas {
   }
 
   private setupEventListeners(): void {
-    // Pointer events for stylus + touch + mouse
-    this.canvas.addEventListener("pointerdown", (e) => this.handlePointerDown(e))
-    this.canvas.addEventListener("pointermove", (e) => this.handlePointerMove(e))
-    this.canvas.addEventListener("pointerup", (e) => this.handlePointerUp(e))
-    this.canvas.addEventListener("pointercancel", () => this.endStroke())
+    // Pointer events for stylus + touch + mouse (preferred)
+    this.canvas.addEventListener("pointerdown", (e) => {
+      e.preventDefault()
+      this.handlePointerDown(e)
+    })
+    this.canvas.addEventListener("pointermove", (e) => {
+      e.preventDefault()
+      this.handlePointerMove(e)
+    })
+    this.canvas.addEventListener("pointerup", (e) => {
+      e.preventDefault()
+      this.handlePointerUp(e)
+    })
+    this.canvas.addEventListener("pointercancel", (e) => {
+      e.preventDefault()
+      this.endStroke()
+    })
 
-    // Touch events fallback
-    this.canvas.addEventListener("touchstart", (e) => this.handleTouchStart(e))
-    this.canvas.addEventListener("touchmove", (e) => this.handleTouchMove(e))
-    this.canvas.addEventListener("touchend", () => this.endStroke())
+    // Touch events fallback for older browsers
+    this.canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault()
+      this.handleTouchStart(e)
+    })
+    this.canvas.addEventListener("touchmove", (e) => {
+      e.preventDefault()
+      this.handleTouchMove(e)
+    })
+    this.canvas.addEventListener("touchend", (e) => {
+      e.preventDefault()
+      this.endStroke()
+    })
+
+    // Prevent default scroll/zoom on touch
+    this.canvas.addEventListener("gesturestart", (e) => e.preventDefault())
   }
 
   private handlePointerDown(e: PointerEvent): void {
@@ -190,18 +217,20 @@ export class HandwritingCanvas {
 
   private getPoint(e: PointerEvent): Point {
     const rect = this.canvas.getBoundingClientRect()
+    const dpr = window.devicePixelRatio
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * dpr,
+      y: (e.clientY - rect.top) * dpr,
       timestamp: e.timeStamp,
     }
   }
 
   private getTouchPoint(touch: Touch): Point {
     const rect = this.canvas.getBoundingClientRect()
+    const dpr = window.devicePixelRatio
     return {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top,
+      x: (touch.clientX - rect.left) * dpr,
+      y: (touch.clientY - rect.top) * dpr,
       timestamp: Date.now(),
     }
   }
