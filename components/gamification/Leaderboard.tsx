@@ -39,23 +39,23 @@ export function Leaderboard({ userId }: LeaderboardProps) {
   const userEntry = leaderboard.userEntry
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Period Selector */}
-      <div className="flex gap-3 justify-center">
+      <div className="flex gap-2 sm:gap-3 justify-center overflow-x-auto pb-2">
         {(["weekly", "monthly", "all-time"] as LeaderboardPeriod[]).map((p) => (
           <button
             key={p}
             onClick={() => setPeriod(p)}
-            className={`px-6 py-2 rounded-lg font-bold transition-all ${
+            className={`px-3 sm:px-6 py-2 sm:py-2 rounded-lg sm:rounded-xl font-bold text-sm sm:text-base transition-all whitespace-nowrap h-10 sm:h-auto ${
               period === p
                 ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             {p === "weekly"
-              ? "📅 Diese Woche"
+              ? "📅 Woche"
               : p === "monthly"
-                ? "📊 Dieser Monat"
+                ? "📊 Monat"
                 : "🏆 Gesamt"}
           </button>
         ))}
@@ -63,16 +63,16 @@ export function Leaderboard({ userId }: LeaderboardProps) {
 
       {/* User's Position */}
       {userEntry && (
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
-          <div className="flex justify-between items-center">
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white">
+          <div className="flex justify-between items-center gap-4">
             <div>
-              <p className="text-sm font-bold opacity-90">DEINE POSITION</p>
-              <p className="text-3xl font-bold">#{userEntry.rank}</p>
+              <p className="text-xs sm:text-sm font-bold opacity-90">POSITION</p>
+              <p className="text-2xl sm:text-3xl font-bold">#{userEntry.rank}</p>
             </div>
             <div className="text-right space-y-1">
-              <p className="font-bold">{userEntry.userName}</p>
-              <p className="text-2xl">Level {userEntry.level}</p>
-              <p className="text-sm opacity-90">{userEntry.totalXp} XP</p>
+              <p className="text-xs sm:text-base font-bold truncate">{userEntry.userName}</p>
+              <p className="text-lg sm:text-2xl">Level {userEntry.level}</p>
+              <p className="text-xs sm:text-sm opacity-90">{userEntry.totalXp} XP</p>
             </div>
           </div>
         </div>
@@ -98,42 +98,42 @@ export function Leaderboard({ userId }: LeaderboardProps) {
           return (
             <div
               key={entry.userId}
-              className={`rounded-xl p-4 border-2 transition-all ${
+              className={`rounded-lg sm:rounded-xl p-3 sm:p-4 border-2 transition-all ${
                 isCurrentUser
                   ? "bg-blue-50 border-blue-400 shadow-md ring-2 ring-blue-200"
                   : "bg-white border-gray-200 hover:border-gray-300"
               }`}
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2 sm:gap-4">
                 {/* Rank */}
-                <div className="text-2xl font-bold w-12 text-center">
+                <div className="text-xl sm:text-2xl font-bold w-8 sm:w-12 text-center flex-shrink-0">
                   {getMedalEmoji(entry.rank)}
                 </div>
 
                 {/* User Info */}
-                <div className="flex-1 ml-4">
-                  <p className="font-bold text-gray-900">{entry.userName}</p>
-                  <div className="flex gap-4 text-sm text-gray-600">
-                    <span>Level {entry.level}</span>
-                    <span>🔥 {entry.streak} Tage</span>
-                    <span>🏆 {entry.badges} Badges</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-gray-900 text-sm sm:text-base truncate">{entry.userName}</p>
+                  <div className="flex gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 flex-wrap">
+                    <span className="whitespace-nowrap">Lv {entry.level}</span>
+                    <span className="whitespace-nowrap">🔥 {entry.streak}</span>
+                    <span className="whitespace-nowrap">🏆 {entry.badges}</span>
                   </div>
                 </div>
 
                 {/* XP & Coins */}
-                <div className="text-right">
-                  <p className="text-lg font-bold text-blue-600">{entry.totalXp} XP</p>
-                  <p className="text-sm text-yellow-600 font-bold">
-                    {entry.totalCoins} 🪙
+                <div className="text-right flex-shrink-0">
+                  <p className="text-base sm:text-lg font-bold text-blue-600">{entry.totalXp}</p>
+                  <p className="text-xs sm:text-sm text-yellow-600 font-bold">
+                    {entry.totalCoins}🪙
                   </p>
                 </div>
               </div>
 
               {/* Progress Bar (if current user) */}
               {isCurrentUser && (
-                <div className="mt-3 pt-3 border-t border-blue-200">
-                  <p className="text-xs font-bold text-blue-700 mb-2">
-                    Fortschritt zum nächsten Level
+                <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-blue-200">
+                  <p className="text-xs font-bold text-blue-700 mb-1 sm:mb-2">
+                    → Nächstes Level
                   </p>
                   <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden">
                     <div
@@ -142,7 +142,7 @@ export function Leaderboard({ userId }: LeaderboardProps) {
                     />
                   </div>
                   <p className="text-xs text-gray-600 mt-1">
-                    {entry.totalXp} / 7800 XP (noch 1275 XP)
+                    {entry.totalXp} / 7800 XP
                   </p>
                 </div>
               )}
@@ -152,8 +152,8 @@ export function Leaderboard({ userId }: LeaderboardProps) {
       </div>
 
       {/* Info */}
-      <p className="text-xs text-gray-500 text-center">
-        🎯 Rankings aktualisieren sich stündlich basierend auf XP, Level und Streaks
+      <p className="text-xs text-gray-500 text-center px-2">
+        🎯 Rankings aktualisieren sich stündlich
       </p>
     </div>
   )

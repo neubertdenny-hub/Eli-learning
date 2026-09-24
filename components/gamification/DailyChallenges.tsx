@@ -45,44 +45,44 @@ export function DailyChallenges({ userId }: DailyChallengesProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Bonus Rewards Summary */}
       {bonusRewards.xp > 0 && (
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-4 text-white">
-          <p className="text-sm font-bold mb-1">🎁 Tages-Bonus verfügbar</p>
-          <div className="flex justify-between items-center">
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white">
+          <p className="text-xs sm:text-sm font-bold mb-2">🎁 Tages-Bonus</p>
+          <div className="flex justify-between items-center gap-2">
             <div>
-              <p className="text-2xl font-bold">+{bonusRewards.xp} XP</p>
-              <p className="text-sm opacity-90">+{bonusRewards.coins} Coins</p>
+              <p className="text-xl sm:text-2xl font-bold">+{bonusRewards.xp} XP</p>
+              <p className="text-xs sm:text-sm opacity-90">+{bonusRewards.coins} Coins</p>
             </div>
-            <p className="text-3xl">{claimedCount}/3 erledigt</p>
+            <p className="text-2xl sm:text-3xl font-bold">{claimedCount}/3</p>
           </div>
         </div>
       )}
 
       {/* Challenge Cards */}
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-2 sm:gap-3">
         {challenges.map((challenge) => (
           <div
             key={challenge.id}
-            className={`rounded-xl p-4 border-2 transition-all ${
+            className={`rounded-lg sm:rounded-xl p-3 sm:p-4 border-2 transition-all ${
               challenge.completed
                 ? "bg-green-50 border-green-300"
                 : "bg-white border-blue-200 hover:border-blue-400"
             }`}
           >
             {/* Header */}
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <p className="text-lg font-bold text-gray-900">
+            <div className="flex justify-between items-start gap-2 mb-2 sm:mb-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm sm:text-lg font-bold text-gray-900">
                   {challenge.icon} {challenge.title}
                 </p>
-                <p className="text-sm text-gray-600">{challenge.description}</p>
+                <p className="text-xs sm:text-sm text-gray-600 line-clamp-1">{challenge.description}</p>
               </div>
               {challenge.completed ? (
-                <span className="text-2xl">✅</span>
+                <span className="text-xl sm:text-2xl flex-shrink-0">✅</span>
               ) : (
-                <span className={`text-xs font-bold px-2 py-1 rounded ${
+                <span className={`text-xs font-bold px-2 py-1 rounded flex-shrink-0 ${
                   challenge.difficulty === "einfach" ? "bg-green-100 text-green-700" :
                   challenge.difficulty === "mittel" ? "bg-yellow-100 text-yellow-700" :
                   "bg-red-100 text-red-700"
@@ -93,12 +93,12 @@ export function DailyChallenges({ userId }: DailyChallengesProps) {
             </div>
 
             {/* Progress Bar */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold">
-                <span className="text-gray-700">
-                  Fortschritt: {challenge.progress}/{challenge.target}
+            <div className="space-y-1 sm:space-y-2">
+              <div className="flex justify-between text-xs font-bold gap-2">
+                <span className="text-gray-700 truncate">
+                  {challenge.progress}/{challenge.target}
                 </span>
-                <span className="text-gray-600">
+                <span className="text-gray-600 flex-shrink-0">
                   {Math.round((challenge.progress / challenge.target) * 100)}%
                 </span>
               </div>
@@ -118,12 +118,10 @@ export function DailyChallenges({ userId }: DailyChallengesProps) {
 
             {/* Reward Badge */}
             {challenge.completed && (
-              <div className="mt-3 flex justify-between items-center bg-green-100 rounded-lg p-2">
-                <p className="text-sm font-bold text-green-700">Bonus freigegeben!</p>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-green-700">
-                    +{challenge.reward.xp} XP · +{challenge.reward.coins} 🪙
-                  </p>
+              <div className="mt-2 sm:mt-3 flex justify-between items-center bg-green-100 rounded-lg p-2 gap-2">
+                <p className="text-xs sm:text-sm font-bold text-green-700">Bonus!</p>
+                <div className="text-right text-xs sm:text-sm font-bold text-green-700 flex-shrink-0">
+                  +{challenge.reward.xp}XP · +{challenge.reward.coins}🪙
                 </div>
               </div>
             )}
@@ -132,8 +130,8 @@ export function DailyChallenges({ userId }: DailyChallengesProps) {
       </div>
 
       {/* Info */}
-      <p className="text-xs text-gray-500 text-center mt-4">
-        🔄 Challenges resetten täglich um Mitternacht
+      <p className="text-xs text-gray-500 text-center mt-3 sm:mt-4 px-2">
+        🔄 Täglich reset um Mitternacht
       </p>
     </div>
   )
