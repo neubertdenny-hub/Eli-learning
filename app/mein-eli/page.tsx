@@ -12,6 +12,8 @@ export default function MeinEliPage() {
     headColor: "eli-blue",
     accessory: null as string | null,
     background: null as string | null,
+    outfit: null as string | null,
+    shoes: null as string | null,
   })
   const [isSaving, setIsSaving] = useState(false)
 
@@ -38,6 +40,8 @@ export default function MeinEliPage() {
             headColor: cosmData.equipped.headColor || "eli-blue",
             accessory: cosmData.equipped.accessory,
             background: cosmData.equipped.background,
+            outfit: cosmData.equipped.outfit,
+            shoes: cosmData.equipped.shoes,
           })
         }
       } catch (error) {
@@ -79,6 +83,10 @@ export default function MeinEliPage() {
             setEquipped({ ...equipped, accessory: itemSlug })
           } else if (category === "background") {
             setEquipped({ ...equipped, background: itemSlug })
+          } else if (category === "outfit") {
+            setEquipped({ ...equipped, outfit: itemSlug })
+          } else if (category === "shoes") {
+            setEquipped({ ...equipped, shoes: itemSlug })
           }
         }
       } else {
@@ -87,6 +95,10 @@ export default function MeinEliPage() {
           setEquipped({ ...equipped, accessory: null })
         } else if (category === "background") {
           setEquipped({ ...equipped, background: null })
+        } else if (category === "outfit") {
+          setEquipped({ ...equipped, outfit: null })
+        } else if (category === "shoes") {
+          setEquipped({ ...equipped, shoes: null })
         }
       }
     } catch (error) {
@@ -120,6 +132,8 @@ export default function MeinEliPage() {
               headColor={equipped.headColor}
               accessory={equipped.accessory}
               background={equipped.background}
+              outfit={equipped.outfit}
+              shoes={equipped.shoes}
               onEquip={handleEquip}
             />
 
@@ -191,8 +205,19 @@ async function findItemIdBySlug(slug: string | null, category: string): Promise<
     "eli-pink": "color-pink",
     "cap": "accessory-cap",
     "glasses": "accessory-glasses",
+    "chain": "accessory-chain",
     "headphones": "accessory-headphones",
     "antenna": "accessory-antenna",
+    "shirt-red": "outfit-shirt-red",
+    "shirt-blue": "outfit-shirt-blue",
+    "shirt-purple": "outfit-shirt-purple",
+    "hoodie-black": "outfit-hoodie-black",
+    "hoodie-gray": "outfit-hoodie-gray",
+    "jacket-leather": "outfit-jacket-leather",
+    "shoes-black": "shoes-black",
+    "shoes-red": "shoes-red",
+    "shoes-sneaker": "shoes-sneaker",
+    "shoes-boots": "shoes-boots",
     "space": "bg-space",
     "ocean": "bg-ocean",
     "forest": "bg-forest",

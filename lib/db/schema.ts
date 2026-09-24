@@ -307,6 +307,8 @@ export const userEquippedCosmetics = sqliteTable("user_equipped_cosmetics", {
   headColor: text("head_color").default("blue"), // Eli Kopffarbe
   accessory: text("accessory"), // cosmeticId
   background: text("background"), // cosmeticId
+  outfit: text("outfit"), // cosmeticId (Kleidung/Shirt/Hoodie/Jacke)
+  shoes: text("shoes"), // cosmeticId (Schuhe)
   updatedAt: text("updated_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

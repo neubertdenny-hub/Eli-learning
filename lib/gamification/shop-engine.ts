@@ -13,7 +13,7 @@ export interface CosmeticItem {
   id: string
   slug: string
   name: string
-  category: "color" | "accessory" | "background" | "design"
+  category: "color" | "accessory" | "background" | "outfit" | "shoes" | "design"
   unlocksAt: number // Level requirement
 }
 
@@ -64,6 +64,13 @@ export const COSMETIC_ITEMS: CosmeticItem[] = [
     unlocksAt: 4,
   },
   {
+    id: "accessory-chain",
+    slug: "chain",
+    name: "⛓️ Goldkette",
+    category: "accessory",
+    unlocksAt: 6,
+  },
+  {
     id: "accessory-headphones",
     slug: "headphones",
     name: "🎧 Kopfhörer",
@@ -76,6 +83,80 @@ export const COSMETIC_ITEMS: CosmeticItem[] = [
     name: "📡 Antenne",
     category: "accessory",
     unlocksAt: 9,
+  },
+
+  // Outfits/Clothes
+  {
+    id: "outfit-shirt-red",
+    slug: "shirt-red",
+    name: "👕 Rotes Shirt",
+    category: "outfit",
+    unlocksAt: 2,
+  },
+  {
+    id: "outfit-shirt-blue",
+    slug: "shirt-blue",
+    name: "👕 Blaues Shirt",
+    category: "outfit",
+    unlocksAt: 3,
+  },
+  {
+    id: "outfit-shirt-purple",
+    slug: "shirt-purple",
+    name: "👕 Violettes Shirt",
+    category: "outfit",
+    unlocksAt: 5,
+  },
+  {
+    id: "outfit-hoodie-black",
+    slug: "hoodie-black",
+    name: "🖤 Schwarzer Hoodie",
+    category: "outfit",
+    unlocksAt: 4,
+  },
+  {
+    id: "outfit-hoodie-gray",
+    slug: "hoodie-gray",
+    name: "🩶 Grauer Hoodie",
+    category: "outfit",
+    unlocksAt: 6,
+  },
+  {
+    id: "outfit-jacket-leather",
+    slug: "jacket-leather",
+    name: "🧥 Lederjacke",
+    category: "outfit",
+    unlocksAt: 8,
+  },
+
+  // Shoes
+  {
+    id: "shoes-black",
+    slug: "shoes-black",
+    name: "👟 Schwarze Schuhe",
+    category: "shoes",
+    unlocksAt: 2,
+  },
+  {
+    id: "shoes-red",
+    slug: "shoes-red",
+    name: "👟 Rote Schuhe",
+    category: "shoes",
+    unlocksAt: 4,
+  },
+  {
+    id: "shoes-sneaker",
+    slug: "shoes-sneaker",
+    name: "👟 Weiße Sneaker",
+    category: "shoes",
+    unlocksAt: 5,
+  },
+  {
+    id: "shoes-boots",
+    slug: "shoes-boots",
+    name: "👢 Boots",
+    category: "shoes",
+    unlocksAt: 7,
   },
 
   // Backgrounds
@@ -99,22 +180,6 @@ export const COSMETIC_ITEMS: CosmeticItem[] = [
     name: "🌲 Wald",
     category: "background",
     unlocksAt: 8,
-  },
-
-  // Designs
-  {
-    id: "design-robot",
-    slug: "robot-pro",
-    name: "🤖 Pro Robot",
-    category: "design",
-    unlocksAt: 10,
-  },
-  {
-    id: "design-ai",
-    slug: "ai-master",
-    name: "⚡ AI Master",
-    category: "design",
-    unlocksAt: 12,
   },
 ]
 
