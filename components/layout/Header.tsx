@@ -14,8 +14,10 @@ interface HeaderProps {
   currentXP?: number
   maxXP?: number
   streak?: number
+  coins?: number
   showParentAccess?: boolean
   onParentClick?: () => void
+  onShopClick?: () => void
 }
 
 export function Header({
@@ -24,8 +26,10 @@ export function Header({
   currentXP = 0,
   maxXP = 100,
   streak = 0,
+  coins = 0,
   showParentAccess = true,
   onParentClick,
+  onShopClick,
 }: HeaderProps) {
   const xpPercentage = Math.round((currentXP / maxXP) * 100)
 
@@ -68,12 +72,30 @@ export function Header({
             <div className="text-2xl sm:text-3xl font-bold">{currentXP}</div>
           </div>
 
+          {/* Coins */}
+          <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+            <div className="text-xs opacity-75 font-medium">🪙 COINS</div>
+            <div className="text-2xl sm:text-3xl font-bold">{coins}</div>
+          </div>
+
           {/* Streak */}
           {streak > 0 && (
             <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-lg p-3 border border-white/20">
               <div className="text-xs opacity-75 font-medium">🔥 STREAK</div>
               <div className="text-2xl sm:text-3xl font-bold">{streak}</div>
             </div>
+          )}
+
+          {/* Shop Button */}
+          {onShopClick && (
+            <button
+              onClick={onShopClick}
+              className="flex-shrink-0 px-3 sm:px-4 py-3 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold transition-all duration-200 transform hover:scale-105"
+              aria-label="Shop öffnen"
+              title="Shop"
+            >
+              <span className="text-lg sm:text-2xl">🛍️</span>
+            </button>
           )}
         </div>
 

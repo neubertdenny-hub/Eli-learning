@@ -14,6 +14,7 @@ import {
   generateTipForDivision
 } from "@/lib/learning/tip-generator"
 import { MissionCompletionCelebration } from "@/components/training/MissionCompletionCelebration"
+import { ShopModal } from "@/components/shop/ShopModal"
 import {
   getReactionTaskCorrectIndependent,
   getReactionLevelUp,
@@ -131,6 +132,8 @@ function TrainingContent() {
     badgesUnlocked?: string[]
     eliReaction: EliReaction
   } | null>(null)
+  const [showShop, setShowShop] = useState(false)
+  const [userRewards, setUserRewards] = useState({ xp: 0, coins: 0, level: 1 })
   const canvasImageRef = React.useRef<ImageData | null>(null)
 
   React.useEffect(() => {
@@ -144,6 +147,39 @@ function TrainingContent() {
       }
     }
   }, [currentIdx])
+
+  React.useEffect(() => {
+    const userId = "test-user"
+
+    // Initialize shop
+    const initShop = async () => {
+      try {
+        await fetch("/api/shop/init", { method: "POST" })
+      } catch (error) {
+        console.error("Failed to init shop:", error)
+      }
+    }
+
+    // Load user rewards
+    const loadUserRewards = async () => {
+      try {
+        const response = await fetch(`/api/reward/user?userId=${userId}`)
+        const data = await response.json()
+        if (data.success) {
+          setUserRewards({
+            xp: data.totalXp,
+            coins: data.totalCoins,
+            level: data.currentLevel,
+          })
+        }
+      } catch (error) {
+        console.error("Failed to load user rewards:", error)
+      }
+    }
+
+    initShop()
+    loadUserRewards()
+  }, [])
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
@@ -444,7 +480,14 @@ function TrainingContent() {
 
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-green-50 pb-24 sm:pb-32">
-        <Header userName="Zoey" currentLevel={1} currentXP={25} maxXP={100} />
+        <Header
+          userName="Zoey"
+          currentLevel={userRewards.level}
+          currentXP={userRewards.xp}
+          maxXP={1000}
+          coins={userRewards.coins}
+          onShopClick={() => setShowShop(true)}
+        />
         <main className="flex-1 container-full py-6 sm:py-8 space-y-8 flex flex-col items-center justify-center">
           <EliSpeaking
             mood="happy"
@@ -469,7 +512,14 @@ function TrainingContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50 pb-24 sm:pb-32">
-      <Header userName="Zoey" currentLevel={1} currentXP={25} maxXP={100} />
+      <Header
+        userName="Zoey"
+        currentLevel={userRewards.level}
+        currentXP={userRewards.xp}
+        maxXP={1000}
+        coins={userRewards.coins}
+        onShopClick={() => setShowShop(true)}
+      />
 
       <main className="flex-1 container-full py-6 sm:py-8 space-y-6">
         <div className="w-full max-w-4xl mx-auto space-y-4">
@@ -681,6 +731,17 @@ function TrainingContent() {
           onClose={() => setShowCelebration(false)}
         />
       )}
+
+      {/* Shop Modal */}
+      <ShopModal
+        show={showShop}
+        userId="test-user"
+        userLevel={userRewards.level}
+        onClose={() => setShowShop(false)}
+        onEquip={() => {
+          // Optional: Reload rewards after equip
+        }}
+      />
 
       <Navigation />
     </div>
