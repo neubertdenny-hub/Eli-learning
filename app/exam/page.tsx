@@ -4,19 +4,44 @@ import React, { useState } from "react"
 import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 import { CreateExamDialog } from "@/components/exam/CreateExamDialog"
+import { MaterialUploadSection } from "@/components/exam/MaterialUploadSection"
+import { TopicConfirmationDialog } from "@/components/exam/TopicConfirmationDialog"
 import { getDaysUntilExam, formatDateGerman, EXAM_STATUS_LABELS } from "@/lib/exam/exam-manager"
 import type { Exam } from "@/lib/db/exam-schema"
+import type { AnalyzedTopic } from "@/lib/exam/material-analyzer"
 
 export default function ExamPage() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [exams, setExams] = useState<Exam[]>([])
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analyzedTopics, setAnalyzedTopics] = useState<AnalyzedTopic[]>([])
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
 
   const activeExam = exams.find((e) => e.status !== "COMPLETED")
 
   const handleExamCreated = (exam: Exam) => {
     setExams([exam, ...exams])
     setSelectedExam(exam)
+  }
+
+  const handleMaterialsAnalyzed = (topics: AnalyzedTopic[]) => {
+    setAnalyzedTopics(topics)
+    setShowConfirmDialog(true)
+  }
+
+  const handleTopicsConfirmed = (confirmedTopics: AnalyzedTopic[]) => {
+    // TODO: Save confirmed topics to exam_topics table
+    console.log("[Topics Confirmed]", confirmedTopics)
+    setShowConfirmDialog(false)
+    setAnalyzedTopics([])
+    // Update exam status to PREPARING
+    if (selectedExam) {
+      setSelectedExam({
+        ...selectedExam,
+        status: "PREPARING",
+      })
+    }
   }
 
   return (
@@ -105,21 +130,11 @@ export default function ExamPage() {
                 </h3>
 
                 {activeExam.status === "PLANNING" && (
-                  <div className="space-y-4">
-                    <p className="text-gray-700">
-                      Lade deinen Stoffzettel, Arbeitsblätter oder Hefteinträge
-                      hoch. ELI analysiert sie und erstellt einen Lernplan für
-                      dich.
-                    </p>
-                    <button
-                      onClick={() => {
-                        /* TODO: Navigate to material upload */
-                      }}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-xl transition-all inline-block"
-                    >
-                      📸 Material hochladen
-                    </button>
-                  </div>
+                  <MaterialUploadSection
+                    examId={activeExam.id}
+                    onMaterialsAnalyzed={handleMaterialsAnalyzed}
+                    isAnalyzing={isAnalyzing}
+                  />
                 )}
 
                 {activeExam.status === "PREPARING" && (
@@ -192,6 +207,13 @@ export default function ExamPage() {
         isOpen={showCreateDialog}
         onClose={() => setShowCreateDialog(false)}
         onExamCreated={handleExamCreated}
+      />
+
+      {/* Topic Confirmation Dialog */}
+      <TopicConfirmationDialog
+        isOpen={showConfirmDialog}
+        topics={analyzedTopics}
+        onConfirm={handleTopicsConfirmed}
       />
     </div>
   )
