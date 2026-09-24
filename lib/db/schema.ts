@@ -314,6 +314,26 @@ export const userEquippedCosmetics = sqliteTable("user_equipped_cosmetics", {
     .notNull(),
 })
 
+// Daily Challenges (Phase 6F-A)
+export const dailyChallengeProgress = sqliteTable("daily_challenge_progress", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  challengeId: text("challenge_id").notNull(), // "solve_5", "level_up_1", etc.
+  date: text("date").notNull(), // YYYY-MM-DD für täglich Reset
+  currentProgress: integer("current_progress").default(0),
+  completed: integer("completed").default(0), // 0 = false, 1 = true
+  completedAt: text("completed_at"),
+  rewardsClaimed: integer("rewards_claimed").default(0),
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: text("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
 export type User = typeof users.$inferSelect
 export type SkillMastery = typeof skillMastery.$inferSelect
 export type LearningMission = typeof learningMissions.$inferSelect
@@ -330,3 +350,4 @@ export type LearningStreak = typeof learningStreaks.$inferSelect
 export type CosmeticItem = typeof cosmeticItems.$inferSelect
 export type UserCosmetic = typeof userCosmetics.$inferSelect
 export type UserEquippedCosmetic = typeof userEquippedCosmetics.$inferSelect
+export type DailyChallengeProgress = typeof dailyChallengeProgress.$inferSelect

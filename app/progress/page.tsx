@@ -11,6 +11,7 @@ import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
+import { DailyChallenges } from "@/components/gamification/DailyChallenges"
 
 export default function ProgressPage() {
   const [userRewards, setUserRewards] = useState({ xp: 0, coins: 0, level: 1 })
@@ -184,6 +185,12 @@ export default function ProgressPage() {
               </div>
               <p className="text-gray-600 font-medium">Zum Üben</p>
             </div>
+          </div>
+
+          {/* Daily Challenges - Phase 6F-A */}
+          <div className="space-y-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">🎯 Tägliche Challenges</h2>
+            <DailyChallenges userId="test-user" />
           </div>
 
           {/* Skills Grid */}
