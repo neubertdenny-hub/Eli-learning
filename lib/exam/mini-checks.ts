@@ -285,7 +285,7 @@ function generateTransferTaskText(topics: string[], difficulty: "medium" | "hard
     Wie kalt ist es in 3 Tagen?`
   }
 
-  return `Kombiniere deine Fähigkeiten bei ${topics[0]} und ${topics[1] || "weiteren Topics"]} in dieser Aufgabe.`
+  return `Kombiniere deine Fähigkeiten bei ${topics[0]} und ${topics[1] || "weiteren Topics"} in dieser Aufgabe.`
 }
 
 function generateTransferSteps(topics: string[], difficulty: "medium" | "hard"): string[] {
