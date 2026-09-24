@@ -7,12 +7,32 @@
 
 "use client"
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { Header } from "@/components/layout/Header"
 import { Navigation } from "@/components/layout/Navigation"
 
 export default function ProgressPage() {
+  const [userRewards, setUserRewards] = useState({ xp: 0, coins: 0, level: 1 })
+
+  useEffect(() => {
+    const loadUserRewards = async () => {
+      try {
+        const response = await fetch("/api/reward/user?userId=test-user")
+        const data = await response.json()
+        if (data.success) {
+          setUserRewards({
+            xp: data.totalXp,
+            coins: data.totalCoins,
+            level: data.currentLevel,
+          })
+        }
+      } catch (error) {
+        console.error("Failed to load user rewards:", error)
+      }
+    }
+    loadUserRewards()
+  }, [])
   const allTopics = [
     {
       title: "Grundrechenarten",
@@ -103,7 +123,13 @@ export default function ProgressPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50/30 pb-24 sm:pb-32">
-      <Header userName="Zoey" currentLevel={1} currentXP={25} maxXP={100} />
+      <Header
+        userName="Zoey"
+        currentLevel={userRewards.level}
+        currentXP={userRewards.xp}
+        maxXP={1000}
+        coins={userRewards.coins}
+      />
 
       <main className="flex-1 w-full py-8 sm:py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
