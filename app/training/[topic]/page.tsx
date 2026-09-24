@@ -111,6 +111,9 @@ function TrainingContent() {
   const [drawTool, setDrawTool] = useState<"pen" | "rectangle" | "circle" | "line" | "triangle">("pen")
   const [startPos, setStartPos] = useState({ x: 0, y: 0 })
   const [showTip, setShowTip] = useState(false)
+  const [showLevelUp, setShowLevelUp] = useState(false)
+  const [rewardMessage, setRewardMessage] = useState<{ xp: number; coins: number; levelUp: boolean } | null>(null)
+  const [usedHelp, setUsedHelp] = useState(false)
   const canvasImageRef = React.useRef<ImageData | null>(null)
 
   React.useEffect(() => {
@@ -319,19 +322,59 @@ function TrainingContent() {
     return `💡 Tipp: Schau dir die Aufgabe genau an! Welche Rechenart? Addition (+), Subtraktion (-), Multiplikation (×) oder Division (÷)? Versuch es Schritt für Schritt!`
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const answer = parseFloat(userAnswer)
     const expectedAnswer = typeof currentTask.answer === "number" ? currentTask.answer : parseFloat(currentTask.answer)
 
     if (Math.abs(answer - expectedAnswer) < 0.01) {
       setFeedback("correct")
       setCompleted(completed + 1)
+
+      // Reward Engine: Bestimme XP-Event basierend auf Help-Nutzung
+      const userId = "test-user" // TODO: aus Session holen
+      const taskAttemptId = `${topic}-${currentIdx}-${Date.now()}`
+
+      let eventType: "TASK_CORRECT_INDEPENDENT" | "TASK_CORRECT_WITH_HELP_L1_L2" | "TASK_CORRECT_WITH_HELP_L3" =
+        "TASK_CORRECT_INDEPENDENT"
+
+      if (usedHelp) {
+        eventType = "TASK_CORRECT_WITH_HELP_L1_L2" // Default
+      }
+
+      try {
+        const rewardRes = await fetch("/api/reward/process", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            eventType,
+            sourceId: taskAttemptId,
+          }),
+        })
+        const reward = await rewardRes.json()
+        if (reward.success) {
+          setRewardMessage({
+            xp: reward.xp,
+            coins: reward.coins,
+            levelUp: reward.levelUp,
+          })
+          if (reward.levelUp) {
+            setShowLevelUp(true)
+          }
+        }
+      } catch (error) {
+        console.error("Reward Processing Error:", error)
+      }
+
       setTimeout(() => {
         if (currentIdx < tasks.length - 1) {
           setCurrentIdx(currentIdx + 1)
           setUserAnswer("")
           setFeedback(null)
           setShowTip(false)
+          setUsedHelp(false)
+          setRewardMessage(null)
+          setShowLevelUp(false)
         }
       }, 1500)
     } else {
@@ -476,7 +519,12 @@ function TrainingContent() {
               <div className="flex justify-between items-center">
                 <label className="text-base font-bold text-gray-700">✍️ Deine Antwort:</label>
                 <button
-                  onClick={() => setShowTip(!showTip)}
+                  onClick={() => {
+                    setShowTip(!showTip)
+                    if (!showTip && !usedHelp) {
+                      setUsedHelp(true)
+                    }
+                  }}
                   className="px-4 py-2 bg-yellow-300 hover:bg-yellow-400 text-gray-800 rounded-lg font-bold text-sm transition-colors"
                 >
                   💡 Tipp

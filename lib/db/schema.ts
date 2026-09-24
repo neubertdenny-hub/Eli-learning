@@ -206,6 +206,112 @@ export const taskVariants = sqliteTable("task_variants", {
     .notNull(),
 })
 
+// Reward Events (Phase 6)
+export const rewardEvents = sqliteTable("reward_events", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  eventType: text("event_type").notNull(), // TASK_CORRECT_INDEPENDENT, SELF_CORRECTION, etc.
+  sourceId: text("source_id").notNull(), // taskAttemptId, missionId, etc.
+  xpAmount: integer("xp_amount").notNull(),
+  coinsAmount: integer("coins_amount").default(0),
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+// User Rewards (Phase 6)
+export const userRewards = sqliteTable("user_rewards", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id),
+  totalXp: integer("total_xp").default(0),
+  totalCoins: integer("total_coins").default(0),
+  currentLevel: integer("current_level").default(1),
+  lastRewardAt: text("last_reward_at"),
+  updatedAt: text("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+// Badges (Phase 6)
+export const badges = sqliteTable("badges", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(), // "first_step", "on_fire", etc.
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  requirement: text("requirement").notNull(), // JSON: {type: "missions_completed", value: 1}
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+// User Badges (Phase 6)
+export const userBadges = sqliteTable("user_badges", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  badgeId: text("badge_id")
+    .notNull()
+    .references(() => badges.id),
+  unlockedAt: text("unlocked_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+// Learning Streaks (Phase 6)
+export const learningStreaks = sqliteTable("learning_streaks", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id),
+  currentStreak: integer("current_streak").default(0), // Anzahl aufeinanderfolgender Lerntage
+  bestStreak: integer("best_streak").default(0),
+  lastActiveDate: text("last_active_date"), // Letzter Tag mit echten Lernaktivitäten
+  streakFreezeUsed: integer("streak_freeze_used").default(0), // Anzahl verwendet
+  updatedAt: text("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+// Cosmetic Items (Phase 6)
+export const cosmeticItems = sqliteTable("cosmetic_items", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(), // "cap", "weltraum_bg", etc.
+  name: text("name").notNull(),
+  category: text("category").notNull(), // accessory, background, color, etc.
+  unlocksAt: integer("unlocks_at").default(1), // Level requirement
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+// User Cosmetics (Phase 6)
+export const userCosmetics = sqliteTable("user_cosmetics", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  cosmeticId: text("cosmetic_id")
+    .notNull()
+    .references(() => cosmeticItems.id),
+  unlockedAt: text("unlocked_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+// User Equipped Cosmetics (Phase 6)
+export const userEquippedCosmetics = sqliteTable("user_equipped_cosmetics", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id),
+  headColor: text("head_color").default("blue"), // Eli Kopffarbe
+  accessory: text("accessory"), // cosmeticId
+  background: text("background"), // cosmeticId
+  updatedAt: text("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
 export type User = typeof users.$inferSelect
 export type SkillMastery = typeof skillMastery.$inferSelect
 export type LearningMission = typeof learningMissions.$inferSelect
@@ -214,3 +320,11 @@ export type SchoolTopicSignal = typeof schoolTopicSignals.$inferSelect
 export type SchoolTask = typeof schoolTasks.$inferSelect
 export type TaskVariant = typeof taskVariants.$inferSelect
 export type XPSystem = typeof xpSystem.$inferSelect
+export type RewardEvent = typeof rewardEvents.$inferSelect
+export type UserRewards = typeof userRewards.$inferSelect
+export type Badge = typeof badges.$inferSelect
+export type UserBadge = typeof userBadges.$inferSelect
+export type LearningStreak = typeof learningStreaks.$inferSelect
+export type CosmeticItem = typeof cosmeticItems.$inferSelect
+export type UserCosmetic = typeof userCosmetics.$inferSelect
+export type UserEquippedCosmetic = typeof userEquippedCosmetics.$inferSelect
