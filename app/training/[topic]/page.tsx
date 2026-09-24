@@ -685,8 +685,47 @@ function TrainingContent() {
                 </button>
               </div>
               {showTip && (
-                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 text-base text-gray-800 font-medium">
-                  {getHelpfulTip(currentTask)}
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto border-3 border-yellow-300 shadow-2xl">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 p-6 sticky top-0 flex justify-between items-center">
+                      <h3 className="text-2xl font-bold text-gray-900">💡 Detaillierte Hilfe</h3>
+                      <button
+                        onClick={() => setShowTip(false)}
+                        className="text-2xl text-gray-600 hover:text-gray-900 font-bold"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-8 space-y-6">
+                      <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-6">
+                        <p className="text-lg font-bold text-blue-900 mb-2">📚 Die Aufgabe:</p>
+                        <p className="text-2xl font-bold text-gray-900">{currentTask.question}</p>
+                      </div>
+
+                      <div className="prose prose-lg max-w-none">
+                        <div className="whitespace-pre-wrap text-base text-gray-800 leading-relaxed font-medium space-y-4">
+                          {getHelpfulTip(currentTask).split('\n\n').map((paragraph, idx) => (
+                            <div key={idx} className={`${paragraph.includes('🎯') ? 'bg-green-50 border-2 border-green-300 p-4 rounded-lg' : paragraph.includes('✅') ? 'bg-green-100 border-2 border-green-400 p-4 rounded-lg font-bold' : paragraph.includes('💡') ? 'bg-yellow-50 border-2 border-yellow-300 p-4 rounded-lg' : ''}`}>
+                              {paragraph}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="bg-gray-100 p-6 border-t-2 border-gray-300 sticky bottom-0">
+                      <button
+                        onClick={() => setShowTip(false)}
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all"
+                      >
+                        ✅ Verstanden! Zurück zur Aufgabe
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
               <input
