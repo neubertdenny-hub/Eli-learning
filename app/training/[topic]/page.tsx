@@ -210,6 +210,7 @@ function TrainingContent() {
   const currentTask = tasks[currentIdx]
 
   const getHelpfulTip = (task: MathTask): string => {
+    // Geometrie-spezifische Tipps
     if (task.type === "geometry" && task.geometry) {
       const { shape, data } = task.geometry
       if (shape === "rectangle") {
@@ -222,7 +223,26 @@ function TrainingContent() {
         return `⭕ Kreis-Formel: Umfang = 2 × r × 3,14 (oder d × 3,14). Radius ist die Linie von Mitte bis Rand! 📌 Beispiel: r=2cm → 2×2×3,14 ≈ 12,56cm. 👉 Bei dir: 2×${data.radius}×3,14 = ?`
       }
     }
-    return `Du schaffst das! Versuch es nochmal! 💪`
+
+    // Smart Fallback für alle anderen Aufgabentypen
+    const question = task.question.toLowerCase()
+    const isAddition = question.includes("+") && !question.includes("(")
+    const isSubtraction = question.includes("-") && !question.includes("(")
+    const isMultiplication = question.includes("*") || question.includes("×")
+    const isDivision = question.includes("/") || question.includes("÷")
+    const isNegative = question.includes("(") && question.includes("-")
+    const isFraction = question.includes("/") && question.includes("+") || question.includes("-")
+    const isEquation = question.includes("x") || question.includes("=")
+
+    if (isNegative) return `➖ Negative Zahlen-Trick: Positive nach rechts, negative nach links auf dem Zahlenstrahl! Beispiel: -5 + 3 = -5 dann +3 = -2. Bei dir: rechne Schritt für Schritt!`
+    if (isFraction) return `🔢 Bruch-Regel: Wenn Nenner (unten) gleich, addiere/subtrahiere nur die Zähler! Der Nenner bleibt gleich! Beispiel: 1/4 + 2/4 = 3/4`
+    if (isMultiplication) return `✖️ Multiplikation = wiederholte Addition! Beispiel: 3 × 4 bedeutet: 4 + 4 + 4 = 12. Zähle wie oft du addierst!`
+    if (isDivision) return `➗ Division = verteilen! Beispiel: 12 ÷ 3 bedeutet: 12 in 3 Teile teilen = 4 pro Teil. Wie viel bekommt jedes Teil?`
+    if (isAddition) return `➕ Addition: Zähle von der ersten Zahl aus WEITER nach oben! Beispiel: 5 + 3 bedeutet: 5, 6, 7, 8 (= 8). Bei dir: zähle nach oben!`
+    if (isSubtraction) return `➖ Subtraktion: Zähle von der ersten Zahl aus ZURÜCK nach unten! Beispiel: 8 - 3 bedeutet: 8, 7, 6, 5 (= 5). Bei dir: zähle nach unten!`
+    if (isEquation) return `📝 Gleichung lösen: x ist die unbekannte Zahl! Beispiel: x + 5 = 12 bedeutet: Welche Zahl + 5 ergibt 12? Antwort: 7. Bei dir: probiere verschiedene Zahlen!`
+
+    return `💡 Tipp: Schau dir alle Zahlen und Symbole in der Aufgabe genau an! Welche Rechenart ist es? Addition, Subtraktion, Multiplikation oder Division? Versuch es Schritt für Schritt!`
   }
 
   const handleSubmit = () => {
