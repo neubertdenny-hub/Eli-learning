@@ -15,6 +15,7 @@ import {
 } from "@/lib/learning/tip-generator"
 import { MissionCompletionCelebration } from "@/components/training/MissionCompletionCelebration"
 import { ShopModal } from "@/components/shop/ShopModal"
+import { ReadAloudButton } from "@/components/voice/ReadAloudButton"
 import {
   getReactionTaskCorrectIndependent,
   getReactionLevelUp,
@@ -546,9 +547,17 @@ function TrainingContent() {
           {/* Task - Full Width */}
           <div className="bg-white rounded-2xl border-3 border-blue-300 p-6 sm:p-8 space-y-6">
             <div className="text-center space-y-6">
-              <p className="text-2xl sm:text-4xl font-bold text-gray-900 leading-tight">
-                {currentTask.question}
-              </p>
+              <div className="flex items-center justify-center gap-3">
+                <p className="text-2xl sm:text-4xl font-bold text-gray-900 leading-tight">
+                  {currentTask.question}
+                </p>
+                <ReadAloudButton
+                  text={currentTask.question}
+                  isMath={true}
+                  label="lesen"
+                  size="sm"
+                />
+              </div>
 
               {/* Geometry Diagram */}
               {isGeometry && currentTask.geometry && (
@@ -623,19 +632,27 @@ function TrainingContent() {
 
             {/* Input - Prominent */}
             <div className="space-y-3 border-t-2 border-gray-200 pt-4">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-2">
                 <label className="text-base font-bold text-gray-700">✍️ Deine Antwort:</label>
-                <button
-                  onClick={() => {
-                    setShowTip(!showTip)
-                    if (!showTip && !usedHelp) {
-                      setUsedHelp(true)
-                    }
-                  }}
-                  className="px-4 py-2 bg-yellow-300 hover:bg-yellow-400 text-gray-800 rounded-lg font-bold text-sm transition-colors"
-                >
-                  💡 Tipp
-                </button>
+                <div className="flex gap-2">
+                  <ReadAloudButton
+                    text={currentTask.question}
+                    isMath={true}
+                    label="vorlesen"
+                    size="sm"
+                  />
+                  <button
+                    onClick={() => {
+                      setShowTip(!showTip)
+                      if (!showTip && !usedHelp) {
+                        setUsedHelp(true)
+                      }
+                    }}
+                    className="px-4 py-2 bg-yellow-300 hover:bg-yellow-400 text-gray-800 rounded-lg font-bold text-sm transition-colors"
+                  >
+                    💡 Tipp
+                  </button>
+                </div>
               </div>
               {showTip && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
