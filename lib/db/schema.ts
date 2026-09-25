@@ -419,8 +419,54 @@ export type LearningStreak = typeof learningStreaks.$inferSelect
 export type CosmeticItem = typeof cosmeticItems.$inferSelect
 export type UserCosmetic = typeof userCosmetics.$inferSelect
 export type UserEquippedCosmetic = typeof userEquippedCosmetics.$inferSelect
+// Phase 9: School Assessments
+export const schoolAssessments = sqliteTable("school_assessments", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  title: text("title").notNull(),
+  assessmentType: text("assessment_type").notNull(), // CLASS_TEST, EXAM, QUIZ, HOMEWORK, OTHER
+  date: text("date").notNull(),
+  subject: text("subject"),
+  topics: text("topics"), // JSON array
+  pointsEarned: real("points_earned"),
+  pointsPossible: real("points_possible"),
+  grade: text("grade"), // "1", "2", "3", etc.
+  gradeScale: text("grade_scale"), // "15-point", "6-point", etc.
+  teacherFeedback: text("teacher_feedback"),
+  sourceDocumentId: text("source_document_id"), // blob storage ID
+  confirmed: integer("confirmed").default(0), // 0 = false, 1 = true (parent confirmed)
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: text("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+export const schoolAssessmentAnalysis = sqliteTable("school_assessment_analysis", {
+  id: text("id").primaryKey(),
+  assessmentId: text("assessment_id")
+    .notNull()
+    .references(() => schoolAssessments.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  analyzedTopics: text("analyzed_topics"), // JSON
+  recognizedErrors: text("recognized_errors"), // JSON
+  strengths: text("strengths"), // JSON
+  weaknesses: text("weaknesses"), // JSON
+  aiConfidence: real("ai_confidence"), // 0-1
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
 export type DailyChallengeProgress = typeof dailyChallengeProgress.$inferSelect
 export type LearningStrategyStats = typeof learningStrategyStats.$inferSelect
 export type AdaptiveDecision = typeof adaptiveDecisions.$inferSelect
 export type LearningBaseline = typeof learningBaselines.$inferSelect
 export type LearningEffectivenessSnapshot = typeof learningEffectivenessSnapshots.$inferSelect
+export type SchoolAssessment = typeof schoolAssessments.$inferSelect
+export type SchoolAssessmentAnalysis = typeof schoolAssessmentAnalysis.$inferSelect
