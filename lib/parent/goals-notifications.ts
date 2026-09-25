@@ -49,6 +49,7 @@ export async function generateWeeklyGoals(
     .select()
     .from(schoolTopicSignals)
     .where(eq(schoolTopicSignals.userId, userId))
+    .limit(50)
 
   const now = new Date()
   const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
