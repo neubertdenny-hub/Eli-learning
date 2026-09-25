@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import {
   generateExamLearningPlan,
   shouldAdjustPlan,
-  type LearningPriority,
 } from "@/lib/exam/learning-planner"
-import type { TopicReadinessReport } from "@/lib/exam/readiness-engine"
-import { generateId } from "@/lib/utils/id-generator"
+import type { TopicReadinessReport, LearningPriority } from "@/lib/exam/readiness-engine"
 
 interface GeneratePlanRequest {
   examId: string

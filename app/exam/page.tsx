@@ -43,11 +43,11 @@ export default function ExamPage() {
         body: JSON.stringify({
           examId: selectedExam.id,
           topics: confirmedTopics.map((topic) => ({
-            topicId: topic.topicId,
-            subtopicId: topic.subtopicId,
-            sourceType: topic.sourceType,
-            confidence: topic.confidence,
-            priority: topic.priority || 5,
+            topicId: topic.topicName,
+            subtopicId: topic.subtopics?.[0],
+            sourceType: topic.sourceType || "CONFIRMED",
+            confidence: topic.confidence || 0.8,
+            priority: 5,
           })),
         }),
       })
