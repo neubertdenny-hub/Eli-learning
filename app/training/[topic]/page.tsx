@@ -24,6 +24,7 @@ import {
   getReactionMissionCompleted,
 } from "@/lib/gamification/eli-reactions"
 import type { EliReaction } from "@/lib/gamification/eli-reactions"
+import { generateNewTask } from "@/lib/learning/task-generator"
 
 interface MathTask {
   id: string
@@ -109,7 +110,7 @@ const TOPIC_NAMES: Record<string, string> = {
 function TrainingContent() {
   const params = useParams()
   const topic = (params?.topic as string) || "bruchrechnung"
-  const tasks = TOPIC_TASKS[topic] || TOPIC_TASKS["bruchrechnung"]
+  const allTasks = TOPIC_TASKS[topic] || TOPIC_TASKS["bruchrechnung"]
   const topicName = TOPIC_NAMES[topic] || "Training"
   const isGeometry = topic === "geometrie"
   const [isMobile, setIsMobile] = useState(false)
@@ -141,6 +142,8 @@ function TrainingContent() {
   const [userRewards, setUserRewards] = useState({ xp: 0, coins: 0, level: 1 })
   const [showHandwriting, setShowHandwriting] = useState(false)
   const canvasImageRef = React.useRef<ImageData | null>(null)
+  const [completedTaskIds, setCompletedTaskIds] = useState<string[]>([])
+  const [tasks, setTasks] = useState<MathTask[]>(allTasks)
 
   // Detect mobile on mount
   React.useEffect(() => {
@@ -149,6 +152,48 @@ function TrainingContent() {
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
+
+  // Load completed tasks and filter available tasks + generate new ones
+  React.useEffect(() => {
+    const userId = "test-user"
+    const loadCompletedTasks = async () => {
+      try {
+        const response = await fetch(
+          `/api/training/completed-tasks?userId=${userId}&topic=${topic}`
+        )
+        const data = await response.json()
+        if (data.success) {
+          setCompletedTaskIds(data.completedTaskIds)
+          // Filter: Show only NEW tasks (not already completed)
+          let availableTasks = allTasks.filter(
+            (t) => !data.completedTaskIds.includes(t.id)
+          )
+
+          // GENERATE NEW TASKS if not enough available
+          if (availableTasks.length < 3) {
+            const newCount = 6 - availableTasks.length
+            for (let i = 0; i < newCount; i++) {
+              availableTasks.push(generateNewTask(topic))
+            }
+          }
+
+          setTasks(availableTasks)
+        }
+      } catch (error) {
+        console.error("Failed to load completed tasks:", error)
+        // Fallback: Generate new tasks
+        let fallbackTasks = allTasks
+        if (allTasks.length < 3) {
+          const newCount = 6 - allTasks.length
+          for (let i = 0; i < newCount; i++) {
+            fallbackTasks = [...fallbackTasks, generateNewTask(topic)]
+          }
+        }
+        setTasks(fallbackTasks)
+      }
+    }
+    loadCompletedTasks()
+  }, [topic, allTasks])
 
   React.useEffect(() => {
     const canvas = canvasRef.current
@@ -455,6 +500,18 @@ function TrainingContent() {
       }
 
       try {
+        // 0. Mark Task as Completed - NEUE AUFGABE GENERIEREN
+        await fetch("/api/training/completed-tasks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            topic,
+            taskId: currentTask.id,
+            taskQuestion: currentTask.question,
+          }),
+        })
+
         // 1. Process Reward
         const rewardRes = await fetch("/api/reward/process", {
           method: "POST",
@@ -467,6 +524,13 @@ function TrainingContent() {
         })
         const reward = await rewardRes.json()
         if (reward.success) {
+          // UPDATE HEADER: Refresh points in real-time
+          setUserRewards({
+            xp: reward.totalXp,
+            coins: reward.totalCoins,
+            level: reward.currentLevel,
+          })
+
           // Determine Eli Reaction
           let eliReaction: EliReaction
           if (reward.levelUp) {
