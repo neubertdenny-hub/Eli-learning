@@ -222,6 +222,19 @@ function TrainingContent() {
   React.useEffect(() => {
     const userId = "test-user"
 
+    // Load user rewards from localStorage first (fastest, most reliable)
+    try {
+      const stored = localStorage.getItem(`user-rewards:${userId}`)
+      if (stored) {
+        const rewards = JSON.parse(stored)
+        setUserRewards(rewards)
+        console.log("[localStorage] Loaded rewards:", rewards)
+        return
+      }
+    } catch (error) {
+      console.error("Failed to load rewards from localStorage:", error)
+    }
+
     // Initialize shop
     const initShop = async () => {
       try {
@@ -231,17 +244,20 @@ function TrainingContent() {
       }
     }
 
-    // Load user rewards
+    // Load user rewards from API (fallback)
     const loadUserRewards = async () => {
       try {
         const response = await fetch(`/api/reward/user?userId=${userId}`)
         const data = await response.json()
         if (data.success) {
-          setUserRewards({
+          const rewards = {
             xp: data.totalXp,
             coins: data.totalCoins,
             level: data.currentLevel,
-          })
+          }
+          setUserRewards(rewards)
+          // Store in localStorage
+          localStorage.setItem(`user-rewards:${userId}`, JSON.stringify(rewards))
         }
       } catch (error) {
         console.error("Failed to load user rewards:", error)
@@ -536,24 +552,44 @@ function TrainingContent() {
         const reward = await rewardRes.json()
         console.log("[Reward Response]", reward)
 
-        // ALWAYS fetch current user rewards regardless of reward success
-        // This ensures header updates even if processReward has issues
+        // IMMEDIATELY update points in localStorage (most reliable)
+        // This ensures header updates instantly, independent of API/DB
+        try {
+          if (reward.xp || reward.coins) {
+            // Calculate new totals based on reward
+            const newXp = userRewards.xp + (reward.xp || 0)
+            const newCoins = userRewards.coins + (reward.coins || 0)
+            const newLevel = Math.floor(newXp / 100) + 1 // Simple level calc
+
+            const newRewards = {
+              xp: newXp,
+              coins: newCoins,
+              level: newLevel,
+            }
+
+            setUserRewards(newRewards)
+            localStorage.setItem(`user-rewards:${userId}`, JSON.stringify(newRewards))
+            console.log("[localStorage] Updated rewards:", newRewards)
+          }
+        } catch (error) {
+          console.error("[Error] Failed to update points:", error)
+        }
+
+        // ALSO fetch from API as fallback (non-blocking)
         try {
           const userRewardsRes = await fetch(`/api/reward/user?userId=${userId}`)
           const userRewardsData = await userRewardsRes.json()
           console.log("[User Rewards Response]", userRewardsData)
 
           if (userRewardsData.success) {
-            console.log("[Setting User Rewards]", {
+            const apiRewards = {
               xp: userRewardsData.totalXp,
               coins: userRewardsData.totalCoins,
               level: userRewardsData.currentLevel,
-            })
-            setUserRewards({
-              xp: userRewardsData.totalXp,
-              coins: userRewardsData.totalCoins,
-              level: userRewardsData.currentLevel,
-            })
+            }
+            console.log("[Setting User Rewards from API]", apiRewards)
+            setUserRewards(apiRewards)
+            localStorage.setItem(`user-rewards:${userId}`, JSON.stringify(apiRewards))
           } else {
             console.error("[Error] User Rewards API failed:", userRewardsData)
           }
