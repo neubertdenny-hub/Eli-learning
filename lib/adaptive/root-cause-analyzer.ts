@@ -58,7 +58,7 @@ export async function analyzeRootCause(
   }
 
   // Check 3: Low mastery with repeated errors
-  if (currentMastery && currentMastery.currentLevel <= 1 && sameErrorCount >= 2) {
+  if (currentMastery && currentMastery.currentLevel != null && currentMastery.currentLevel <= 1 && sameErrorCount >= 2) {
     evidence.push(
       `Low mastery (level ${currentMastery.currentLevel}) + repeated errors suggest foundation gap`
     )
@@ -176,7 +176,7 @@ export async function quickFoundationCheck(
 
   for (const foundation of foundations) {
     const mastery = masteries.find((m) => m.skillName === foundation)
-    if (!mastery || mastery.currentLevel < 2) {
+    if (!mastery || mastery.currentLevel == null || mastery.currentLevel < 2) {
       return {
         needsReview: true,
         confidence: mastery ? 0.8 : 0.6,
