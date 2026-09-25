@@ -17,14 +17,22 @@ import { TopicCard } from "@/components/task/TopicCard"
 
 export default function HomePage() {
   const router = useRouter()
-
-  const userStats = {
+  const [userStats, setUserStats] = React.useState({
     name: "Zoey",
     level: 1,
-    xp: 25,
+    xp: 0,
     maxXP: 100,
     streak: 3,
-  }
+  })
+
+  React.useEffect(() => {
+    const userId = "test-user"
+    const stored = localStorage.getItem(`user-rewards:${userId}`)
+    if (stored) {
+      const rewards = JSON.parse(stored)
+      setUserStats(prev => ({ ...prev, xp: rewards.xp || 0, level: rewards.level || 1 }))
+    }
+  }, [])
 
   const currentMission = {
     title: "Addieren mit negativen Zahlen",
