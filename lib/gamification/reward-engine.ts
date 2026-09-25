@@ -158,7 +158,8 @@ export async function processReward(
         totalXp: 0,
         totalCoins: 0,
         currentLevel: 1,
-      } as any)
+        lastRewardAt: new Date().toISOString(),
+      })
       userRewardsRecord = await db
         .select()
         .from(userRewards)
