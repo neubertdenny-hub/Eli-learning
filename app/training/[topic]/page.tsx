@@ -672,6 +672,30 @@ function TrainingContent() {
       }, 1500)
     } else {
       setFeedback("wrong")
+
+      // Phase 8 Integration: Record error & get adaptive help recommendation
+      const userId = "test-user"
+      try {
+        fetch("/api/adaptive/record-error", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            topic,
+            taskId: currentTask.id,
+            errorType: "calculation_error",
+            attemptNumber: 1 + (usedHelp ? 1 : 0),
+            usedHelp,
+          }),
+        }).then(res => res.json()).then(data => {
+          if (data.adaptiveStrategy) {
+            console.log("[Adaptive] Recommended strategy:", data.adaptiveStrategy)
+            // Strategy will be used when user clicks help button
+          }
+        })
+      } catch (error) {
+        console.error("[Adaptive Integration Error]", error)
+      }
     }
   }
 
