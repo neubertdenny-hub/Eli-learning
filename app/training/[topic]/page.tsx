@@ -16,6 +16,8 @@ import {
 import { MissionCompletionCelebration } from "@/components/training/MissionCompletionCelebration"
 import { ShopModal } from "@/components/shop/ShopModal"
 import { ReadAloudButton } from "@/components/voice/ReadAloudButton"
+import { DrawingCanvas } from "@/components/training/DrawingCanvas"
+import { RecognitionResult } from "@/lib/learning/handwriting-input"
 import {
   getReactionTaskCorrectIndependent,
   getReactionLevelUp,
@@ -137,6 +139,7 @@ function TrainingContent() {
   } | null>(null)
   const [showShop, setShowShop] = useState(false)
   const [userRewards, setUserRewards] = useState({ xp: 0, coins: 0, level: 1 })
+  const [showHandwriting, setShowHandwriting] = useState(false)
   const canvasImageRef = React.useRef<ImageData | null>(null)
 
   // Detect mobile on mount
@@ -427,6 +430,11 @@ function TrainingContent() {
     return `💡 Tipp: Schau dir die Aufgabe genau an! Welche Rechenart? Addition (+), Subtraktion (-), Multiplikation (×) oder Division (÷)? Versuch es Schritt für Schritt!`
   }
 
+  const handleHandwritingRecognition = (result: RecognitionResult) => {
+    setRechenwegText(prev => prev + result.recognized_text + "\n")
+    setShowHandwriting(false)
+  }
+
   const handleSubmit = async () => {
     const answer = parseFloat(userAnswer)
     const expectedAnswer = typeof currentTask.answer === "number" ? currentTask.answer : parseFloat(currentTask.answer)
@@ -645,12 +653,20 @@ function TrainingContent() {
                     placeholder="Schreib deinen Rechenweg hier auf..."
                     className="w-full border-3 border-gray-300 rounded-lg p-4 h-32 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-300 resize-none text-base"
                   />
-                  <button
-                    onClick={() => setRechenwegText("")}
-                    className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-bold transition-colors w-full"
-                  >
-                    🗑️ Löschen
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowHandwriting(true)}
+                      className="flex-1 text-sm bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded font-bold transition-colors"
+                    >
+                      ✍️ Mit Handschrift schreiben
+                    </button>
+                    <button
+                      onClick={() => setRechenwegText("")}
+                      className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-bold transition-colors"
+                    >
+                      🗑️ Löschen
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -831,6 +847,14 @@ function TrainingContent() {
           badgesUnlocked={celebrationData.badgesUnlocked}
           eliReaction={celebrationData.eliReaction}
           onClose={() => setShowCelebration(false)}
+        />
+      )}
+
+      {/* Handwriting Canvas */}
+      {showHandwriting && (
+        <DrawingCanvas
+          onRecognition={handleHandwritingRecognition}
+          onClose={() => setShowHandwriting(false)}
         />
       )}
 
