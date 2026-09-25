@@ -519,16 +519,27 @@ function TrainingContent() {
           }),
         })
         const reward = await rewardRes.json()
+        console.log("[Reward Response]", reward)
+
         if (reward.success) {
           // UPDATE HEADER: Fetch current user rewards to refresh points in real-time
           const userRewardsRes = await fetch(`/api/reward/user?userId=${userId}`)
           const userRewardsData = await userRewardsRes.json()
+          console.log("[User Rewards Response]", userRewardsData)
+
           if (userRewardsData.success) {
+            console.log("[Setting User Rewards]", {
+              xp: userRewardsData.totalXp,
+              coins: userRewardsData.totalCoins,
+              level: userRewardsData.currentLevel,
+            })
             setUserRewards({
               xp: userRewardsData.totalXp,
               coins: userRewardsData.totalCoins,
               level: userRewardsData.currentLevel,
             })
+          } else {
+            console.error("[Error] User Rewards API failed:", userRewardsData)
           }
 
           // Determine Eli Reaction
