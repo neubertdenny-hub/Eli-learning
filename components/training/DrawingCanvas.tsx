@@ -21,7 +21,7 @@ export interface DrawingCanvasProps {
 
 export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }: DrawingCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [handwritingCanvas, setHandwritingCanvas] = useState<HandwritingCanvas | null>(null)
+  const [mathSymbolCanvas, setMathSymbolCanvas] = useState<MathSymbolCanvas | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [recognitionResult, setRecognitionResult] = useState<RecognitionResult | null>(null)
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
@@ -31,8 +31,8 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
   useEffect(() => {
     if (!canvasRef.current) return
 
-    const canvas = new HandwritingCanvas(canvasRef.current)
-    setHandwritingCanvas(canvas)
+    const canvas = new MathSymbolCanvas(canvasRef.current)
+    setMathSymbolCanvas(canvas)
 
     return () => {
       canvas.clearCanvas()
@@ -40,13 +40,20 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
   }, [])
 
   const handleSubmit = async () => {
-    if (!handwritingCanvas) return
+    if (!mathSymbolCanvas) return
 
     setIsProcessing(true)
-    const drawing = handwritingCanvas.getDrawing()
+    const drawing = mathSymbolCanvas.getDrawing()
 
     try {
-      const result = await recognizeHandwriting(drawing)
+      const prediction = await recognizeMathSymbol(drawing)
+      const result: RecognitionResult = {
+        recognized_text: prediction.symbol,
+        confidence: prediction.confidence,
+        alternatives: [],
+        is_equation: false,
+        recognized_elements: [],
+      }
       setRecognitionResult(result)
       onRecognition(result)
     } catch (error) {
@@ -57,8 +64,8 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
   }
 
   const handleClear = () => {
-    if (handwritingCanvas) {
-      handwritingCanvas.clearCanvas()
+    if (mathSymbolCanvas) {
+      mathSymbolCanvas.clearCanvas()
       setRecognitionResult(null)
     }
   }
