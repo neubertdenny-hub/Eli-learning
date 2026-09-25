@@ -1,7 +1,16 @@
 "use client"
 
 import React, { useRef, useEffect, useState } from "react"
-import { HandwritingCanvas, recognizeHandwriting, RecognitionResult } from "@/lib/learning/handwriting-input"
+import { MathSymbolCanvas, recognizeMathSymbol, type SymbolPrediction } from "@/lib/learning/math-symbol-recognition"
+
+// Adapt SymbolPrediction to RecognitionResult interface
+interface RecognitionResult {
+  recognized_text: string
+  confidence: number
+  alternatives: string[]
+  is_equation: boolean
+  recognized_elements: Array<any>
+}
 
 export interface DrawingCanvasProps {
   onRecognition: (result: RecognitionResult) => void
@@ -15,7 +24,8 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
   const [handwritingCanvas, setHandwritingCanvas] = useState<HandwritingCanvas | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [recognitionResult, setRecognitionResult] = useState<RecognitionResult | null>(null)
-  const [useTyping, setUseTyping] = useState(false)
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+  const [useTyping, setUseTyping] = useState(isMobile) // Mobile: default to typing
   const [typedText, setTypedText] = useState("")
 
   useEffect(() => {
