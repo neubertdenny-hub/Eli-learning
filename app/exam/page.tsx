@@ -8,6 +8,7 @@ import { MaterialUploadSection } from "@/components/exam/MaterialUploadSection"
 import { TopicConfirmationDialog } from "@/components/exam/TopicConfirmationDialog"
 import { MiniCheckSessionRunner } from "@/components/exam/MiniCheckSessionRunner"
 import { PracticeExamSimulator } from "@/components/exam/PracticeExamSimulator"
+import { ExamResultsDisplay } from "@/components/exam/ExamResultsDisplay"
 import { getDaysUntilExam, formatDateGerman, EXAM_STATUS_LABELS } from "@/lib/exam/exam-manager"
 import type { Exam } from "@/lib/db/exam-schema"
 import type { AnalyzedTopic } from "@/lib/exam/material-analyzer"
@@ -38,6 +39,11 @@ export default function ExamPage() {
   const [currentMiniCheckSession, setCurrentMiniCheckSession] = useState<MiniCheckSession | null>(null)
   const [showPracticeExam, setShowPracticeExam] = useState(false)
   const [currentPracticeExam, setCurrentPracticeExam] = useState<PracticeExam | null>(null)
+
+  // Results
+  const [showResults, setShowResults] = useState(false)
+  const [lastResults, setLastResults] = useState<any>(null)
+  const [isReplanning, setIsReplanning] = useState(false)
   
   const activeExam = exams.find((e) => e.status !== "COMPLETED")
 
@@ -178,6 +184,57 @@ export default function ExamPage() {
       }
     } catch (error) {
       console.error("Failed to start mini-check:", error)
+    }
+  }
+
+  const handleAutoReplan = async (topicId: string, score: number) => {
+    if (!selectedExam || !learningPlan) return
+
+    try {
+      setIsReplanning(true)
+
+      // Check if re-plan is needed
+      const feedbackResponse = await fetch("/api/exam/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          examId: selectedExam.id,
+          type: "MINI_CHECK_RESULT",
+          topicId,
+          score,
+          currentPlanId: learningPlan.id,
+        }),
+      })
+
+      if (feedbackResponse.ok) {
+        const feedbackData = await feedbackResponse.json()
+
+        if (feedbackData.decision.shouldReplan) {
+          console.log("[Auto Re-plan] Triggered:", feedbackData.decision.reason)
+
+          // Generate new plan
+          const newPlanResponse = await fetch("/api/exam/plan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              examId: selectedExam.id,
+              topicPriorities: prioritizedTopics,
+              readinessReports: readinessReport?.criticalTopics || [],
+              daysUntilExam: getDaysUntilExam(selectedExam.examDate),
+            }),
+          })
+
+          if (newPlanResponse.ok) {
+            const newPlanData = await newPlanResponse.json()
+            setLearningPlan(newPlanData.plan)
+            console.log("[New Plan] Generated with", newPlanData.plan.dailyPlan.length, "days")
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Auto re-plan failed:", error)
+    } finally {
+      setIsReplanning(false)
     }
   }
 
@@ -362,7 +419,13 @@ export default function ExamPage() {
           onComplete={(result) => {
             console.log("[Mini-Check Complete]", result)
             setShowMiniCheck(false)
-            // TODO: Trigger re-planning if needed
+            setLastResults(result)
+            setShowResults(true)
+
+            // Auto re-planning if score changed significantly
+            if (result.score !== undefined) {
+              handleAutoReplan(currentMiniCheckSession.topicId, result.score)
+            }
           }}
           onCancel={() => setShowMiniCheck(false)}
         />
@@ -374,8 +437,23 @@ export default function ExamPage() {
           onComplete={(result) => {
             console.log("[Practice Exam Complete]", result)
             setShowPracticeExam(false)
+            setLastResults(result)
+            setShowResults(true)
           }}
           onCancel={() => setShowPracticeExam(false)}
+        />
+      )}
+
+      {showResults && lastResults && (
+        <ExamResultsDisplay
+          score={lastResults.score || 0}
+          pointsEarned={lastResults.points?.earned || 0}
+          pointsTotal={lastResults.points?.total || 100}
+          feedback={lastResults.feedback || ""}
+          onClose={() => {
+            setShowResults(false)
+            setLastResults(null)
+          }}
         />
       )}
 
