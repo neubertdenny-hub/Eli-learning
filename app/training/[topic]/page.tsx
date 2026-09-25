@@ -153,9 +153,24 @@ function TrainingContent() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // Load completed tasks on mount
+  // Load completed tasks on mount (from localStorage for persistence)
   React.useEffect(() => {
     const userId = "test-user"
+    try {
+      // Try localStorage first (persists across page reloads)
+      const localKey = `completed-tasks:${userId}:${topic}`
+      const stored = localStorage.getItem(localKey)
+      if (stored) {
+        const taskIds = JSON.parse(stored)
+        setCompletedTaskIds(taskIds)
+        console.log(`[Completed Tasks] Loaded ${taskIds.length} from localStorage`)
+        return
+      }
+    } catch (error) {
+      console.error("Failed to load from localStorage:", error)
+    }
+
+    // Fallback: Try API (for backward compatibility)
     const loadCompletedTasks = async () => {
       try {
         const response = await fetch(
@@ -166,7 +181,7 @@ function TrainingContent() {
           setCompletedTaskIds(data.completedTaskIds)
         }
       } catch (error) {
-        console.error("Failed to load completed tasks:", error)
+        console.error("Failed to load completed tasks from API:", error)
       }
     }
     loadCompletedTasks()
@@ -599,8 +614,19 @@ function TrainingContent() {
 
       setTimeout(() => {
         if (currentIdx < tasks.length - 1) {
-          // Update completed tasks list locally
-          setCompletedTaskIds([...completedTaskIds, currentTask.id])
+          // Update completed tasks list locally AND in localStorage
+          const newCompletedIds = [...completedTaskIds, currentTask.id]
+          setCompletedTaskIds(newCompletedIds)
+
+          // Persist to localStorage
+          try {
+            const userId = "test-user"
+            const localKey = `completed-tasks:${userId}:${topic}`
+            localStorage.setItem(localKey, JSON.stringify(newCompletedIds))
+            console.log(`[localStorage] Saved ${newCompletedIds.length} completed tasks`)
+          } catch (error) {
+            console.error("Failed to save to localStorage:", error)
+          }
 
           setCurrentIdx(currentIdx + 1)
           setUserAnswer("")
