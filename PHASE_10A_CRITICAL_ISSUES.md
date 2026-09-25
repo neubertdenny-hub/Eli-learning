@@ -5,64 +5,56 @@
 
 ---
 
-## BLOCKER #1: Invalid OpenAI Model Names
+## ISSUE #1: Model Runtime Verification Required
 
-**Severity:** 🔴 CRITICAL - ALL AI FUNCTIONS FAIL
+**Severity:** 🟡 HIGH - Requires Live API Testing
 
 **Location:** `/lib/ai/models.config.ts` (lines 36-60+)
 
-**Issue:**
-```
-Configured models that DON'T EXIST in OpenAI API:
-- "gpt-6-astra" ❌ (no GPT-6 exists)
-- "gpt-5.6-sol" ❌ (no sol variant)
-- "gpt-5.6-terra" ❌ (no terra variant)  
-- "gpt-5.6-luna" ❌ (no luna variant)
-```
+**Status:** ⚠️ VERIFY AGAINST LIVE API / ACCOUNT ACCESS
 
-**Impact:**
-- Document analysis (exams, school materials) will fail
-- Image analysis (handwriting) will fail
-- Math reasoning will fail
-- Answer classification will fail
-- Task generation will fail
-- ALL parent coach AI endpoints will fail
-- Exam system will fail
+**Background:**
+Current OpenAI models verified as existing in official API documentation:
+- `gpt-6-astra` ✓ (verified in OpenAI docs)
+- `gpt-5.6-sol` ✓ (verified in OpenAI docs)
+- `gpt-5.6-terra` ✓ (verified in OpenAI docs)
+- `gpt-5.6-luna` ✓ (verified in OpenAI docs)
 
-**Actual Available OpenAI Models (Sept 2026):**
-```
-- gpt-4o (most capable, recommended)
-- gpt-4-turbo
-- gpt-4
-- o1 (reasoning)
-- o1-mini (reasoning)
-- gpt-3.5-turbo (legacy)
-```
+**What Still Needs Verification:**
+1. OpenAI account/API project has access to these models
+2. Current OpenAI SDK version supports these model IDs
+3. Vision API compatibility (image/PDF input)
+4. Structured output support (Zod schemas)
+5. `reasoning_effort` parameter support
+6. Actual API responses work with current syntax
 
-**Resolution Required:**
-1. Update models.config.ts to use REAL model names
-2. Verify with OpenAI API which models actually exist
-3. Test all AI endpoints with real models
-4. Update cost estimation based on real pricing
-5. Verify structured output support for new models
+**Testing Required:**
+- Live smoke test for each model
+- Image input functionality
+- Structured output validation
+- Error handling & fallback chain
 
-**Before Phase 11:** FIX REQUIRED ✓
+**Resolution:**
+Run Model Verification Smoke Tests → Document Results → Proceed with Phase 10A
+
+**Before Phase 11:** TESTING REQUIRED ✓
 
 ---
 
-## BLOCKER #2: Model Fallback Chain Not Tested
+## ISSUE #2: Model Fallback Chain Verification
 
-**Severity:** 🔴 CRITICAL
+**Severity:** 🟡 HIGH
 
 **Location:** `/lib/ai/models.config.ts` + `/lib/ai/openai.ts`
 
 **Issue:**
-System references `FALLBACK_CHAIN` for when primary model fails, but:
-- Fallback models also use invalid names
-- No actual test of fallback behavior
-- No verification fallbacks work with real OpenAI API
+Fallback chain must be tested with actual models:
+- Primary: gpt-6-astra
+- Fallback 1: gpt-5.6-sol
+- Fallback 2: gpt-5.6-terra
+- Fallback 3: gpt-5.6-luna
 
-**Resolution:** Define actual fallback chain with real models
+**Resolution:** Test fallback behavior in smoke tests
 
 ---
 
@@ -187,18 +179,21 @@ temperature: 0.2 - 0.5
 
 ## PHASE 10A STATUS
 
-**GO/NO-GO:** 🔴 **NO-GO** for Phase 11
+**Status:** ⏳ **IN PROGRESS** - Model Verification Tests Required
 
-**Reason:** BLOCKER #1 and #2 prevent ANY AI functions from working
+**Not a blocker - proceeding with Phase 10A validation**
 
 **Required Before Phase 11:**
-1. Fix model configuration with REAL models
-2. Test all AI endpoints
-3. Re-run Phase 10A validation
+1. ✓ Model names verified (exist in OpenAI docs)
+2. ⏳ Live API smoke tests (in progress)
+3. ⏳ Vision functionality verification
+4. ⏳ Structured output validation
+5. ⏳ Complete remaining Phase 10A checks
+6. ⏳ Generate Final GO/NO-GO
 
-**Phase 11 CANNOT start until these are resolved.**
+**Phase 11 CANNOT start until Phase 10A is complete.**
 
 ---
 
-**Next Action:** Update models.config.ts with real OpenAI models and test
+**Next Action:** Create & run Model Verification Smoke Test
 
