@@ -521,8 +521,9 @@ function TrainingContent() {
         const reward = await rewardRes.json()
         console.log("[Reward Response]", reward)
 
-        if (reward.success) {
-          // UPDATE HEADER: Fetch current user rewards to refresh points in real-time
+        // ALWAYS fetch current user rewards regardless of reward success
+        // This ensures header updates even if processReward has issues
+        try {
           const userRewardsRes = await fetch(`/api/reward/user?userId=${userId}`)
           const userRewardsData = await userRewardsRes.json()
           console.log("[User Rewards Response]", userRewardsData)
@@ -541,6 +542,11 @@ function TrainingContent() {
           } else {
             console.error("[Error] User Rewards API failed:", userRewardsData)
           }
+        } catch (rewardsError) {
+          console.error("[Error] Failed to fetch user rewards:", rewardsError)
+        }
+
+        if (reward.success) {
 
           // Determine Eli Reaction
           let eliReaction: EliReaction
