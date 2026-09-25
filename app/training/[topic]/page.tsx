@@ -193,13 +193,31 @@ function TrainingContent() {
     loadUserRewards()
   }, [])
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const getCanvasCoordinates = (clientX: number, clientY: number) => {
+    const canvas = canvasRef.current
+    if (!canvas) return { x: 0, y: 0 }
+    const rect = canvas.getBoundingClientRect()
+    return {
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height),
+    }
+  }
+
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
 
+    let clientX: number, clientY: number
+    if ("touches" in e) {
+      clientX = e.touches[0].clientX
+      clientY = e.touches[0].clientY
+      e.preventDefault()
+    } else {
+      clientX = e.clientX
+      clientY = e.clientY
+    }
+
+    const { x, y } = getCanvasCoordinates(clientX, clientY)
     setStartPos({ x, y })
     setIsDrawing(true)
 
@@ -211,15 +229,24 @@ function TrainingContent() {
     }
   }
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing || drawTool !== "pen") return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+
+    let clientX: number, clientY: number
+    if ("touches" in e) {
+      clientX = e.touches[0].clientX
+      clientY = e.touches[0].clientY
+      e.preventDefault()
+    } else {
+      clientX = e.clientX
+      clientY = e.clientY
+    }
+
+    const { x, y } = getCanvasCoordinates(clientX, clientY)
 
     ctx.lineWidth = 2
     ctx.lineCap = "round"
@@ -229,15 +256,28 @@ function TrainingContent() {
     ctx.stroke()
   }
 
-  const endDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const endDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+
+    let clientX: number, clientY: number
+    if ("touches" in e) {
+      if (e.changedTouches.length === 0) {
+        setIsDrawing(false)
+        return
+      }
+      clientX = e.changedTouches[0].clientX
+      clientY = e.changedTouches[0].clientY
+      e.preventDefault()
+    } else {
+      clientX = e.clientX
+      clientY = e.clientY
+    }
+
+    const { x, y } = getCanvasCoordinates(clientX, clientY)
 
     ctx.lineWidth = 2
     ctx.strokeStyle = "#000000"
@@ -658,7 +698,10 @@ function TrainingContent() {
                     onMouseMove={draw}
                     onMouseUp={endDrawing}
                     onMouseLeave={endDrawing}
-                    className="w-full border-3 border-gray-400 rounded-lg bg-white cursor-crosshair shadow-md"
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={endDrawing}
+                    className="w-full border-3 border-gray-400 rounded-lg bg-white cursor-crosshair shadow-md touch-none"
                   />
                 </>
               )}
