@@ -1,41 +1,33 @@
 import { NextRequest, NextResponse } from "next/server"
 
-interface CompletedTask {
-  userId: string
-  topic: string
-  taskId: string
-  taskQuestion: string
-  completedAt: string
-}
-
-const completedTasks: CompletedTask[] = []
+// Fallback in-memory for local testing only
+const completedTasksMemory: Map<string, Set<string>> = new Map()
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { userId, topic, taskId, taskQuestion } = body
 
-    if (!userId || !topic || !taskId || !taskQuestion) {
+    if (!userId || !topic || !taskId) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       )
     }
 
-    const task: CompletedTask = {
-      userId,
-      topic,
-      taskId,
-      taskQuestion,
-      completedAt: new Date().toISOString(),
+    // Store in memory (fallback - ideally would use DB)
+    const key = `${userId}:${topic}`
+    if (!completedTasksMemory.has(key)) {
+      completedTasksMemory.set(key, new Set())
     }
+    completedTasksMemory.get(key)!.add(taskId)
 
-    completedTasks.push(task)
+    console.log(`[Completed Task] ${userId}/${topic}/${taskId}`)
 
     return NextResponse.json({
       success: true,
       message: "Task marked as completed",
-      task,
+      taskId,
     })
   } catch (error) {
     console.error("[Completed Tasks Error]", error)
@@ -59,14 +51,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const userCompletedTasks = completedTasks.filter(
-      (t) => t.userId === userId && t.topic === topic
-    )
+    const key = `${userId}:${topic}`
+    const completedIds = Array.from(completedTasksMemory.get(key) || new Set())
+
+    console.log(`[Get Completed Tasks] ${userId}/${topic}: ${completedIds.length} tasks`)
 
     return NextResponse.json({
       success: true,
-      completedTaskIds: userCompletedTasks.map((t) => t.taskId),
-      completedTasks: userCompletedTasks,
+      completedTaskIds: completedIds,
+      completedTasks: completedIds.map(id => ({ taskId: id })),
     })
   } catch (error) {
     console.error("[Get Completed Tasks Error]", error)
