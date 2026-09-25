@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useRef, useEffect, useState } from "react"
-import { MathSymbolCanvas, recognizeMathSymbol, type SymbolPrediction } from "@/lib/learning/math-symbol-recognition"
+import { MathSymbolCanvas, recognizeMathSymbol } from "@/lib/learning/math-symbol-recognition"
+import type { SymbolPrediction } from "@/lib/learning/math-symbol-recognition"
 
 // Adapt SymbolPrediction to RecognitionResult interface
 interface RecognitionResult {
