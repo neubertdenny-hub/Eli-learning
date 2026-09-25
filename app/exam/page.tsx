@@ -30,17 +30,69 @@ export default function ExamPage() {
     setShowConfirmDialog(true)
   }
 
-  const handleTopicsConfirmed = (confirmedTopics: AnalyzedTopic[]) => {
-    // TODO: Save confirmed topics to exam_topics table
-    console.log("[Topics Confirmed]", confirmedTopics)
-    setShowConfirmDialog(false)
-    setAnalyzedTopics([])
-    // Update exam status to PREPARING
-    if (selectedExam) {
+  const handleTopicsConfirmed = async (confirmedTopics: AnalyzedTopic[]) => {
+    if (!selectedExam) return
+
+    try {
+      setIsAnalyzing(true)
+
+      // 1. Save confirmed topics to exam_topics table
+      const topicsResponse = await fetch("/api/exam/topics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          examId: selectedExam.id,
+          topics: confirmedTopics.map((topic) => ({
+            topicId: topic.topicId,
+            subtopicId: topic.subtopicId,
+            sourceType: topic.sourceType,
+            confidence: topic.confidence,
+            priority: topic.priority || 5,
+          })),
+        }),
+      })
+
+      if (!topicsResponse.ok) {
+        throw new Error("Failed to save topics")
+      }
+
+      const topicsData = await topicsResponse.json()
+      console.log("[Topics Saved]", topicsData)
+
+      // 2. Update exam status to PREPARING
+      const statusResponse = await fetch("/api/exam/status", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          examId: selectedExam.id,
+          newStatus: "PREPARING",
+        }),
+      })
+
+      if (!statusResponse.ok) {
+        throw new Error("Failed to update exam status")
+      }
+
+      const statusData = await statusResponse.json()
+      console.log("[Status Updated]", statusData)
+
+      // 3. Update UI
+      setShowConfirmDialog(false)
+      setAnalyzedTopics([])
       setSelectedExam({
         ...selectedExam,
         status: "PREPARING",
       })
+      setExams(
+        exams.map((e) =>
+          e.id === selectedExam.id ? { ...e, status: "PREPARING" } : e
+        )
+      )
+    } catch (error) {
+      console.error("[Topics Confirmation Error]", error)
+      alert("❌ Fehler beim Speichern der Topics. Bitte versuche es erneut.")
+    } finally {
+      setIsAnalyzing(false)
     }
   }
 
