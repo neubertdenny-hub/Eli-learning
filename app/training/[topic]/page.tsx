@@ -886,9 +886,21 @@ function TrainingContent() {
             )}
 
             {feedback === "wrong" && (
-              <div className="bg-red-100 border-2 border-red-400 rounded-lg p-4 text-center">
-                <p className="text-lg font-bold text-red-700">❌ Versuche es nochmal!</p>
-                <p className="text-base text-red-600 mt-2">{getHelpfulTip(currentTask)}</p>
+              <div className="bg-red-50 border-3 border-red-400 rounded-lg p-6 text-center space-y-3">
+                <div className="text-5xl">❌</div>
+                <p className="text-2xl font-bold text-red-700">Nicht ganz richtig!</p>
+                <p className="text-base text-red-600">Schau dir die Zahlen nochmal an und versuche es erneut.</p>
+                <button
+                  onClick={() => {
+                    setShowTip(true)
+                    if (!usedHelp) {
+                      setUsedHelp(true)
+                    }
+                  }}
+                  className="mt-2 px-4 py-2 bg-yellow-300 hover:bg-yellow-400 text-gray-800 rounded-lg font-bold text-sm transition-colors inline-block"
+                >
+                  💡 Tipp anschauen
+                </button>
               </div>
             )}
 
