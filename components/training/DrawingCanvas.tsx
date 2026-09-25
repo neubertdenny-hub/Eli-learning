@@ -15,6 +15,8 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
   const [handwritingCanvas, setHandwritingCanvas] = useState<HandwritingCanvas | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [recognitionResult, setRecognitionResult] = useState<RecognitionResult | null>(null)
+  const [useTyping, setUseTyping] = useState(false)
+  const [typedText, setTypedText] = useState("")
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -72,19 +74,52 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
           </div>
         )}
 
-        {/* Canvas */}
-        <div className="border-3 border-blue-300 rounded-lg overflow-hidden bg-white flex-1 min-h-64 sm:min-h-96 relative">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full cursor-crosshair touch-none absolute inset-0"
-            style={{
-              display: "block",
-              touchAction: "none",
-              WebkitTouchCallout: "none",
-              WebkitUserSelect: "none",
-            }}
-          />
+        {/* Mode Toggle */}
+        <div className="flex gap-2 bg-gray-100 p-2 rounded-lg">
+          <button
+            onClick={() => setUseTyping(false)}
+            className={`flex-1 py-2 rounded font-bold transition-colors text-sm ${
+              !useTyping
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            ✍️ Handschrift
+          </button>
+          <button
+            onClick={() => setUseTyping(true)}
+            className={`flex-1 py-2 rounded font-bold transition-colors text-sm ${
+              useTyping
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            ⌨️ Tippen
+          </button>
         </div>
+
+        {/* Canvas or Typing Area */}
+        {!useTyping ? (
+          <div className="border-3 border-blue-300 rounded-lg overflow-hidden bg-white flex-1 min-h-64 sm:min-h-96 relative">
+            <canvas
+              ref={canvasRef}
+              className="w-full h-full cursor-crosshair touch-none absolute inset-0"
+              style={{
+                display: "block",
+                touchAction: "none",
+                WebkitTouchCallout: "none",
+                WebkitUserSelect: "none",
+              }}
+            />
+          </div>
+        ) : (
+          <textarea
+            value={typedText}
+            onChange={(e) => setTypedText(e.target.value)}
+            placeholder="Schreib deinen Rechenweg hier..."
+            className="w-full border-3 border-blue-300 rounded-lg p-4 flex-1 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        )}
 
         {/* Recognition Result */}
         {recognitionResult && (
@@ -125,7 +160,25 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
             {isProcessing ? "⏳ Erkenne..." : recognitionResult ? "✅ OK" : "📝 Schreib & Erkenne"}
           </button>
 
-          {recognitionResult && (
+          {useTyping && typedText ? (
+            <button
+              onClick={() => {
+                onRecognition({
+                  recognized_text: typedText,
+                  confidence: 1.0,
+                  alternatives: [],
+                  is_equation: false,
+                  recognized_elements: [],
+                })
+                onClose()
+                onSubmit?.()
+              }}
+              disabled={isProcessing}
+              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors text-sm sm:text-base"
+            >
+              ✅ Übernehmen & Abschließen
+            </button>
+          ) : recognitionResult && !useTyping ? (
             <button
               onClick={() => {
                 onRecognition(recognitionResult)
@@ -137,7 +190,7 @@ export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }
             >
               ✅ Übernehmen & Abschließen
             </button>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
