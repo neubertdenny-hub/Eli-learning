@@ -89,14 +89,14 @@ function generateMiniCheckQuestions(
       id: `q-${topicId}-${i}`,
       topicId,
       topicName,
-      questionText: template.questionText || "Frage",
-      questionType: template.questionType || "multiple-choice",
+      questionText: template.questionText ?? "Frage",
+      questionType: template.questionType ?? "multiple-choice",
       options: template.options,
-      correctAnswer: template.correctAnswer || "",
-      explanation: template.explanation || "",
-      difficulty: template.difficulty || "medium",
-      estimatedSeconds: template.estimatedSeconds || 30,
-    })
+      correctAnswer: template.correctAnswer ?? "",
+      explanation: template.explanation ?? "",
+      difficulty: template.difficulty ?? "medium",
+      estimatedSeconds: template.estimatedSeconds ?? 30,
+    } as MiniCheckQuestion)
   }
 
   return questions
@@ -176,7 +176,7 @@ function getBruchfragen(difficulty: "easy" | "medium" | "hard"): Partial<MiniChe
       questionType: "multiple-choice",
       options: ["6/12", "1/2", "5/7", "6/7"],
       correctAnswer: "1/2",
-      explanation: "Zähler: 2×3=6. Nenner: 3×4=12. Kürzen: 6/12 = 1/2",
+      explanation: "Zaehler: 2×3=6. Nenner: 3×4=12. Kuerzen: 6/12 = 1/2",
       difficulty: "medium",
       estimatedSeconds: 45,
     },
@@ -237,7 +237,7 @@ function getProzentFragen(difficulty: "easy" | "medium" | "hard"): Partial<MiniC
 function getGenericFragen(topicName: string, difficulty: "easy" | "medium" | "hard"): Partial<MiniCheckQuestion>[] {
   return [
     {
-      questionText: `Erkläre das Wichtigste bei ${topicName} in einem Satz.`,
+      questionText: `Erklaere das Wichtigste bei ${topicName} in einem Satz.`,
       questionType: "short-answer",
       correctAnswer: "Student-generierte Antwort",
       explanation: "Dies ist eine offene Frage - deine Antwort wird manuell bewertet.",
@@ -276,24 +276,24 @@ export function generateTransferTask(
 
 function generateTransferTaskText(topics: string[], difficulty: "medium" | "hard"): string {
   if (topics.includes("Bruchrechnung") && topics.includes("Prozentrechnung")) {
-    return `Eine Klasse hat 20 Schüler. 3/5 der Schüler bekamen eine "1", 2/5 bekamen eine "2".
-    Wie viel Prozent der Klasse haben eine "1"?`
+    return `Eine Klasse hat 20 Schueler. 3/5 der Schueler bekamen eine 1, 2/5 bekamen eine 2.
+    Wie viel Prozent der Klasse haben eine 1?`
   }
 
   if (topics.includes("Negative Zahlen") && topics.includes("Multiplikation")) {
-    return `In einer Stadt wird es täglich um 2°C kälter. Heute sind es 5°C.
+    return `In einer Stadt wird es taeglich um 2 Grad kälter. Heute sind es 5 Grad.
     Wie kalt ist es in 3 Tagen?`
   }
 
-  return `Kombiniere deine Fähigkeiten bei ${topics[0]} und ${topics[1] || "weiteren Topics"} in dieser Aufgabe.`
+  return `Kombiniere deine Faehigkeiten bei ${topics[0]} und ${topics[1] || "weiteren Topics"} in dieser Aufgabe.`
 }
 
 function generateTransferSteps(topics: string[], difficulty: "medium" | "hard"): string[] {
   return [
     `1. Identifiziere welche Techniken aus ${topics[0]} du brauchst`,
     ...(topics[1] ? [`2. Nutze auch Konzepte aus ${topics[1]}`] : []),
-    `${topics[1] ? "3" : "2"}. Löse Schritt für Schritt`,
-    `${topics[1] ? "4" : "3"}. Überprüfe dein Ergebnis`,
+    `${topics[1] ? "3" : "2"}. Löse Schritt fuer Schritt`,
+    `${topics[1] ? "4" : "3"}. Ueberprüfe dein Ergebnis`,
   ]
 }
 
@@ -320,7 +320,7 @@ export function scoreMiniCheck(session: MiniCheckSession): MiniCheckSession {
 
   for (const question of session.questions) {
     const userAnswer = session.userAnswers[question.id]
-    const correct = !!(userAnswer && normalizeAnswer(userAnswer) === normalizeAnswer(question.correctAnswer))
+    const correct: boolean = !!(userAnswer && normalizeAnswer(userAnswer) === normalizeAnswer(question.correctAnswer))
 
     isCorrect[question.id] = correct
     if (correct) correctCount++

@@ -110,11 +110,13 @@ function TrainingContent() {
   const tasks = TOPIC_TASKS[topic] || TOPIC_TASKS["bruchrechnung"]
   const topicName = TOPIC_NAMES[topic] || "Training"
   const isGeometry = topic === "geometrie"
+  const [isMobile, setIsMobile] = useState(false)
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [currentIdx, setCurrentIdx] = useState(0)
   const [userAnswer, setUserAnswer] = useState("")
+  const [rechenwegText, setRechenwegText] = useState("")
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null)
   const [completed, setCompleted] = useState(0)
   const [drawTool, setDrawTool] = useState<"pen" | "rectangle" | "circle" | "line" | "triangle">("pen")
@@ -137,6 +139,14 @@ function TrainingContent() {
   const [userRewards, setUserRewards] = useState({ xp: 0, coins: 0, level: 1 })
   const canvasImageRef = React.useRef<ImageData | null>(null)
 
+  // Detect mobile on mount
+  React.useEffect(() => {
+    setIsMobile(window.innerWidth < 768)
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
   React.useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
@@ -147,6 +157,7 @@ function TrainingContent() {
         canvasImageRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height)
       }
     }
+    setRechenwegText("")
   }, [currentIdx])
 
   React.useEffect(() => {
@@ -461,6 +472,7 @@ function TrainingContent() {
         if (currentIdx < tasks.length - 1) {
           setCurrentIdx(currentIdx + 1)
           setUserAnswer("")
+          setRechenwegText("")
           setFeedback(null)
           setShowTip(false)
           setUsedHelp(false)
@@ -570,64 +582,86 @@ function TrainingContent() {
               )}
             </div>
 
-            {/* Whiteboard Canvas - LARGE */}
+            {/* Rechenweg - Mobile Textarea / Desktop Canvas */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-base font-bold text-gray-700">📝 Rechnenweg:</label>
-                <button
-                  onClick={clearCanvas}
-                  className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-bold transition-colors"
-                >
-                  🗑️ Löschen
-                </button>
+                {!isMobile && (
+                  <button
+                    onClick={clearCanvas}
+                    className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-bold transition-colors"
+                  >
+                    🗑️ Löschen
+                  </button>
+                )}
               </div>
 
-              {/* Geometry Tools */}
-              {isGeometry && (
-                <div className="flex gap-2 flex-wrap justify-start">
+              {/* Mobile: Textarea für Rechenweg */}
+              {isMobile ? (
+                <div className="space-y-2">
+                  <textarea
+                    value={rechenwegText}
+                    onChange={(e) => setRechenwegText(e.target.value)}
+                    placeholder="Schreib deinen Rechenweg hier auf..."
+                    className="w-full border-3 border-gray-300 rounded-lg p-4 h-32 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-300 resize-none text-base"
+                  />
                   <button
-                    onClick={() => setDrawTool("pen")}
-                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "pen" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                    onClick={() => setRechenwegText("")}
+                    className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-bold transition-colors w-full"
                   >
-                    ✏️ Stift
-                  </button>
-                  <button
-                    onClick={() => setDrawTool("rectangle")}
-                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "rectangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
-                  >
-                    ▭ Rechteck
-                  </button>
-                  <button
-                    onClick={() => setDrawTool("circle")}
-                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "circle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
-                  >
-                    ◯ Kreis
-                  </button>
-                  <button
-                    onClick={() => setDrawTool("line")}
-                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "line" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
-                  >
-                    / Linie
-                  </button>
-                  <button
-                    onClick={() => setDrawTool("triangle")}
-                    className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "triangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
-                  >
-                    △ Dreieck
+                    🗑️ Löschen
                   </button>
                 </div>
-              )}
+              ) : (
+                <>
+                  {/* Desktop: Geometry Tools */}
+                  {isGeometry && (
+                    <div className="flex gap-2 flex-wrap justify-start">
+                      <button
+                        onClick={() => setDrawTool("pen")}
+                        className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "pen" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                      >
+                        ✏️ Stift
+                      </button>
+                      <button
+                        onClick={() => setDrawTool("rectangle")}
+                        className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "rectangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                      >
+                        ▭ Rechteck
+                      </button>
+                      <button
+                        onClick={() => setDrawTool("circle")}
+                        className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "circle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                      >
+                        ◯ Kreis
+                      </button>
+                      <button
+                        onClick={() => setDrawTool("line")}
+                        className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "line" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                      >
+                        / Linie
+                      </button>
+                      <button
+                        onClick={() => setDrawTool("triangle")}
+                        className={`px-4 py-2 text-sm rounded font-bold transition-colors ${drawTool === "triangle" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                      >
+                        △ Dreieck
+                      </button>
+                    </div>
+                  )}
 
-              <canvas
-                ref={canvasRef}
-                width={800}
-                height={300}
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={endDrawing}
-                onMouseLeave={endDrawing}
-                className="w-full border-3 border-gray-400 rounded-lg bg-white cursor-crosshair shadow-md"
-              />
+                  <canvas
+                    ref={canvasRef}
+                    width={800}
+                    height={300}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={endDrawing}
+                    onMouseLeave={endDrawing}
+                    className="w-full border-3 border-gray-400 rounded-lg bg-white cursor-crosshair shadow-md"
+                  />
+                </>
+              )}
             </div>
 
             {/* Input - Prominent */}
