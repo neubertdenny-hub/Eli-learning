@@ -553,24 +553,17 @@ function TrainingContent() {
         console.log("[Reward Response]", reward)
 
         // IMMEDIATELY update points in localStorage (most reliable)
-        // This ensures header updates instantly, independent of API/DB
+        // DIRECT POINTS UPDATE - hardcode XP values
         try {
-          if (reward.xp || reward.coins) {
-            // Calculate new totals based on reward
-            const newXp = userRewards.xp + (reward.xp || 0)
-            const newCoins = userRewards.coins + (reward.coins || 0)
-            const newLevel = Math.floor(newXp / 100) + 1 // Simple level calc
-
-            const newRewards = {
-              xp: newXp,
-              coins: newCoins,
-              level: newLevel,
-            }
-
-            setUserRewards(newRewards)
-            localStorage.setItem(`user-rewards:${userId}`, JSON.stringify(newRewards))
-            console.log("[localStorage] Updated rewards:", newRewards)
-          }
+          const xpGain = 10
+          const coinsGain = 1
+          const newXp = (userRewards.xp || 0) + xpGain
+          const newCoins = (userRewards.coins || 0) + coinsGain
+          const newLevel = Math.floor(newXp / 100) + 1
+          const newRewards = { xp: newXp, coins: newCoins, level: newLevel }
+          setUserRewards(newRewards)
+          localStorage.setItem(`user-rewards:${userId}`, JSON.stringify(newRewards))
+          console.log("[Points FIXED] +10 XP +1 Coin →", newRewards)
         } catch (error) {
           console.error("[Error] Failed to update points:", error)
         }
