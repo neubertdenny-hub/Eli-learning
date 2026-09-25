@@ -334,6 +334,75 @@ export const dailyChallengeProgress = sqliteTable("daily_challenge_progress", {
     .notNull(),
 })
 
+// Phase 8: Adaptive Intelligence
+export const learningStrategyStats = sqliteTable("learning_strategy_stats", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  strategy: text("strategy").notNull(), // CONCRETE_EXAMPLE, SIMPLE_TEXT, etc.
+  topicId: text("topic_id"), // nullable - global or topic-specific
+  foundationId: text("foundation_id"), // nullable
+  errorType: text("error_type"), // nullable
+  usageCount: integer("usage_count").default(0),
+  immediateSuccessCount: integer("immediate_success_count").default(0),
+  delayedSuccessCount: integer("delayed_success_count").default(0),
+  transferSuccessCount: integer("transfer_success_count").default(0),
+  effectiveness: real("effectiveness").default(0), // 0-1
+  confidence: real("confidence").default(0), // 0-1
+  lastUsedAt: text("last_used_at"),
+  updatedAt: text("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+export const adaptiveDecisions = sqliteTable("adaptive_decisions", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  sessionId: text("session_id"),
+  taskId: text("task_id"),
+  decisionType: text("decision_type").notNull(), // HELP_STRATEGY, DIFFICULTY, REVIEW, etc.
+  selectedStrategy: text("selected_strategy"), // strategy name or help level
+  selectedHelpLevel: integer("selected_help_level"), // 0-5
+  previousDifficulty: integer("previous_difficulty"),
+  newDifficulty: integer("new_difficulty"),
+  confidence: real("confidence").default(0),
+  reasonCodes: text("reason_codes"), // JSON array of strings
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+export const learningBaselines = sqliteTable("learning_baselines", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  baselineStart: text("baseline_start").notNull(),
+  baselineEnd: text("baseline_end").notNull(),
+  metrics: text("metrics").notNull(), // JSON object with KPI values
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
+export const learningEffectivenessSnapshots = sqliteTable("learning_effectiveness_snapshots", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  periodStart: text("period_start").notNull(),
+  periodEnd: text("period_end").notNull(),
+  periodDays: integer("period_days").notNull(), // 7, 21, etc.
+  metrics: text("metrics").notNull(), // JSON with KPIs
+  comparisonToPrevious: text("comparison_to_previous"), // JSON with changes
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+})
+
 export type User = typeof users.$inferSelect
 export type SkillMastery = typeof skillMastery.$inferSelect
 export type LearningMission = typeof learningMissions.$inferSelect
@@ -351,3 +420,7 @@ export type CosmeticItem = typeof cosmeticItems.$inferSelect
 export type UserCosmetic = typeof userCosmetics.$inferSelect
 export type UserEquippedCosmetic = typeof userEquippedCosmetics.$inferSelect
 export type DailyChallengeProgress = typeof dailyChallengeProgress.$inferSelect
+export type LearningStrategyStats = typeof learningStrategyStats.$inferSelect
+export type AdaptiveDecision = typeof adaptiveDecisions.$inferSelect
+export type LearningBaseline = typeof learningBaselines.$inferSelect
+export type LearningEffectivenessSnapshot = typeof learningEffectivenessSnapshots.$inferSelect
