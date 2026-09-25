@@ -5,6 +5,7 @@
 
 import { getDatabase } from "@/lib/db/connection"
 import { schoolTopicSignals } from "@/lib/db/schema"
+import { eq } from "drizzle-orm"
 
 export interface WeeklyGoal {
   id: string
@@ -47,7 +48,7 @@ export async function generateWeeklyGoals(
   const schoolTopics = await db
     .select()
     .from(schoolTopicSignals)
-    .where((t) => t.userId === userId)
+    .where(eq(schoolTopicSignals.userId, userId))
 
   const now = new Date()
   const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
