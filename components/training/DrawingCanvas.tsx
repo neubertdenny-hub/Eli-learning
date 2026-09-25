@@ -6,10 +6,11 @@ import { HandwritingCanvas, recognizeHandwriting, RecognitionResult } from "@/li
 export interface DrawingCanvasProps {
   onRecognition: (result: RecognitionResult) => void
   onClose: () => void
+  onSubmit?: () => void
   taskQuestion?: string
 }
 
-export function DrawingCanvas({ onRecognition, onClose, taskQuestion }: DrawingCanvasProps) {
+export function DrawingCanvas({ onRecognition, onClose, onSubmit, taskQuestion }: DrawingCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [handwritingCanvas, setHandwritingCanvas] = useState<HandwritingCanvas | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -109,7 +110,7 @@ export function DrawingCanvas({ onRecognition, onClose, taskQuestion }: DrawingC
         )}
 
         {/* Buttons */}
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={handleClear}
             className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors text-sm sm:text-base"
@@ -123,6 +124,20 @@ export function DrawingCanvas({ onRecognition, onClose, taskQuestion }: DrawingC
           >
             {isProcessing ? "⏳ Erkenne..." : recognitionResult ? "✅ OK" : "📝 Schreib & Erkenne"}
           </button>
+
+          {recognitionResult && (
+            <button
+              onClick={() => {
+                onRecognition(recognitionResult)
+                onClose()
+                onSubmit?.()
+              }}
+              disabled={isProcessing}
+              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors text-sm sm:text-base"
+            >
+              ✅ Übernehmen & Abschließen
+            </button>
+          )}
         </div>
       </div>
     </div>

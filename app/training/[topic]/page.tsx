@@ -856,6 +856,7 @@ function TrainingContent() {
           taskQuestion={currentTask.question}
           onRecognition={handleHandwritingRecognition}
           onClose={() => setShowHandwriting(false)}
+          onSubmit={handleSubmit}
         />
       )}
 
