@@ -153,7 +153,7 @@ function TrainingContent() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // Load completed tasks and filter available tasks + generate new ones
+  // Load completed tasks on mount
   React.useEffect(() => {
     const userId = "test-user"
     const loadCompletedTasks = async () => {
@@ -164,36 +164,32 @@ function TrainingContent() {
         const data = await response.json()
         if (data.success) {
           setCompletedTaskIds(data.completedTaskIds)
-          // Filter: Show only NEW tasks (not already completed)
-          let availableTasks = allTasks.filter(
-            (t) => !data.completedTaskIds.includes(t.id)
-          )
-
-          // GENERATE NEW TASKS if not enough available
-          if (availableTasks.length < 3) {
-            const newCount = 6 - availableTasks.length
-            for (let i = 0; i < newCount; i++) {
-              availableTasks.push(generateNewTask(topic))
-            }
-          }
-
-          setTasks(availableTasks)
         }
       } catch (error) {
         console.error("Failed to load completed tasks:", error)
-        // Fallback: Generate new tasks
-        let fallbackTasks = allTasks
-        if (allTasks.length < 3) {
-          const newCount = 6 - allTasks.length
-          for (let i = 0; i < newCount; i++) {
-            fallbackTasks = [...fallbackTasks, generateNewTask(topic)]
-          }
-        }
-        setTasks(fallbackTasks)
       }
     }
     loadCompletedTasks()
-  }, [topic, allTasks])
+  }, [topic])
+
+  // Filter tasks whenever completed tasks change
+  React.useEffect(() => {
+    // Filter: Show only NEW tasks (not already completed)
+    let availableTasks = allTasks.filter(
+      (t) => !completedTaskIds.includes(t.id)
+    )
+
+    // GENERATE NEW TASKS if not enough available
+    if (availableTasks.length < 3) {
+      const newCount = 6 - availableTasks.length
+      for (let i = 0; i < newCount; i++) {
+        availableTasks.push(generateNewTask(topic))
+      }
+    }
+
+    setTasks(availableTasks)
+    // Don't reset currentIdx - let it continue naturally
+  }, [completedTaskIds, allTasks, topic])
 
   React.useEffect(() => {
     const canvas = canvasRef.current
@@ -524,12 +520,16 @@ function TrainingContent() {
         })
         const reward = await rewardRes.json()
         if (reward.success) {
-          // UPDATE HEADER: Refresh points in real-time
-          setUserRewards({
-            xp: reward.totalXp,
-            coins: reward.totalCoins,
-            level: reward.currentLevel,
-          })
+          // UPDATE HEADER: Fetch current user rewards to refresh points in real-time
+          const userRewardsRes = await fetch(`/api/reward/user?userId=${userId}`)
+          const userRewardsData = await userRewardsRes.json()
+          if (userRewardsData.success) {
+            setUserRewards({
+              xp: userRewardsData.totalXp,
+              coins: userRewardsData.totalCoins,
+              level: userRewardsData.currentLevel,
+            })
+          }
 
           // Determine Eli Reaction
           let eliReaction: EliReaction
@@ -582,6 +582,9 @@ function TrainingContent() {
 
       setTimeout(() => {
         if (currentIdx < tasks.length - 1) {
+          // Update completed tasks list locally
+          setCompletedTaskIds([...completedTaskIds, currentTask.id])
+
           setCurrentIdx(currentIdx + 1)
           setUserAnswer("")
           setRechenwegText("")
