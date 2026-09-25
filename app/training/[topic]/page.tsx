@@ -853,6 +853,7 @@ function TrainingContent() {
       {/* Handwriting Canvas */}
       {showHandwriting && (
         <DrawingCanvas
+          taskQuestion={currentTask.question}
           onRecognition={handleHandwritingRecognition}
           onClose={() => setShowHandwriting(false)}
         />
