@@ -12,7 +12,7 @@ BEFORE ANY CODE CHANGES:
 - [ ] Rollback procedure documented
 - [ ] Test restore successful
 - [ ] Git baseline tagged (phase-11a-baseline)
-- [ ] Latest commit: e2cf549
+- [ ] Latest commit: bf32bbb (Rationale Zahlen expanded)
 
 ---
 
