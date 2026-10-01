@@ -135,7 +135,7 @@ function generateCompareNegatives() {
     taskData: {
       hint1: `BEOBACHTE: Beide sind NEGATIV (Minus). Das ist der Knackpunkt! \n${pair.n1} und ${pair.n2} - Welche ist weiter weg von Null?`,
       hint2: `REGEL - MEMORIZE DIES: Bei negativen Zahlen gilt UMGEKEHRT!\n-50 ist KLEINER als -10, weil |-50| > |-10|!\nJe GRÖSSER der Abstand zu Null, desto KLEINER die negative Zahl!`,
-      hint3: `LÖSUNG: ${pair.smaller} ist kleiner als ${pair.n1 === pair.smaller ? pair.n2 : pair.n1}. ${Math.abs(pair.smaller)} > ${Math.abs(pair.n1 === pair.smaller ? pair.n2 : pair.n1)}, also ist ${pair.smaller} weiter weg = kleiner!`,
+      hint3: `LÖSUNG: ${pair.smaller} ist die kleinere Zahl. Der Abstand zu Null ist größer, deshalb ist es kleiner!`,
     },
   }
 }
