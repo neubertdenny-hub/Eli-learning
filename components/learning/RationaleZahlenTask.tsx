@@ -78,8 +78,8 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
           </div>
         )}
 
-        {/* Thermometer für andere Task-Typen */}
-        {task.taskType === "READ_THERMOMETER" && task.taskData?.thermometer && (
+        {/* Thermometer - ZEIGE ES! */}
+        {task.taskType === "READ_THERMOMETER" && task.taskData?.thermometerMark !== undefined && (
           <div className="flex justify-center py-4">
             <ThermometerDisplay temp={task.taskData.thermometerMark} />
           </div>
