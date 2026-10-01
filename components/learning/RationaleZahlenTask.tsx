@@ -140,21 +140,49 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
   )
 }
 
-// Thermometer Visualisierung
+// Thermometer mit Skala
 function ThermometerDisplay({ temp }: { temp: number }) {
-  const scale = (temp + 100) / 2 // Skalierung von -100 bis 100 auf 0 bis 100
+  const minTemp = -20, maxTemp = 30, range = maxTemp - minTemp
+  const fillPercent = ((temp - minTemp) / range) * 100
+
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="w-12 h-48 border-2 border-gray-800 rounded-full relative bg-gradient-to-t from-red-200 to-blue-200">
-        <div
-          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-red-400 rounded-full transition-all"
-          style={{ height: `${scale}%` }}
-        />
-        <span className="absolute -right-12 top-1/2 transform -translate-y-1/2 font-bold text-gray-800">
-          {temp}°C
-        </span>
+    <div className="flex items-end gap-8">
+      {/* Skala mit Zahlen */}
+      <div className="flex flex-col justify-between h-64 text-xs font-bold text-gray-700">
+        {[30, 20, 10, 0, -10, -20].map((n) => (
+          <div key={n}>{n}°</div>
+        ))}
       </div>
-      <p className="text-sm text-gray-600">Liest die Temperatur ab!</p>
+
+      {/* Thermometer */}
+      <div className="flex flex-col items-center gap-2">
+        <svg width="60" height="280" viewBox="0 0 60 280" className="border-2 border-gray-800 rounded-2xl bg-gradient-to-b from-blue-50 to-red-50">
+          {/* Skala-Markierungen */}
+          {[30, 20, 10, 0, -10, -20].map((n) => {
+            const y = 20 + ((30 - n) / range) * 240
+            return (
+              <g key={`mark-${n}`}>
+                <line x1="15" y1={y} x2="35" y2={y} stroke="#666" strokeWidth="2" />
+              </g>
+            )
+          })}
+
+          {/* Flüssigkeit (gefüllt bis temp) */}
+          <rect
+            x="18"
+            y={20 + (1 - fillPercent / 100) * 240}
+            width="24"
+            height={fillPercent * 2.4}
+            fill={temp > 15 ? "#ef4444" : temp > 0 ? "#f97316" : "#3b82f6"}
+            rx="3"
+          />
+        </svg>
+
+        <div className="text-center">
+          <p className="text-xl font-bold text-gray-900">{temp}°C</p>
+          <p className="text-xs text-gray-600">Liest ab!</p>
+        </div>
+      </div>
     </div>
   )
 }
