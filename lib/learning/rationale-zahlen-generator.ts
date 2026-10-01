@@ -8,11 +8,13 @@ import { RATIONALE_ZAHLEN_CONTENT } from "./rationale-zahlen"
 export function generateRationaleZahlenTasks(difficulty: number, count: number = 5) {
   const tasks = []
   const taskTypes = [
+    "PLACE_ON_NUMBER_LINE",  // Zahlenstrahl first (neu!)
     "COMPARE_TEMPERATURES",
-    "ORDER_TEMPERATURES",
+    "PLACE_ON_NUMBER_LINE",  // 2x Zahlenstrahl
     "TEMPERATURE_DIFFERENCE",
     "COMPARE_NEGATIVES",
-    "PLACE_ON_NUMBER_LINE",
+    "PLACE_ON_NUMBER_LINE",  // 3x Zahlenstrahl
+    "ORDER_TEMPERATURES",
   ]
 
   for (let i = 0; i < count; i++) {

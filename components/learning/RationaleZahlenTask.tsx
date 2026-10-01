@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import { InteractiveNumberLine } from "./InteractiveNumberLine"
 
 interface RationaleZahlenTaskProps {
   task: any
@@ -49,16 +50,29 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
         <h2 className="text-2xl font-bold text-gray-900">{task.title}</h2>
         <p className="text-lg text-gray-700">{task.problem_statement}</p>
 
-        {/* Visuelle Hilfen für spezielle Task-Typen */}
-        {task.taskType === "READ_THERMOMETER" && task.taskData?.thermometer && (
-          <div className="flex justify-center py-4">
-            <ThermometerDisplay temp={task.taskData.thermometerMark} />
+        {/* Interaktive Zahlenstrahl-Aufgaben */}
+        {(task.taskType === "PLACE_ON_NUMBER_LINE" ||
+          task.taskType === "ORDER_TEMPERATURES") &&
+         task.taskData?.range && (
+          <div className="py-4">
+            <InteractiveNumberLine
+              range={task.taskData.range}
+              targetValue={task.taskData.value || parseInt(task.solution)}
+              title={task.title}
+              problem={task.problem_statement}
+              onAnswer={(value, correct) => {
+                if (correct) {
+                  onSubmit(value.toString(), helpLevel)
+                }
+              }}
+            />
           </div>
         )}
 
-        {task.taskType === "PLACE_ON_NUMBER_LINE" && task.taskData?.range && (
+        {/* Thermometer für andere Task-Typen */}
+        {task.taskType === "READ_THERMOMETER" && task.taskData?.thermometer && (
           <div className="flex justify-center py-4">
-            <NumberLineDisplay range={task.taskData.range} highlightValue={task.taskData.value} />
+            <ThermometerDisplay temp={task.taskData.thermometerMark} />
           </div>
         )}
       </div>
