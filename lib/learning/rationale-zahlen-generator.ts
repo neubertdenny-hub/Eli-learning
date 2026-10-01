@@ -1,6 +1,6 @@
 /**
- * Task-Generator für Rationale Zahlen
- * Erzeugt echte Aufgaben zum Rechnen mit Tipps
+ * Task-Generator für Rationale Zahlen - BUCH-NIVEAU
+ * Echte Nachhilfe-Lehrer Tipps + Realschul-Aufgaben
  */
 
 import { RATIONALE_ZAHLEN_CONTENT } from "./rationale-zahlen"
@@ -8,47 +8,26 @@ import { RATIONALE_ZAHLEN_CONTENT } from "./rationale-zahlen"
 export function generateRationaleZahlenTasks(difficulty: number, count: number = 5) {
   const tasks = []
   const taskTypes = [
-    "PLACE_ON_NUMBER_LINE",  // Zahlenstrahl first (neu!)
-    "COMPARE_TEMPERATURES",
-    "PLACE_ON_NUMBER_LINE",  // 2x Zahlenstrahl
-    "TEMPERATURE_DIFFERENCE",
-    "COMPARE_NEGATIVES",
-    "PLACE_ON_NUMBER_LINE",  // 3x Zahlenstrahl
-    "ORDER_TEMPERATURES",
+    "READ_THERMOMETER", "COMPARE_TEMPERATURES", "PLACE_ON_NUMBER_LINE",
+    "TEMPERATURE_DIFFERENCE", "COMPARE_NEGATIVES", "ORDER_TEMPERATURES",
   ]
-
   for (let i = 0; i < count; i++) {
-    const typeIndex = i % taskTypes.length
-    const taskType = taskTypes[typeIndex]
+    const taskType = taskTypes[i % taskTypes.length]
     const task = generateTask(taskType, difficulty)
     if (task) tasks.push(task)
   }
-
   return tasks
 }
 
 function generateTask(taskType: string, difficulty: number) {
   switch (taskType) {
-    case "READ_THERMOMETER":
-      return generateReadThermometer()
-
-    case "COMPARE_TEMPERATURES":
-      return generateCompareTempTask()
-
-    case "ORDER_TEMPERATURES":
-      return generateOrderTask()
-
-    case "TEMPERATURE_DIFFERENCE":
-      return generateDifferenceTask()
-
-    case "COMPARE_NEGATIVES":
-      return generateCompareNegatives()
-
-    case "PLACE_ON_NUMBER_LINE":
-      return generateNumberLineTask()
-
-    default:
-      return null
+    case "READ_THERMOMETER": return generateReadThermometer()
+    case "COMPARE_TEMPERATURES": return generateCompareTempTask()
+    case "ORDER_TEMPERATURES": return generateOrderTask()
+    case "TEMPERATURE_DIFFERENCE": return generateDifferenceTask()
+    case "COMPARE_NEGATIVES": return generateCompareNegatives()
+    case "PLACE_ON_NUMBER_LINE": return generateNumberLineTask()
+    default: return null
   }
 }
 
@@ -58,7 +37,7 @@ function generateReadThermometer() {
   return {
     id: `task-thermo-${Math.random()}`,
     title: "📖 Aufgabe: Thermometer ablesen",
-    problem_statement: `Schaue auf das Thermometer. Die rote Flüssigkeit zeigt auf eine Markierung. Welche Temperatur zeigt das Thermometer an?\n\n(Denk daran: Über 0 = warm/Plus. Unter 0 = kalt/Minus)`,
+    problem_statement: `Schaue auf das Thermometer. Die rote Flüssigkeit zeigt auf eine Markierung. Welche Temperatur zeigt das Thermometer an?`,
     taskType: "READ_THERMOMETER",
     difficulty_level: 1,
     category: "conceptual",
@@ -74,120 +53,89 @@ function generateReadThermometer() {
 
 function generateCompareTempTask() {
   const pairs = [
-    { t1: 6, t2: -7, colder: "-7", warmer: 6 },
-    { t1: -9, t2: -15, colder: "-15", warmer: -9 },
-    { t1: 12, t2: 5, colder: "5", warmer: 12 },
-    { t1: -2, t2: 3, colder: "-2", warmer: 3 },
+    { t1: 6, t2: -7, colder: "-7", warmer: 6, rule: "negativ" },
+    { t1: -9, t2: -15, colder: "-15", warmer: -9, rule: "betrag" },
+    { t1: 12, t2: 5, colder: "5", warmer: 12, rule: "positiv" },
+    { t1: -2, t2: 3, colder: "-2", warmer: 3, rule: "negativ" },
   ]
   const pair = pairs[Math.floor(Math.random() * pairs.length)]
-
   return {
     id: `task-compare-${Math.random()}`,
-    title: "Temperaturen vergleichen",
-    problem_statement: `Welche Temperatur ist kälter: ${pair.t1}°C oder ${pair.t2}°C?`,
-    difficulty_level: 1,
+    title: "📖 Aufgabe: Zwei Temperaturen vergleichen",
+    problem_statement: `Vergleiche: ${pair.t1}°C oder ${pair.t2}°C - Welche ist KÄLTER?`,
+    difficulty_level: 2,
     category: "conceptual",
     solution: `${pair.colder}°C ist kälter`,
     taskData: {
-      hint1: `Schau dir beide Zahlen an: ${pair.t1}°C und ${pair.t2}°C. Frage dich: Welche ist negativ (Minus)? Welche ist positiv (Plus)?`,
-      hint2: `REGEL zum Merken: Negative Zahlen sind IMMER kälter/kleiner als positive Zahlen. Wenn eine Zahl negativ ist (Minus-Zeichen), dann ist sie auf jeden Fall die kältere!`,
-      hint3: `Lösung: Zwischen ${pair.t1}°C und ${pair.t2}°C ist ${pair.colder}°C die Antwort. Du kannst schreiben: "${pair.colder}" oder "${pair.colder}°C ist kälter".`,
+      hint1: `SCHRITT 1 - BEOBACHTE: ${pair.t1}°C und ${pair.t2}°C. Hat eine Zahl ein Minus-Zeichen?`,
+      hint2: `REGEL: ${pair.rule === "negativ" ? `Negative Zahlen sind IMMER kälter als positive!` : `Bei zwei negativen Zahlen: Je größer der Abstand zu Null, desto kälter!`}`,
+      hint3: `LÖSUNG: ${pair.colder}°C ist kälter.`,
     },
   }
 }
 
 function generateOrderTask() {
   const sets = [
-    {
-      temps: [5, -3, 0, 12, -7],
-      ordered: "-7, -3, 0, 5, 12",
-      explanation: "-7 ist am kältesten (ganz links), dann -3, dann 0, dann 5, dann 12 am wärmsten"
-    },
-    {
-      temps: [20, -10, 8, -5, 0],
-      ordered: "-10, -5, 0, 8, 20",
-      explanation: "-10 ist am kältesten, -5 kommt danach, 0 ist die Mitte, dann die positiven Zahlen"
-    },
-    {
-      temps: [3, -8, 15, -2, 6],
-      ordered: "-8, -2, 3, 6, 15",
-      explanation: "Negative Zahlen ZUERST (von kalt zu weniger kalt), dann positive (von schwach zu stark)"
-    },
+    { temps: [5, -3, 0, 12, -7], ordered: "-7, -3, 0, 5, 12" },
+    { temps: [20, -10, 8, -5, 0], ordered: "-10, -5, 0, 8, 20" },
+    { temps: [3, -8, 15, -2, 6], ordered: "-8, -2, 3, 6, 15" },
   ]
   const set = sets[Math.floor(Math.random() * sets.length)]
-
   return {
     id: `task-order-${Math.random()}`,
-    title: "Aufgabe: Temperaturen ordnen",
-    problem_statement: `Ordne diese 5 Temperaturen von der KÄLTESTEN zur WÄRMSTEN: ${set.temps.join("°C | ")}°C\n\nSchreib sie in die richtige Reihenfolge mit Kommas dazwischen.`,
+    title: "📖 Aufgabe: 5 Temperaturen ordnen (SCHWER!)",
+    problem_statement: `Ordne diese 5 Temperaturen von KÄLTESTE zu WÄRMSTE: ${set.temps.join("°C | ")}°C\n\nSchreib: -8, -2, 3, 6, 15 (mit Kommas)`,
     difficulty_level: 3,
     category: "conceptual",
     solution: set.ordered,
     taskData: {
-      hint1: `Strategiee: Teile in zwei Gruppen! NEGATIVE (mit Minus): ${set.temps.filter(t => t < 0).sort((a,b) => a-b).join(", ")}. NULL und POSITIVE: ${set.temps.filter(t => t >= 0).sort((a,b) => a-b).join(", ")}. Welche Gruppe ist kälter?`,
-      hint2: `ZAHLENSTRAHL denken: Negative Zahlen sind LINKS (kälter). Je weiter links, desto kälter. Positive sind RECHTS (wärmer). Ordne: Ganz links = kälteste. Ganz rechts = wärmste.`,
-      hint3: `Lösung: ${set.ordered}. ${set.explanation}`,
+      hint1: `STRATEGIE: Teile in ZWEI GRUPPEN!\n• NEGATIVE: ${set.temps.filter(t => t < 0).sort((a,b) => a-b).join(", ")}\n• POSITIVE: ${set.temps.filter(t => t >= 0).sort((a,b) => a-b).join(", ")}\nWelche Gruppe kommt ZUERST?`,
+      hint2: `ZAHLENSTRAHL VISUALISIEREN: Negative (LINKS) → Null → Positive (RECHTS). Ordne von LINKS nach RECHTS!`,
+      hint3: `LÖSUNG: ${set.ordered}`,
     },
   }
 }
 
 function generateDifferenceTask() {
   const examples = [
-    {
-      t1: 56.7,
-      t2: -89.2,
-      diff: 145.9,
-      calc: "56,7 - (-89,2) = 56,7 + 89,2 = 145,9",
-    },
-    {
-      t1: 20,
-      t2: -10,
-      diff: 30,
-      calc: "20 - (-10) = 20 + 10 = 30",
-    },
-    {
-      t1: 15,
-      t2: -5,
-      diff: 20,
-      calc: "15 - (-5) = 15 + 5 = 20",
-    },
+    { t1: 20, t2: -10, diff: 30, calc: "20 - (-10) = 20 + 10 = 30" },
+    { t1: 15, t2: -5, diff: 20, calc: "15 - (-5) = 15 + 5 = 20" },
+    { t1: 25, t2: -15, diff: 40, calc: "25 - (-15) = 25 + 15 = 40" },
   ]
   const ex = examples[Math.floor(Math.random() * examples.length)]
-
   return {
     id: `task-diff-${Math.random()}`,
-    title: "Temperaturunterschiede berechnen",
-    problem_statement: `Unterschied zwischen ${ex.t1}°C und ${ex.t2}°C?`,
-    difficulty_level: 2,
+    title: "📖 Aufgabe: Temperaturunterschied berechnen",
+    problem_statement: `Berechne den Unterschied zwischen ${ex.t1}°C und ${ex.t2}°C\n\nFormel: ${ex.t1} - (${ex.t2}) = ?`,
+    difficulty_level: 3,
     category: "calculation",
     solution: ex.diff.toString(),
     taskData: {
-      hint1: `Die DIFFERENZ (der Unterschied) findest du durch MINUS rechnen: ${ex.t1} - (${ex.t2}). Beachte: Von der höheren Temperatur (${ex.t1}) subtrahierst du die tiefere (${ex.t2}).`,
-      hint2: `WICHTIGE REGEL: MINUS vor einer Klammer mit negativer Zahl → wird zu PLUS! Also: - (${ex.t2}) wird zu + ${Math.abs(ex.t2)}. Deshalb: ${ex.t1} + ${Math.abs(ex.t2)} = ${ex.diff}`,
-      hint3: `Schritt für Schritt: ${ex.calc} = ${ex.diff}. Das ist der Temperatur-Unterschied zwischen den beiden Orten!`,
+      hint1: `SCHRITT 1: Schreib die Rechnung auf: ${ex.t1} - (${ex.t2})\n MERKE: Minus vor Klammer mit negativ = wird zu PLUS!`,
+      hint2: `SCHRITT 2: - (${ex.t2}) wird zu + ${Math.abs(ex.t2)}\n Neue Rechnung: ${ex.t1} + ${Math.abs(ex.t2)}`,
+      hint3: `SCHRITT 3 - LÖSUNG: ${ex.t1} + ${Math.abs(ex.t2)} = ${ex.diff}°C Unterschied!`,
     },
   }
 }
 
 function generateCompareNegatives() {
   const pairs = [
-    { n1: -71.2, n2: -23.9, smaller: "-71.2" },
     { n1: -12, n2: -2, smaller: "-12" },
     { n1: -50, n2: -30, smaller: "-50" },
+    { n1: -25, n2: -10, smaller: "-25" },
   ]
   const pair = pairs[Math.floor(Math.random() * pairs.length)]
-
   return {
     id: `task-cmpneg-${Math.random()}`,
-    title: "Negative Zahlen vergleichen",
+    title: "📖 Aufgabe: Zwei negative Zahlen vergleichen (HART!)",
     problem_statement: `Welche Zahl ist KLEINER? ${pair.n1} oder ${pair.n2}?`,
-    difficulty_level: 2,
+    difficulty_level: 3,
     category: "conceptual",
     solution: pair.smaller,
     taskData: {
-      hint1: `Beide Zahlen sind negativ: ${pair.n1} und ${pair.n2}. Tipp: Welche hat den größeren Abstand zu Null (0)?`,
-      hint2: `Merke: Bei negativen Zahlen - Je WEITER WEG von Null (größerer Betrag), desto KLEINER die Zahl! Vergleich: |${pair.n1}| vs |${pair.n2}|. Welche ist größer?`,
-      hint3: `Lösung: ${pair.smaller} ist die kleinere Zahl (hat den größeren Abstand zu Null).`,
+      hint1: `BEOBACHTE: Beide sind NEGATIV (Minus). Das ist der Knackpunkt! \n${pair.n1} und ${pair.n2} - Welche ist weiter weg von Null?`,
+      hint2: `REGEL - MEMORIZE DIES: Bei negativen Zahlen gilt UMGEKEHRT!\n-50 ist KLEINER als -10, weil |-50| > |-10|!\nJe GRÖSSER der Abstand zu Null, desto KLEINER die negative Zahl!`,
+      hint3: `LÖSUNG: ${pair.smaller} ist kleiner als ${pair.n1 === pair.smaller ? pair.n2 : pair.n1}. ${Math.abs(pair.smaller)} > ${Math.abs(pair.n1 === pair.smaller ? pair.n2 : pair.n1)}, also ist ${pair.smaller} weiter weg = kleiner!`,
     },
   }
 }
@@ -196,23 +144,23 @@ function generateNumberLineTask() {
   const ranges = [
     { min: -10, max: 10, value: -3 },
     { min: -5, max: 5, value: 2 },
-    { min: 0, max: 20, value: 8 },
+    { min: -15, max: 15, value: -8 },
+    { min: 0, max: 20, value: 12 },
   ]
   const range = ranges[Math.floor(Math.random() * ranges.length)]
-
   return {
     id: `task-nline-${Math.random()}`,
-    title: "Zahlen auf der Zahlengerade",
-    problem_statement: `Wo liegt die Zahl ${range.value}? (Zahlenstrahl: ${range.min} bis ${range.max})`,
-    difficulty_level: 1,
+    title: "📖 Aufgabe: Zahl auf Zahlenstrahl platzieren",
+    problem_statement: `Klick auf die richtige Position! Wo liegt ${range.value} auf dem Zahlenstrahl von ${range.min} bis ${range.max}?`,
+    difficulty_level: 2,
     category: "conceptual",
     solution: range.value.toString(),
     taskData: {
       range: [range.min, range.max],
       value: range.value,
-      hint1: "Schau auf den Zahlenstrahl!",
-      hint2: `Positive Zahlen sind RECHTS von Null!`,
-      hint3: `Die Antwort ist: ${range.value}`,
+      hint1: `STRATEGIE: Schau die Zahlen an:\n• ${range.min} (LINKS/klein)\n• ${range.max} (RECHTS/groß)\n• ${range.value} - wo liegt es DAZWISCHEN?`,
+      hint2: `REGEL: ${range.value < 0 ? `${range.value} ist NEGATIV → liegt LINKS von Null` : `${range.value} ist POSITIV → liegt RECHTS von Null`}`,
+      hint3: `LÖSUNG: Klick auf die Markierung bei ${range.value}!`,
     },
   }
 }
