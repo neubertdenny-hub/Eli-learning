@@ -89,9 +89,9 @@ function generateCompareTempTask() {
     category: "conceptual",
     solution: `${pair.colder}°C ist kälter`,
     taskData: {
-      hint1: `MERKE: Alle NEGATIVEN Zahlen (Minus) sind KÄLTER als positive (Plus)! Zum Beispiel: ${pair.t2}°C (minus/kalt) ist VIEL kälter als ${pair.t1}°C (plus/warm).`,
-      hint2: `Wenn du zwei Zahlen vergleichst: Je WEITER LINKS auf dem Zahlenstrahl, desto KÄLTER! ${pair.colder} ist weiter links von ${pair.warmer}, deshalb ist ${pair.colder}°C KÄLTER.`,
-      hint3: `Die Antwort: ${pair.colder}°C ist kälter als ${pair.t1}°C. Du kannst auch schreiben: "${pair.colder}" oder "${pair.colder}°C"`,
+      hint1: `MERKE: In dieser Aufgabe: ${pair.t1}°C und ${pair.t2}°C. Regel: Alle NEGATIVEN Zahlen (Minus) sind KÄLTER als positive (Plus)! ${pair.t2 < 0 ? `${pair.t2}°C (Minus) ist VIEL kälter als ${pair.t1}°C.` : `${pair.t1}°C ist kälter als ${pair.t2}°C.`}`,
+      hint2: `Zahlenstrahl-Trick: Je WEITER LINKS, desto KÄLTER! Zwischen ${pair.t1}°C und ${pair.t2}°C: ${pair.colder} liegt weiter links, deshalb ist ${pair.colder}°C die kältere Temperatur!`,
+      hint3: `Lösung zu "${pair.t1}°C oder ${pair.t2}°C?": Die Antwort ist ${pair.colder}°C (kälter). Du kannst schreiben: "${pair.colder}" oder "${pair.colder}°C ist kälter".`,
     },
   }
 }
@@ -182,9 +182,9 @@ function generateCompareNegatives() {
     category: "conceptual",
     solution: pair.smaller,
     taskData: {
-      hint1: "Bei negativen Zahlen: Je weiter weg von Null, desto KLEINER!",
-      hint2: `${pair.n1} liegt weiter LINKS auf dem Zahlenstrahl als ${pair.n2}`,
-      hint3: `Die Antwort ist: ${pair.smaller}`,
+      hint1: `Bei dieser Aufgabe: ${pair.n1} vs ${pair.n2}. REGEL: Bei negativen Zahlen - Je WEITER WEG von Null, desto KLEINER! ${pair.n1} hat größeren Abstand zu 0 als ${pair.n2}.`,
+      hint2: `Zahlenstrahl: ${pair.n1} liegt WEITER LINKS auf dem Strahl als ${pair.n2}. Links = kleiner!`,
+      hint3: `Lösung: ${pair.smaller} ist die kleinere Zahl (weiter links auf dem Zahlenstrahl).`,
     },
   }
 }
