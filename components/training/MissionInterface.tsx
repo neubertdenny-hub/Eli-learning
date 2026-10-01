@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from "react"
 import { TaskRunner, Task } from "./TaskRunner"
+import { RationaleZahlenTask } from "@/components/learning/RationaleZahlenTask"
 import { DrawingCanvas } from "./DrawingCanvas"
 import { EliSpeaking } from "@/components/eli/EliRobot"
 import { RecognitionResult } from "@/lib/learning/handwriting-input"
+import { generateRationaleZahlenTasks } from "@/lib/learning/rationale-zahlen-generator"
 
 export interface MissionInterfaceProps {
   skillName: string
@@ -29,9 +31,19 @@ export function MissionInterface({
   const [showDrawing, setShowDrawing] = useState(false)
   const [missionTasks, setMissionTasks] = useState<MissionTask[]>([])
   const [loading, setLoading] = useState(true)
+  const [isRationaleZahlen, setIsRationaleZahlen] = useState(false)
 
   // Mission Struktur: 5 Tasks à 20 min
   useEffect(() => {
+    // SPECIAL: Rationale Zahlen Skill
+    if (skillName.includes("Rationale Zahlen")) {
+      const tasks = generateRationaleZahlenTasks(difficultyLevel, 5)
+      setMissionTasks(tasks as MissionTask[])
+      setIsRationaleZahlen(true)
+      setLoading(false)
+      return
+    }
+
     // Generiere konkrete Beispiele basierend auf Skill
     const generateExample = (type: string, difficulty: number) => {
       if (skillName.includes("negativ") || skillName.includes("Negative")) {
@@ -191,15 +203,22 @@ export function MissionInterface({
         />
       </div>
 
-      {/* Task Runner */}
+      {/* Task Runner - Rationale Zahlen oder normal */}
       <div className="max-w-4xl mx-auto mb-8">
-        <TaskRunner
-          task={currentTask}
-          onSubmit={handleTaskSubmit}
-          onCompleted={(success) => {
-            if (!success) setPerfectStreak(false)
-          }}
-        />
+        {isRationaleZahlen ? (
+          <RationaleZahlenTask
+            task={currentTask}
+            onSubmit={handleTaskSubmit}
+          />
+        ) : (
+          <TaskRunner
+            task={currentTask}
+            onSubmit={handleTaskSubmit}
+            onCompleted={(success) => {
+              if (!success) setPerfectStreak(false)
+            }}
+          />
+        )}
       </div>
 
       {/* Input Method Selector */}
