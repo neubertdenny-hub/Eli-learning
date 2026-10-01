@@ -57,17 +57,17 @@ function generateReadThermometer() {
   const temp = temps[Math.floor(Math.random() * temps.length)]
   return {
     id: `task-thermo-${Math.random()}`,
-    title: "Thermometer ablesen",
-    problem_statement: `Das Thermometer zeigt an: Welche Temperatur ist es?`,
+    title: "📖 Aufgabe: Thermometer ablesen",
+    problem_statement: `Schaue auf das Thermometer. Die rote Flüssigkeit zeigt auf eine Markierung. Welche Temperatur zeigt das Thermometer an?\n\n(Denk daran: Über 0 = warm/Plus. Unter 0 = kalt/Minus)`,
     taskType: "READ_THERMOMETER",
     difficulty_level: 1,
     category: "conceptual",
     solution: `${temp}°C`,
     taskData: {
       thermometerMark: temp,
-      hint1: `Schau auf die rote Flüssigkeit im Thermometer: Wie weit steigt sie nach oben? Folge der Linie von der Markierung nach links zur Temperaturskala.`,
-      hint2: `Die Zahlen ÜBER 0 sind Plus-Grade (warm). Die Zahlen UNTER 0 sind Minus-Grade (kalt/Frost). Wo ist die rote Linie? Oben oder unten?`,
-      hint3: `Die rote Linie zeigt auf ${temp}. Das bedeutet ${temp}°C (${temp > 0 ? "warm - über Null" : temp === 0 ? "genau Null (Gefrierpunkt)" : "kalt - unter Null"})`,
+      hint1: `STRATEGIE: Folge mit deinem Finger der roten Linie vom Thermometer nach LINKS zur Zahlenskala. Welche Zahl ist es?`,
+      hint2: `MERKE: Die Skala hat zwei Seiten - POSITIVE Zahlen (oben, +1 bis +30) und NEGATIVE Zahlen (unten, -15 bis 0). Auf welcher Seite ist die rote Linie?`,
+      hint3: `Die Antwort: ${temp}°C. Das ist ${temp > 0 ? `${Math.abs(temp)} Grad ÜBER Null (warm)` : temp === 0 ? `genau NULL Grad (Gefrierpunkt)` : `${Math.abs(temp)} Grad UNTER Null (kalt)`}.`,
     },
   }
 }
