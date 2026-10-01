@@ -89,9 +89,9 @@ function generateCompareTempTask() {
     category: "conceptual",
     solution: `${pair.colder}°C ist kälter`,
     taskData: {
-      hint1: `MERKE: In dieser Aufgabe: ${pair.t1}°C und ${pair.t2}°C. Regel: Alle NEGATIVEN Zahlen (Minus) sind KÄLTER als positive (Plus)! ${pair.t2 < 0 ? `${pair.t2}°C (Minus) ist VIEL kälter als ${pair.t1}°C.` : `${pair.t1}°C ist kälter als ${pair.t2}°C.`}`,
-      hint2: `Zahlenstrahl-Trick: Je WEITER LINKS, desto KÄLTER! Zwischen ${pair.t1}°C und ${pair.t2}°C: ${pair.colder} liegt weiter links, deshalb ist ${pair.colder}°C die kältere Temperatur!`,
-      hint3: `Lösung zu "${pair.t1}°C oder ${pair.t2}°C?": Die Antwort ist ${pair.colder}°C (kälter). Du kannst schreiben: "${pair.colder}" oder "${pair.colder}°C ist kälter".`,
+      hint1: `Schau dir beide Zahlen an: ${pair.t1}°C und ${pair.t2}°C. Frage dich: Welche ist negativ (Minus)? Welche ist positiv (Plus)?`,
+      hint2: `REGEL zum Merken: Negative Zahlen sind IMMER kälter/kleiner als positive Zahlen. Wenn eine Zahl negativ ist (Minus-Zeichen), dann ist sie auf jeden Fall die kältere!`,
+      hint3: `Lösung: Zwischen ${pair.t1}°C und ${pair.t2}°C ist ${pair.colder}°C die Antwort. Du kannst schreiben: "${pair.colder}" oder "${pair.colder}°C ist kälter".`,
     },
   }
 }
@@ -182,9 +182,9 @@ function generateCompareNegatives() {
     category: "conceptual",
     solution: pair.smaller,
     taskData: {
-      hint1: `Bei dieser Aufgabe: ${pair.n1} vs ${pair.n2}. REGEL: Bei negativen Zahlen - Je WEITER WEG von Null, desto KLEINER! ${pair.n1} hat größeren Abstand zu 0 als ${pair.n2}.`,
-      hint2: `Zahlenstrahl: ${pair.n1} liegt WEITER LINKS auf dem Strahl als ${pair.n2}. Links = kleiner!`,
-      hint3: `Lösung: ${pair.smaller} ist die kleinere Zahl (weiter links auf dem Zahlenstrahl).`,
+      hint1: `Beide Zahlen sind negativ: ${pair.n1} und ${pair.n2}. Tipp: Welche hat den größeren Abstand zu Null (0)?`,
+      hint2: `Merke: Bei negativen Zahlen - Je WEITER WEG von Null (größerer Betrag), desto KLEINER die Zahl! Vergleich: |${pair.n1}| vs |${pair.n2}|. Welche ist größer?`,
+      hint3: `Lösung: ${pair.smaller} ist die kleinere Zahl (hat den größeren Abstand zu Null).`,
     },
   }
 }
