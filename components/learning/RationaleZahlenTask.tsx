@@ -140,48 +140,50 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
   )
 }
 
-// Thermometer mit Skala
+// Thermometer mit großer Skala - LESBAR!
 function ThermometerDisplay({ temp }: { temp: number }) {
   const minTemp = -20, maxTemp = 30, range = maxTemp - minTemp
   const fillPercent = ((temp - minTemp) / range) * 100
 
   return (
-    <div className="flex items-end gap-8">
-      {/* Skala mit Zahlen */}
-      <div className="flex flex-col justify-between h-64 text-xs font-bold text-gray-700">
-        {[30, 20, 10, 0, -10, -20].map((n) => (
-          <div key={n}>{n}°</div>
-        ))}
-      </div>
+    <div className="flex flex-col items-center justify-center gap-6 py-8 px-4">
+      {/* Großes Thermometer */}
+      <div className="flex items-start gap-8">
+        {/* Skala mit großen Zahlen - LINKS */}
+        <div className="flex flex-col justify-between h-96 text-2xl font-bold text-gray-800 pt-8">
+          {[30, 20, 10, 0, -10, -20].map((n) => (
+            <div key={n} className="w-16">{n}°</div>
+          ))}
+        </div>
 
-      {/* Thermometer */}
-      <div className="flex flex-col items-center gap-2">
-        <svg width="60" height="280" viewBox="0 0 60 280" className="border-2 border-gray-800 rounded-2xl bg-gradient-to-b from-blue-50 to-red-50">
-          {/* Skala-Markierungen */}
+        {/* GROSSES SVG Thermometer - MITTE */}
+        <svg width="160" height="400" viewBox="0 0 160 400" className="border-4 border-gray-900 rounded-3xl bg-gradient-to-b from-blue-100 to-red-100 shadow-xl">
+          {/* Dicke Skala-Markierungen */}
           {[30, 20, 10, 0, -10, -20].map((n) => {
-            const y = 20 + ((30 - n) / range) * 240
+            const y = 30 + ((30 - n) / range) * 340
             return (
               <g key={`mark-${n}`}>
-                <line x1="15" y1={y} x2="35" y2={y} stroke="#666" strokeWidth="2" />
+                <line x1="40" y1={y} x2="100" y2={y} stroke="#333" strokeWidth="4" strokeLinecap="round" />
               </g>
             )
           })}
 
-          {/* Flüssigkeit (gefüllt bis temp) */}
+          {/* Große rote/blaue Flüssigkeit */}
           <rect
-            x="18"
-            y={20 + (1 - fillPercent / 100) * 240}
-            width="24"
-            height={fillPercent * 2.4}
+            x="50"
+            y={30 + (1 - fillPercent / 100) * 340}
+            width="60"
+            height={fillPercent * 3.4}
             fill={temp > 15 ? "#ef4444" : temp > 0 ? "#f97316" : "#3b82f6"}
-            rx="3"
+            rx="6"
           />
         </svg>
+      </div>
 
-        <div className="text-center">
-          <p className="text-xl font-bold text-gray-900">{temp}°C</p>
-          <p className="text-xs text-gray-600">Liest ab!</p>
-        </div>
+      {/* Große Temperaturanzeige darunter */}
+      <div className="text-center bg-gray-100 px-8 py-4 rounded-xl">
+        <p className="text-5xl font-bold text-gray-900">{temp}°C</p>
+        <p className="text-lg text-gray-600 mt-2">Lies ab!</p>
       </div>
     </div>
   )
