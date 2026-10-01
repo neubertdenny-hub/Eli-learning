@@ -100,30 +100,33 @@ function generateOrderTask() {
   const sets = [
     {
       temps: [5, -3, 0, 12, -7],
-      ordered: "-7 < -3 < 0 < 5 < 12",
+      ordered: "-7, -3, 0, 5, 12",
+      explanation: "-7 ist am kältesten (ganz links), dann -3, dann 0, dann 5, dann 12 am wärmsten"
     },
     {
       temps: [20, -10, 8, -5, 0],
-      ordered: "-10 < -5 < 0 < 8 < 20",
+      ordered: "-10, -5, 0, 8, 20",
+      explanation: "-10 ist am kältesten, -5 kommt danach, 0 ist die Mitte, dann die positiven Zahlen"
     },
     {
       temps: [3, -8, 15, -2, 6],
-      ordered: "-8 < -2 < 3 < 6 < 15",
+      ordered: "-8, -2, 3, 6, 15",
+      explanation: "Negative Zahlen ZUERST (von kalt zu weniger kalt), dann positive (von schwach zu stark)"
     },
   ]
   const set = sets[Math.floor(Math.random() * sets.length)]
 
   return {
     id: `task-order-${Math.random()}`,
-    title: "Temperaturen ordnen",
-    problem_statement: `Ordne diese Temperaturen von kalt zu warm: ${set.temps.join("°C | ")}°C`,
-    difficulty_level: 2,
+    title: "Aufgabe: Temperaturen ordnen",
+    problem_statement: `Ordne diese 5 Temperaturen von der KÄLTESTEN zur WÄRMSTEN: ${set.temps.join("°C | ")}°C\n\nSchreib sie in die richtige Reihenfolge mit Kommas dazwischen.`,
+    difficulty_level: 3,
     category: "conceptual",
     solution: set.ordered,
     taskData: {
-      hint1: "Beginne mit der kleinsten (kältesten) Zahl!",
-      hint2: "Nutze: Negative < Null < Positive",
-      hint3: `Die richtige Reihenfolge ist: ${set.ordered}`,
+      hint1: `Strategiee: Teile in zwei Gruppen! NEGATIVE (mit Minus): ${set.temps.filter(t => t < 0).sort((a,b) => a-b).join(", ")}. NULL und POSITIVE: ${set.temps.filter(t => t >= 0).sort((a,b) => a-b).join(", ")}. Welche Gruppe ist kälter?`,
+      hint2: `ZAHLENSTRAHL denken: Negative Zahlen sind LINKS (kälter). Je weiter links, desto kälter. Positive sind RECHTS (wärmer). Ordne: Ganz links = kälteste. Ganz rechts = wärmste.`,
+      hint3: `Lösung: ${set.ordered}. ${set.explanation}`,
     },
   }
 }
