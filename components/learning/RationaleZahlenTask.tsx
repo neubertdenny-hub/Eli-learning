@@ -29,9 +29,20 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
   }
 
   const validateAnswer = (answer: string, task: any): boolean => {
-    const clean = answer.trim().replace(/,/g, ".").toLowerCase()
+    const clean = answer.trim().replace(/,/g, ".").toLowerCase().replace(/°c/g, "").replace("c", "").trim()
     const expected = task.solution?.toString().replace(/,/g, ".").toLowerCase()
-    return clean === expected
+
+    // Exakte Übereinstimmung
+    if (clean === expected) return true
+
+    // Flexible Prüfung: Prüfe ob die Zahl/Wort in der solution enthalten ist
+    if (expected?.includes(clean)) return true
+
+    // Zahlen-Prüfung: z.B. "-7" in "-7°C ist kälter" oder "-7 ist kälter"
+    const numberMatch = clean.match(/-?\d+\.?\d*/)?.[0]
+    if (numberMatch && expected?.includes(numberMatch)) return true
+
+    return false
   }
 
   const getTip = (level: number) => {
