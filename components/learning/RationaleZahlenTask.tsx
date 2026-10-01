@@ -51,13 +51,11 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
         <p className="text-lg text-gray-700">{task.problem_statement}</p>
 
         {/* Interaktive Zahlenstrahl-Aufgaben */}
-        {(task.taskType === "PLACE_ON_NUMBER_LINE" ||
-          task.taskType === "ORDER_TEMPERATURES") &&
-         task.taskData?.range && (
+        {task.taskData?.range && (
           <div className="py-4">
             <InteractiveNumberLine
               range={task.taskData.range}
-              targetValue={task.taskData.value || parseInt(task.solution)}
+              targetValue={task.taskData.value || parseInt(task.solution || "0")}
               title={task.title}
               problem={task.problem_statement}
               onAnswer={(value, correct) => {
