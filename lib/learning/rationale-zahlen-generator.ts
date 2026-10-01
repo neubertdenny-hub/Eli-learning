@@ -65,19 +65,19 @@ function generateReadThermometer() {
     solution: `${temp}°C`,
     taskData: {
       thermometerMark: temp,
-      hint1: "Schau auf die Markierung am Thermometer",
-      hint2: "Negative Zahlen sind unter 0°C",
-      hint3: `Die Antwort ist ${temp}°C`,
+      hint1: `Schau auf die rote Flüssigkeit im Thermometer: Wie weit steigt sie nach oben? Folge der Linie von der Markierung nach links zur Temperaturskala.`,
+      hint2: `Die Zahlen ÜBER 0 sind Plus-Grade (warm). Die Zahlen UNTER 0 sind Minus-Grade (kalt/Frost). Wo ist die rote Linie? Oben oder unten?`,
+      hint3: `Die rote Linie zeigt auf ${temp}. Das bedeutet ${temp}°C (${temp > 0 ? "warm - über Null" : temp === 0 ? "genau Null (Gefrierpunkt)" : "kalt - unter Null"})`,
     },
   }
 }
 
 function generateCompareTempTask() {
   const pairs = [
-    { t1: 6, t2: -7, colder: "-7" },
-    { t1: -9, t2: -15, colder: "-15" },
-    { t1: 12, t2: 5, colder: "5" },
-    { t1: -2, t2: 3, colder: "-2" },
+    { t1: 6, t2: -7, colder: "-7", warmer: 6 },
+    { t1: -9, t2: -15, colder: "-15", warmer: -9 },
+    { t1: 12, t2: 5, colder: "5", warmer: 12 },
+    { t1: -2, t2: 3, colder: "-2", warmer: 3 },
   ]
   const pair = pairs[Math.floor(Math.random() * pairs.length)]
 
@@ -89,9 +89,9 @@ function generateCompareTempTask() {
     category: "conceptual",
     solution: `${pair.colder}°C ist kälter`,
     taskData: {
-      hint1: "Negative Zahlen sind KÄLTER als positive!",
-      hint2: "Je kleiner die Zahl, desto KÄLTER!",
-      hint3: `Die Antwort ist: ${pair.colder}°C ist kälter`,
+      hint1: `MERKE: Alle NEGATIVEN Zahlen (Minus) sind KÄLTER als positive (Plus)! Zum Beispiel: ${pair.t2}°C (minus/kalt) ist VIEL kälter als ${pair.t1}°C (plus/warm).`,
+      hint2: `Wenn du zwei Zahlen vergleichst: Je WEITER LINKS auf dem Zahlenstrahl, desto KÄLTER! ${pair.colder} ist weiter links von ${pair.warmer}, deshalb ist ${pair.colder}°C KÄLTER.`,
+      hint3: `Die Antwort: ${pair.colder}°C ist kälter als ${pair.t1}°C. Du kannst auch schreiben: "${pair.colder}" oder "${pair.colder}°C"`,
     },
   }
 }
@@ -159,9 +159,9 @@ function generateDifferenceTask() {
     category: "calculation",
     solution: ex.diff.toString(),
     taskData: {
-      hint1: "Minus Minus wird PLUS!",
-      hint2: `${ex.t1} - (${ex.t2}) = ${ex.t1} + ${Math.abs(ex.t2)}`,
-      hint3: `Berechnung: ${ex.calc}`,
+      hint1: `Die DIFFERENZ (der Unterschied) findest du durch MINUS rechnen: ${ex.t1} - (${ex.t2}). Beachte: Von der höheren Temperatur (${ex.t1}) subtrahierst du die tiefere (${ex.t2}).`,
+      hint2: `WICHTIGE REGEL: MINUS vor einer Klammer mit negativer Zahl → wird zu PLUS! Also: - (${ex.t2}) wird zu + ${Math.abs(ex.t2)}. Deshalb: ${ex.t1} + ${Math.abs(ex.t2)} = ${ex.diff}`,
+      hint3: `Schritt für Schritt: ${ex.calc} = ${ex.diff}. Das ist der Temperatur-Unterschied zwischen den beiden Orten!`,
     },
   }
 }
