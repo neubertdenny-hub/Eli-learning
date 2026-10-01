@@ -79,69 +79,113 @@ export function InteractiveNumberLine({
         👉 Klick auf die richtige Position auf dem Zahlenstrahl!
       </div>
 
-      {/* Zahlenstrahl */}
-      <div className="overflow-x-auto bg-gray-50 p-4 rounded-lg">
+      {/* Zahlenstrahl - PROFESSIONELL */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-xl border-2 border-indigo-200">
         <svg
           ref={canvasRef}
           width="100%"
-          height="200"
-          viewBox={`0 0 800 200`}
+          height="240"
+          viewBox={`0 0 800 240`}
           className="cursor-pointer"
           onClick={handleCanvasClick}
         >
-          {/* Hauptlinie */}
-          <line x1="60" y1="100" x2="740" y2="100" stroke="#000" strokeWidth="3" />
+          {/* Hintergrund */}
+          <rect width="800" height="240" fill="none" />
+
+          {/* Hauptlinie - dick & präsent */}
+          <line x1="60" y1="120" x2="740" y2="120" stroke="#1e40af" strokeWidth="5" strokeLinecap="round" />
 
           {/* Pfeile */}
-          <polygon points="50,100 60,95 60,105" fill="#000" />
-          <polygon points="750,100 740,95 740,105" fill="#000" />
+          <polygon points="50,120 60,112 60,128" fill="#1e40af" />
+          <polygon points="750,120 740,112 740,128" fill="#1e40af" />
 
-          {/* Markierungen & Zahlen */}
-          {Array.from({ length: Math.ceil(range_span / 5) + 1 }).map((_, i) => {
-            const value = min + i * 5
+          {/* Null-Punkt hervorheben (Referenzmitte) */}
+          {min < 0 && max > 0 && (
+            <g>
+              <circle cx={60 + ((0 - min) / range_span) * 680} cy="120" r="8" fill="#16a34a" opacity="0.3" />
+              <text x={60 + ((0 - min) / range_span) * 680} y="165" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#16a34a">
+                0
+              </text>
+            </g>
+          )}
+
+          {/* Markierungen - ALLE Zahlen! */}
+          {Array.from({ length: range_span + 1 }).map((_, i) => {
+            const value = min + i
             if (value > max) return null
 
             const percentage = (value - min) / range_span
             const x = 60 + percentage * 680
+            const isMajor = value % 5 === 0
 
             return (
               <g key={i}>
-                {/* Tickmark */}
-                <line x1={x} y1="85" x2={x} y2="115" stroke="#000" strokeWidth="2" />
+                {/* Tickmark - klein für alle, größer für 5er */}
+                <line
+                  x1={x}
+                  y1={isMajor ? 105 : 115}
+                  x2={x}
+                  y2={isMajor ? 135 : 125}
+                  stroke="#1e40af"
+                  strokeWidth={isMajor ? "3" : "1.5"}
+                  strokeLinecap="round"
+                />
 
-                {/* Zahl */}
+                {/* Zahl - nur für 5er-Schritte */}
+                {isMajor && (
                 <text
                   x={x}
-                  y="140"
+                  y="190"
                   textAnchor="middle"
-                  fontSize="14"
+                  fontSize="16"
                   fontWeight="bold"
-                  fill="#000"
+                  fill="#1e40af"
+                  className="select-none"
                 >
                   {value}
                 </text>
+                )}
               </g>
             )
           })}
 
-          {/* Markiere Zielwert (versteckt aber als Hilfe angedeutet) */}
+          {/* Markiere Zielwert - PROMINENT */}
           {selectedPosition !== null && (
             <g>
-              {/* Kreis an Klick-Position */}
+              {/* Großer Kreis für Markierung */}
               <circle
                 cx={60 + ((selectedPosition - min) / range_span) * 680}
-                cy="100"
-                r="12"
-                fill="red"
-                opacity="0.7"
+                cy="120"
+                r="16"
+                fill="#ef4444"
+                opacity="0.8"
+                filter="drop-shadow(0 2px 4px rgba(0,0,0,0.2))"
+              />
+              <circle
+                cx={60 + ((selectedPosition - min) / range_span) * 680}
+                cy="120"
+                r="16"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="3"
+              />
+
+              {/* Zahl über Markierung */}
+              <rect
+                x={60 + ((selectedPosition - min) / range_span) * 680 - 25}
+                y="35"
+                width="50"
+                height="35"
+                fill="#ef4444"
+                rx="6"
               />
               <text
                 x={60 + ((selectedPosition - min) / range_span) * 680}
-                y="50"
+                y="65"
                 textAnchor="middle"
-                fontSize="16"
+                fontSize="20"
                 fontWeight="bold"
-                fill="red"
+                fill="white"
               >
                 {selectedPosition}
               </text>
@@ -149,10 +193,15 @@ export function InteractiveNumberLine({
           )}
 
           {/* Info-Text */}
-          <text x="400" y="30" textAnchor="middle" fontSize="12" fill="#666">
+          <text x="400" y="30" textAnchor="middle" fontSize="14" fontWeight="bold" fill="#1e40af">
             Zahlenstrahl: {min} bis {max}
           </text>
         </svg>
+
+        {/* Beschreibung */}
+        <p className="text-center text-sm text-gray-600 mt-4 font-medium">
+          👉 Klick auf die richtige Position auf dem Zahlenstrahl!
+        </p>
       </div>
 
       {/* Aktuelle Auswahl anzeigen */}
