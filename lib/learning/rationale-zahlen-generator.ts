@@ -32,20 +32,21 @@ function generateTask(taskType: string, difficulty: number) {
 }
 
 function generateReadThermometer() {
-  const temps = [-15, -9, -7, 0, 6, 12, 20]
+  // NUR Werte die DIREKT auf Markierungen liegen - leicht ablesbar!
+  const temps = [-20, -10, 0, 10, 20, 30]
   const temp = temps[Math.floor(Math.random() * temps.length)]
   return {
     id: `task-thermo-${Math.random()}`,
     title: "📖 Aufgabe: Thermometer ablesen",
-    problem_statement: `Schaue auf das Thermometer. Die rote Flüssigkeit zeigt auf eine Markierung. Welche Temperatur zeigt das Thermometer an?`,
+    problem_statement: `Schaue auf das Thermometer. Die Flüssigkeit zeigt auf eine Markierung. Welche Temperatur zeigt das Thermometer an?`,
     taskType: "READ_THERMOMETER",
     difficulty_level: 1,
     category: "conceptual",
     solution: `${temp}°C`,
     taskData: {
       thermometerMark: temp,
-      hint1: `STRATEGIE: Folge mit deinem Finger der roten Linie vom Thermometer nach LINKS zur Zahlenskala. Welche Zahl ist es?`,
-      hint2: `MERKE: Die Skala hat zwei Seiten - POSITIVE Zahlen (oben, +1 bis +30) und NEGATIVE Zahlen (unten, -15 bis 0). Auf welcher Seite ist die rote Linie?`,
+      hint1: `STRATEGIE: Folge mit deinem Finger der Flüssigkeit nach LINKS zur Zahlenskala. Welche Zahl ist es?`,
+      hint2: `MERKE: Die Skala hat zwei Seiten - POSITIVE Zahlen (oben) und NEGATIVE Zahlen (unten). Auf welcher Seite ist die Flüssigkeit?`,
       hint3: `Die Antwort: ${temp}°C. Das ist ${temp > 0 ? `${Math.abs(temp)} Grad ÜBER Null (warm)` : temp === 0 ? `genau NULL Grad (Gefrierpunkt)` : `${Math.abs(temp)} Grad UNTER Null (kalt)`}.`,
     },
   }
