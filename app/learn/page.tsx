@@ -46,19 +46,72 @@ export default function LearnPage() {
         }
 
         // Generiere neue Mission falls nicht resumierbar
-        const response = await fetch("/api/build-daily-mission", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: "user_zoey" }),
-        })
+        try {
+          const response = await fetch("/api/build-daily-mission", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: "user_zoey" }),
+          })
 
-        if (!response.ok) {
-          throw new Error("Fehler beim Erstellen der Mission")
+          if (response.ok) {
+            const data = await response.json()
+            setPlannedMission(data.mission)
+            setError(null)
+          } else {
+            // Fallback: Default Mission
+            setPlannedMission({
+              id: "default",
+              userId: "user_zoey",
+              date: new Date(),
+              blocks: [
+                {
+                  id: "default-block",
+                  type: "CURRENT_SCHOOL_TOPIC",
+                  order: 1,
+                  topicId: "grundrechenarten",
+                  topicName: "Grundrechenarten",
+                  targetTaskCount: 5,
+                  completedTaskCount: 0,
+                  estimatedMinutes: 20,
+                  selectionReason: "CURRENT_SCHOOL_TOPIC",
+                  status: "pending",
+                },
+              ],
+              targetMinutes: 20,
+              selectionReasoning: "Fallback Mission",
+              status: "planned",
+              activeLearningSeconds: 0,
+              xpEarned: 0,
+            })
+          }
+        } catch (err) {
+          console.error("Mission fetch error:", err)
+          // Fallback Mission
+          setPlannedMission({
+            id: "fallback",
+            userId: "user_zoey",
+            date: new Date(),
+            blocks: [
+              {
+                id: "fallback-block",
+                type: "CURRENT_SCHOOL_TOPIC",
+                order: 1,
+                topicId: "grundrechenarten",
+                topicName: "Grundrechenarten",
+                targetTaskCount: 5,
+                completedTaskCount: 0,
+                estimatedMinutes: 20,
+                selectionReason: "CURRENT_SCHOOL_TOPIC",
+                status: "pending",
+              },
+            ],
+            targetMinutes: 20,
+            selectionReasoning: "Fallback Mission",
+            status: "planned",
+            activeLearningSeconds: 0,
+            xpEarned: 0,
+          })
         }
-
-        const data = await response.json()
-        setPlannedMission(data.mission)
-        setError(null)
       } catch (err) {
         console.error("Mission init failed:", err)
         setError("Konnte Mission nicht erstellen")
