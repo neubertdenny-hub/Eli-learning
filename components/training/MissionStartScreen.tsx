@@ -103,7 +103,8 @@ export function MissionStartScreen({
             {mission.blocks.map((block, index) => (
               <div
                 key={block.id}
-                className="bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all"
+                onClick={onStart}
+                className="bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-4">
