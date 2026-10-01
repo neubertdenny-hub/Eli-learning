@@ -140,70 +140,80 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
   )
 }
 
-// Thermometer mit vollständiger Skala - wie ein echtes Thermometer!
+// Thermometer - professionell wie Lehrbuch!
 function ThermometerDisplay({ temp }: { temp: number }) {
   const minTemp = -20, maxTemp = 30, range = maxTemp - minTemp
   const fillPercent = ((temp - minTemp) / range) * 100
-
-  // Alle Grad-Werte für kleine Markierungen
   const allDegrees = Array.from({ length: range + 1 }, (_, i) => minTemp + i)
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 py-8 px-4">
-      {/* Großes Thermometer */}
-      <div className="flex items-start gap-8">
-        {/* Skala mit großen Zahlen - LINKS */}
-        <div className="flex flex-col justify-between h-96 text-2xl font-bold text-gray-800 pt-8">
-          {[30, 20, 10, 0, -10, -20].map((n) => (
-            <div key={n} className="w-16">{n}°</div>
-          ))}
-        </div>
+    <div className="flex flex-col items-center justify-center gap-8 py-8 px-4">
+      {/* ONE SVG mit Zahlen + Markierungen + Thermometer */}
+      <svg width="280" height="480" viewBox="0 0 280 480" className="drop-shadow-lg">
+        {/* Hintergrund - Thermometer Gehäuse */}
+        <rect x="120" y="20" width="120" height="420" rx="30" ry="30" fill="#f5f5f5" stroke="#333" strokeWidth="3" />
 
-        {/* GROSSES SVG Thermometer - wie ein echtes! */}
-        <svg width="160" height="400" viewBox="0 0 160 400" className="border-4 border-gray-900 rounded-3xl bg-gradient-to-b from-blue-100 to-red-100 shadow-xl">
-          {/* KLEINE Markierungen für JEDEN Grad */}
-          {allDegrees.map((degree) => {
-            const y = 30 + ((30 - degree) / range) * 340
-            const isMajor = degree % 10 === 0
-            return (
-              <g key={`tick-${degree}`}>
-                <line
-                  x1={isMajor ? 30 : 45}
-                  y1={y}
-                  x2={isMajor ? 45 : 52}
-                  y2={y}
-                  stroke={isMajor ? "#000" : "#666"}
-                  strokeWidth={isMajor ? 3 : 1.5}
-                  strokeLinecap="round"
-                />
-              </g>
-            )
-          })}
+        {/* Skala - LINKS INNEN */}
+        {/* Alle Grad-Markierungen */}
+        {allDegrees.map((degree) => {
+          const y = 40 + ((30 - degree) / range) * 380
+          const isMajor = degree % 10 === 0
+          return (
+            <g key={`tick-${degree}`}>
+              {/* Markierungsstrich */}
+              <line
+                x1={isMajor ? 85 : 100}
+                y1={y}
+                x2={isMajor ? 100 : 110}
+                y2={y}
+                stroke={isMajor ? "#000" : "#999"}
+                strokeWidth={isMajor ? 2.5 : 1}
+                strokeLinecap="round"
+              />
 
-          {/* Große rote/blaue Flüssigkeit */}
-          <rect
-            x="50"
-            y={30 + (1 - fillPercent / 100) * 340}
-            width="60"
-            height={fillPercent * 3.4}
-            fill={temp > 15 ? "#ef4444" : temp > 0 ? "#f97316" : "#3b82f6"}
-            rx="6"
-          />
+              {/* Zahlen nur bei 10er-Schritten */}
+              {isMajor && (
+                <text
+                  x="75"
+                  y={y + 6}
+                  textAnchor="end"
+                  fontSize="16"
+                  fontWeight="bold"
+                  fill="#000"
+                  className="select-none"
+                >
+                  {degree}°
+                </text>
+              )}
+            </g>
+          )
+        })}
 
-          {/* Hilfslinien zu den Zahlenwerten */}
-          {[30, 20, 10, 0, -10, -20].map((n) => {
-            const y = 30 + ((30 - n) / range) * 340
-            return (
-              <line key={`helper-${n}`} x1="100" y1={y} x2="110" y2={y} stroke="#999" strokeWidth="1" strokeDasharray="2,2" opacity="0.5" />
-            )
-          })}
-        </svg>
-      </div>
+        {/* Flüssigkeit - INNEN im Thermometer */}
+        <rect
+          x="130"
+          y={40 + (1 - fillPercent / 100) * 380}
+          width="100"
+          height={fillPercent * 3.8}
+          fill={temp > 15 ? "#ef4444" : temp > 0 ? "#f97316" : "#3b82f6"}
+          rx="8"
+        />
 
-      {/* Große Temperaturanzeige darunter */}
-      <div className="text-center bg-gray-100 px-8 py-4 rounded-xl">
-        <p className="text-5xl font-bold text-gray-900">{temp}°C</p>
-        <p className="text-lg text-gray-600 mt-2">Lies die Flüssigkeit ab!</p>
+        {/* Glaskugel unten */}
+        <circle cx="180" cy="460" r="20" fill="none" stroke="#333" strokeWidth="3" />
+        <circle
+          cx="180"
+          cy="460"
+          r="16"
+          fill={temp > 15 ? "#ef4444" : temp > 0 ? "#f97316" : "#3b82f6"}
+          opacity="0.6"
+        />
+      </svg>
+
+      {/* Temperaturanzeige */}
+      <div className="text-center">
+        <p className="text-6xl font-bold text-gray-900">{temp}°C</p>
+        <p className="text-lg text-gray-600 mt-2">Lies ab!</p>
       </div>
     </div>
   )
