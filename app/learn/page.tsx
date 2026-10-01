@@ -118,7 +118,22 @@ export default function LearnPage() {
           mission={plannedMission}
           onStart={() => setMissionStarted(true)}
           onSkip={() => {
-            alert("Feature: Freie Themenwahl kommt in Phase 5C")
+            // Erlaubt manuellen Wechsel zu Rationale Zahlen
+            setPlannedMission({
+              ...plannedMission,
+              blocks: [{
+                id: "rationale-zahlen",
+                type: "CURRENT_SCHOOL_TOPIC",
+                order: 1,
+                topicId: "rationale-zahlen",
+                topicName: "Rationale Zahlen",
+                targetTaskCount: 5,
+                completedTaskCount: 0,
+                estimatedMinutes: 20,
+                selectionReason: "CURRENT_SCHOOL_TOPIC",
+                status: "pending"
+              }]
+            })
           }}
           loading={loading}
         />

@@ -11,6 +11,8 @@ export interface Task {
   difficulty_level: number
   category: "calculation" | "problem_solving" | "conceptual"
   solution?: string
+  taskType?: string // NEW: für Rationale Zahlen spezifische Types
+  taskData?: any // NEW: zusätzliche Daten (z.B. Thermometer, Zahlenstrahl)
   solution_steps?: Array<{
     step_number: number
     description: string
