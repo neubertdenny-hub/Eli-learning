@@ -140,10 +140,13 @@ export function RationaleZahlenTask({ task, onSubmit }: RationaleZahlenTaskProps
   )
 }
 
-// Thermometer mit großer Skala - LESBAR!
+// Thermometer mit vollständiger Skala - wie ein echtes Thermometer!
 function ThermometerDisplay({ temp }: { temp: number }) {
   const minTemp = -20, maxTemp = 30, range = maxTemp - minTemp
   const fillPercent = ((temp - minTemp) / range) * 100
+
+  // Alle Grad-Werte für kleine Markierungen
+  const allDegrees = Array.from({ length: range + 1 }, (_, i) => minTemp + i)
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 py-8 px-4">
@@ -156,14 +159,23 @@ function ThermometerDisplay({ temp }: { temp: number }) {
           ))}
         </div>
 
-        {/* GROSSES SVG Thermometer - MITTE */}
+        {/* GROSSES SVG Thermometer - wie ein echtes! */}
         <svg width="160" height="400" viewBox="0 0 160 400" className="border-4 border-gray-900 rounded-3xl bg-gradient-to-b from-blue-100 to-red-100 shadow-xl">
-          {/* Dicke Skala-Markierungen */}
-          {[30, 20, 10, 0, -10, -20].map((n) => {
-            const y = 30 + ((30 - n) / range) * 340
+          {/* KLEINE Markierungen für JEDEN Grad */}
+          {allDegrees.map((degree) => {
+            const y = 30 + ((30 - degree) / range) * 340
+            const isMajor = degree % 10 === 0
             return (
-              <g key={`mark-${n}`}>
-                <line x1="40" y1={y} x2="100" y2={y} stroke="#333" strokeWidth="4" strokeLinecap="round" />
+              <g key={`tick-${degree}`}>
+                <line
+                  x1={isMajor ? 30 : 45}
+                  y1={y}
+                  x2={isMajor ? 45 : 52}
+                  y2={y}
+                  stroke={isMajor ? "#000" : "#666"}
+                  strokeWidth={isMajor ? 3 : 1.5}
+                  strokeLinecap="round"
+                />
               </g>
             )
           })}
@@ -177,13 +189,21 @@ function ThermometerDisplay({ temp }: { temp: number }) {
             fill={temp > 15 ? "#ef4444" : temp > 0 ? "#f97316" : "#3b82f6"}
             rx="6"
           />
+
+          {/* Hilfslinien zu den Zahlenwerten */}
+          {[30, 20, 10, 0, -10, -20].map((n) => {
+            const y = 30 + ((30 - n) / range) * 340
+            return (
+              <line key={`helper-${n}`} x1="100" y1={y} x2="110" y2={y} stroke="#999" strokeWidth="1" strokeDasharray="2,2" opacity="0.5" />
+            )
+          })}
         </svg>
       </div>
 
       {/* Große Temperaturanzeige darunter */}
       <div className="text-center bg-gray-100 px-8 py-4 rounded-xl">
         <p className="text-5xl font-bold text-gray-900">{temp}°C</p>
-        <p className="text-lg text-gray-600 mt-2">Lies ab!</p>
+        <p className="text-lg text-gray-600 mt-2">Lies die Flüssigkeit ab!</p>
       </div>
     </div>
   )
